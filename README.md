@@ -19,7 +19,7 @@ Unity VR project to visualize real-world locations with emission-data.
 
 ![image](https://user-images.githubusercontent.com/36818485/216335467-539156c4-b918-49f3-b8aa-2059c47de3c2.png)
   
-5. Restart Unity
+5. Wait for the package to install, then restart Unity.
   
 6. Add your ArcGIS API-key. (In order to load maps, you need to authenticate the plugin with a key.)
 
