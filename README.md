@@ -16,6 +16,8 @@ Unity VR project to visualize real-world locations with emission-data.
   - In the open Unity project, press Window->Package Manager.
   - Press the "+" button in the upper left corner.
   - Press "Add package from tarball...". Select the ArcGIS plugin you downloaded.
+
+![image](https://user-images.githubusercontent.com/36818485/216335467-539156c4-b918-49f3-b8aa-2059c47de3c2.png)
   
 5. Restart Unity
   
