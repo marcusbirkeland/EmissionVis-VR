@@ -1146,6 +1146,16 @@ struct ExecuteEvents_t74DCF8B83743EE2773ACF182344612A048E2CC59  : public Runtime
 {
 };
 
+// UnityEditor.Rendering.BuiltIn.ShaderGraph.MaterialAccess
+struct MaterialAccess_t2D1D644369A02A85560317CFCCCF5E4203E85122  : public RuntimeObject
+{
+};
+
+// UnityEditor.Rendering.Universal.MaterialAccess
+struct MaterialAccess_t8FF9380789D3F7B90559049D64498BB75E0FB6B0  : public RuntimeObject
+{
+};
+
 // System.Reflection.MemberInfo
 struct MemberInfo_t  : public RuntimeObject
 {
@@ -2734,6 +2744,11 @@ struct GameObject_t76FEDD663AB33C991A9C9A23129337651094216F  : public Object_tC1
 {
 };
 
+// UnityEngine.Material
+struct Material_t18053F08F347D0DCA5E1140EC7EC4533DD8A14E3  : public Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C
+{
+};
+
 // System.MulticastDelegate
 struct MulticastDelegate_t  : public Delegate_t
 {
@@ -3988,6 +4003,14 @@ struct ExecuteEvents_t74DCF8B83743EE2773ACF182344612A048E2CC59_StaticFields
 
 // UnityEngine.EventSystems.ExecuteEvents
 
+// UnityEditor.Rendering.BuiltIn.ShaderGraph.MaterialAccess
+
+// UnityEditor.Rendering.BuiltIn.ShaderGraph.MaterialAccess
+
+// UnityEditor.Rendering.Universal.MaterialAccess
+
+// UnityEditor.Rendering.Universal.MaterialAccess
+
 // System.Reflection.MemberInfo
 
 // System.Reflection.MemberInfo
@@ -4673,6 +4696,10 @@ struct EventBase_1_tD5612D4D9A3CAD26CDB27B9D024C6D018D72FBC9_StaticFields
 // UnityEngine.GameObject
 
 // UnityEngine.GameObject
+
+// UnityEngine.Material
+
+// UnityEngine.Material
 
 // System.MulticastDelegate
 
@@ -7233,6 +7260,8 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR Vector3_t24C512C7B96BBABAD472002D
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RaycastResult_Clear_m0E9DA70AC69CF143CEA8428AFC5BA552F99643AE (RaycastResult_tEC6A7B7CABA99C386F054F01E498AEC426CF8023* __this, const RuntimeMethod* method) ;
 // System.String UnityEngine.Vector3::ToString()
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* Vector3_ToString_m6C24B9F0382D25D75B05C606E127CD14660574EE (Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2* __this, const RuntimeMethod* method) ;
+// System.Int32 UnityEngine.Material::get_rawRenderQueue()
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t Material_get_rawRenderQueue_m5B32E9B6304E2C2475500CC417A520C01C9B240D (Material_t18053F08F347D0DCA5E1140EC7EC4533DD8A14E3* __this, const RuntimeMethod* method) ;
 // System.Void UnityEngine.Vector4::.ctor(System.Single,System.Single,System.Single,System.Single)
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void Vector4__ctor_m96B2CD8B862B271F513AF0BDC2EABD58E4DBC813_inline (Vector4_t58B63D32F48C0DBF50DE2C60794C4676C80EDBE3* __this, float ___0_x, float ___1_y, float ___2_z, float ___3_w, const RuntimeMethod* method) ;
 // System.Single UnityEngine.Mathf::Clamp01(System.Single)
@@ -26059,6 +26088,46 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void UIBehaviour__ctor_m24C66A65DDD996E779871
 	{
 		MonoBehaviour__ctor_m592DB0105CA0BC97AA1C5F4AD27B12D68A3B7C1E(__this, NULL);
 		return;
+	}
+}
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+// System.Int32 UnityEditor.Rendering.BuiltIn.ShaderGraph.MaterialAccess::ReadMaterialRawRenderQueue(UnityEngine.Material)
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t MaterialAccess_ReadMaterialRawRenderQueue_m6B9E0FEB4CBD15C741BE81BEEA4E9B17C1091416 (Material_t18053F08F347D0DCA5E1140EC7EC4533DD8A14E3* ___0_mat, const RuntimeMethod* method) 
+{
+	{
+		// return mat.rawRenderQueue;
+		Material_t18053F08F347D0DCA5E1140EC7EC4533DD8A14E3* L_0 = ___0_mat;
+		NullCheck(L_0);
+		int32_t L_1;
+		L_1 = Material_get_rawRenderQueue_m5B32E9B6304E2C2475500CC417A520C01C9B240D(L_0, NULL);
+		return L_1;
+	}
+}
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+// System.Int32 UnityEditor.Rendering.Universal.MaterialAccess::ReadMaterialRawRenderQueue(UnityEngine.Material)
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t MaterialAccess_ReadMaterialRawRenderQueue_m093C11796E1489030FD35E9EAE4005F397BFE6B2 (Material_t18053F08F347D0DCA5E1140EC7EC4533DD8A14E3* ___0_mat, const RuntimeMethod* method) 
+{
+	{
+		// return mat.rawRenderQueue;
+		Material_t18053F08F347D0DCA5E1140EC7EC4533DD8A14E3* L_0 = ___0_mat;
+		NullCheck(L_0);
+		int32_t L_1;
+		L_1 = Material_get_rawRenderQueue_m5B32E9B6304E2C2475500CC417A520C01C9B240D(L_0, NULL);
+		return L_1;
 	}
 }
 #ifdef __clang__

@@ -2724,9 +2724,9 @@ struct Single_t4530F2FF86FCB0DC29F35385CA1BD21BE294761C
 struct Stream_tF844051B786E8F7F4244DBD218D74E8617B9A2DE  : public MarshalByRefObject_t8C2F4C5854177FD60439EB1FCCFC1B3CFAFE8DCE
 {
 	// System.IO.Stream/ReadWriteTask System.IO.Stream::_activeReadWriteTask
-	ReadWriteTask_t0821BF49EE38596C7734E86E1A6A39D769BE2C05* ____activeReadWriteTask_2;
+	ReadWriteTask_t0821BF49EE38596C7734E86E1A6A39D769BE2C05* ____activeReadWriteTask_3;
 	// System.Threading.SemaphoreSlim System.IO.Stream::_asyncActiveSemaphore
-	SemaphoreSlim_t0D5CB5685D9BFA5BF95CEC6E7395490F933E8DB2* ____asyncActiveSemaphore_3;
+	SemaphoreSlim_t0D5CB5685D9BFA5BF95CEC6E7395490F933E8DB2* ____asyncActiveSemaphore_4;
 };
 
 // UnityEngine.InputSystem.EnhancedTouch.TouchHistory
@@ -3671,35 +3671,35 @@ struct Exception_t_marshaled_com
 struct FileStream_t07C7222EE10B75F352B89B76E60820160FF10AD8  : public Stream_tF844051B786E8F7F4244DBD218D74E8617B9A2DE
 {
 	// System.Byte[] System.IO.FileStream::buf
-	ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___buf_6;
+	ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___buf_7;
 	// System.String System.IO.FileStream::name
-	String_t* ___name_7;
+	String_t* ___name_8;
 	// Microsoft.Win32.SafeHandles.SafeFileHandle System.IO.FileStream::safeHandle
-	SafeFileHandle_t033FA6AAAC65F4BB25F4CBA9A242A58C95CD406E* ___safeHandle_8;
+	SafeFileHandle_t033FA6AAAC65F4BB25F4CBA9A242A58C95CD406E* ___safeHandle_9;
 	// System.Boolean System.IO.FileStream::isExposed
-	bool ___isExposed_9;
+	bool ___isExposed_10;
 	// System.Int64 System.IO.FileStream::append_startpos
-	int64_t ___append_startpos_10;
+	int64_t ___append_startpos_11;
 	// System.IO.FileAccess System.IO.FileStream::access
-	int32_t ___access_11;
+	int32_t ___access_12;
 	// System.Boolean System.IO.FileStream::owner
-	bool ___owner_12;
+	bool ___owner_13;
 	// System.Boolean System.IO.FileStream::async
-	bool ___async_13;
+	bool ___async_14;
 	// System.Boolean System.IO.FileStream::canseek
-	bool ___canseek_14;
+	bool ___canseek_15;
 	// System.Boolean System.IO.FileStream::anonymous
-	bool ___anonymous_15;
+	bool ___anonymous_16;
 	// System.Boolean System.IO.FileStream::buf_dirty
-	bool ___buf_dirty_16;
+	bool ___buf_dirty_17;
 	// System.Int32 System.IO.FileStream::buf_size
-	int32_t ___buf_size_17;
+	int32_t ___buf_size_18;
 	// System.Int32 System.IO.FileStream::buf_length
-	int32_t ___buf_length_18;
+	int32_t ___buf_length_19;
 	// System.Int32 System.IO.FileStream::buf_offset
-	int32_t ___buf_offset_19;
+	int32_t ___buf_offset_20;
 	// System.Int64 System.IO.FileStream::buf_start
-	int64_t ___buf_start_20;
+	int64_t ___buf_start_21;
 };
 
 // UnityEngine.InputSystem.LowLevel.GamepadButton
@@ -8177,9 +8177,9 @@ struct Exception_t_StaticFields
 struct FileStream_t07C7222EE10B75F352B89B76E60820160FF10AD8_StaticFields
 {
 	// System.Byte[] System.IO.FileStream::buf_recycle
-	ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___buf_recycle_4;
+	ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___buf_recycle_5;
 	// System.Object System.IO.FileStream::buf_recycle_lock
-	RuntimeObject* ___buf_recycle_lock_5;
+	RuntimeObject* ___buf_recycle_lock_6;
 };
 
 // System.IO.FileStream
@@ -30266,33 +30266,33 @@ IL_0040:
 		int32_t L_12;
 		L_12 = FourCC_op_Implicit_mC296B4E8C4929EACBB7066BB9856C116EE082A7B_inline(L_11, NULL);
 		NullCheck(L_10);
-		VirtualActionInvoker1< int32_t >::Invoke(16 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_10, L_12);
+		VirtualActionInvoker1< int32_t >::Invoke(18 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_10, L_12);
 		// writer.Write(kFileVersion);
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_13 = V_0;
 		int32_t L_14 = ((InputEventTrace_t1D25547AACA8FD1C1AA974F31EF9BD9478205FBD_StaticFields*)il2cpp_codegen_static_fields_for(InputEventTrace_t1D25547AACA8FD1C1AA974F31EF9BD9478205FBD_il2cpp_TypeInfo_var))->___kFileVersion_17;
 		NullCheck(L_13);
-		VirtualActionInvoker1< int32_t >::Invoke(16 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_13, L_14);
+		VirtualActionInvoker1< int32_t >::Invoke(18 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_13, L_14);
 		// writer.Write((int)flags);
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_15 = V_0;
 		int32_t L_16 = V_1;
 		NullCheck(L_15);
-		VirtualActionInvoker1< int32_t >::Invoke(16 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_15, L_16);
+		VirtualActionInvoker1< int32_t >::Invoke(18 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_15, L_16);
 		// writer.Write((int)Application.platform);
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_17 = V_0;
 		int32_t L_18;
 		L_18 = Application_get_platform_m59EF7D6155D18891B24767F83F388160B1FF2138(NULL);
 		NullCheck(L_17);
-		VirtualActionInvoker1< int32_t >::Invoke(16 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_17, L_18);
+		VirtualActionInvoker1< int32_t >::Invoke(18 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_17, L_18);
 		// writer.Write((ulong)m_EventCount);
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_19 = V_0;
 		int64_t L_20 = __this->___m_EventCount_9;
 		NullCheck(L_19);
-		VirtualActionInvoker1< uint64_t >::Invoke(19 /* System.Void System.IO.BinaryWriter::Write(System.UInt64) */, L_19, L_20);
+		VirtualActionInvoker1< uint64_t >::Invoke(21 /* System.Void System.IO.BinaryWriter::Write(System.UInt64) */, L_19, L_20);
 		// writer.Write((ulong)m_EventSizeInBytes);
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_21 = V_0;
 		int64_t L_22 = __this->___m_EventSizeInBytes_10;
 		NullCheck(L_21);
-		VirtualActionInvoker1< uint64_t >::Invoke(19 /* System.Void System.IO.BinaryWriter::Write(System.UInt64) */, L_21, L_22);
+		VirtualActionInvoker1< uint64_t >::Invoke(21 /* System.Void System.IO.BinaryWriter::Write(System.UInt64) */, L_21, L_22);
 		// foreach (var eventPtr in this)
 		RuntimeObject* L_23;
 		L_23 = InputEventTrace_GetEnumerator_mEB8437D4B14D194CBA901FB9DD034AB0BD1015E3(__this, NULL);
@@ -30402,7 +30402,7 @@ IL_00c8_2:
 						BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_38 = V_0;
 						ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_39 = V_8;
 						NullCheck(L_38);
-						VirtualActionInvoker1< ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* >::Invoke(9 /* System.Void System.IO.BinaryWriter::Write(System.Byte[]) */, L_38, L_39);
+						VirtualActionInvoker1< ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* >::Invoke(11 /* System.Void System.IO.BinaryWriter::Write(System.Byte[]) */, L_38, L_39);
 						goto IL_00e7_1;
 					}
 				}// end try (depth: 2)
@@ -30439,12 +30439,12 @@ IL_00fe:
 		// writer.Flush();
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_42 = V_0;
 		NullCheck(L_42);
-		VirtualActionInvoker0::Invoke(6 /* System.Void System.IO.BinaryWriter::Flush() */, L_42);
+		VirtualActionInvoker0::Invoke(7 /* System.Void System.IO.BinaryWriter::Flush() */, L_42);
 		// var positionOfDeviceList = stream.Position;
 		Stream_tF844051B786E8F7F4244DBD218D74E8617B9A2DE* L_43 = ___0_stream;
 		NullCheck(L_43);
 		int64_t L_44;
-		L_44 = VirtualFuncInvoker0< int64_t >::Invoke(11 /* System.Int64 System.IO.Stream::get_Position() */, L_43);
+		L_44 = VirtualFuncInvoker0< int64_t >::Invoke(12 /* System.Int64 System.IO.Stream::get_Position() */, L_43);
 		V_2 = L_44;
 		// var deviceCount = m_DeviceInfos.LengthSafe();
 		DeviceInfoU5BU5D_t83A513EC4EB7BD3AA21A9352117520BC63C34E1A* L_45 = __this->___m_DeviceInfos_16;
@@ -30455,7 +30455,7 @@ IL_00fe:
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_47 = V_0;
 		int32_t L_48 = V_3;
 		NullCheck(L_47);
-		VirtualActionInvoker1< int32_t >::Invoke(16 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_47, L_48);
+		VirtualActionInvoker1< int32_t >::Invoke(18 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_47, L_48);
 		// for (var i = 0; i < deviceCount; ++i)
 		V_11 = 0;
 		goto IL_0187;
@@ -30474,14 +30474,14 @@ IL_0123:
 		int32_t L_53;
 		L_53 = DeviceInfo_get_deviceId_m1F56DCC1850CA1B775C357DA6D521F04EA74F0C6_inline(L_52, NULL);
 		NullCheck(L_51);
-		VirtualActionInvoker1< int32_t >::Invoke(16 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_51, L_53);
+		VirtualActionInvoker1< int32_t >::Invoke(18 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_51, L_53);
 		// writer.Write(device.layout);
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_54 = V_0;
 		DeviceInfo_tAB83FF3BB4996BA68DFDF5D6255C1FEBB452AE52* L_55 = V_12;
 		String_t* L_56;
 		L_56 = DeviceInfo_get_layout_mC531D6400FCF8EE7CCBE96D0DC9328BC0A5AC24C_inline(L_55, NULL);
 		NullCheck(L_54);
-		VirtualActionInvoker1< String_t* >::Invoke(21 /* System.Void System.IO.BinaryWriter::Write(System.String) */, L_54, L_56);
+		VirtualActionInvoker1< String_t* >::Invoke(23 /* System.Void System.IO.BinaryWriter::Write(System.String) */, L_54, L_56);
 		// writer.Write(device.stateFormat);
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_57 = V_0;
 		DeviceInfo_tAB83FF3BB4996BA68DFDF5D6255C1FEBB452AE52* L_58 = V_12;
@@ -30490,14 +30490,14 @@ IL_0123:
 		int32_t L_60;
 		L_60 = FourCC_op_Implicit_mC296B4E8C4929EACBB7066BB9856C116EE082A7B_inline(L_59, NULL);
 		NullCheck(L_57);
-		VirtualActionInvoker1< int32_t >::Invoke(16 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_57, L_60);
+		VirtualActionInvoker1< int32_t >::Invoke(18 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_57, L_60);
 		// writer.Write(device.stateSizeInBytes);
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_61 = V_0;
 		DeviceInfo_tAB83FF3BB4996BA68DFDF5D6255C1FEBB452AE52* L_62 = V_12;
 		int32_t L_63;
 		L_63 = DeviceInfo_get_stateSizeInBytes_mD21A7DBF02B25079F7A1F1482AC2EFE5A86F5C9C_inline(L_62, NULL);
 		NullCheck(L_61);
-		VirtualActionInvoker1< int32_t >::Invoke(16 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_61, L_63);
+		VirtualActionInvoker1< int32_t >::Invoke(18 /* System.Void System.IO.BinaryWriter::Write(System.Int32) */, L_61, L_63);
 		// writer.Write(device.m_FullLayoutJson ?? string.Empty);
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_64 = V_0;
 		DeviceInfo_tAB83FF3BB4996BA68DFDF5D6255C1FEBB452AE52* L_65 = V_12;
@@ -30521,7 +30521,7 @@ IL_0123:
 IL_017c:
 	{
 		NullCheck(G_B23_1);
-		VirtualActionInvoker1< String_t* >::Invoke(21 /* System.Void System.IO.BinaryWriter::Write(System.String) */, G_B23_1, G_B23_0);
+		VirtualActionInvoker1< String_t* >::Invoke(23 /* System.Void System.IO.BinaryWriter::Write(System.String) */, G_B23_1, G_B23_0);
 		// for (var i = 0; i < deviceCount; ++i)
 		int32_t L_69 = V_11;
 		V_11 = ((int32_t)il2cpp_codegen_add(L_69, 1));
@@ -30541,19 +30541,19 @@ IL_0187:
 		// writer.Flush();
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_72 = V_0;
 		NullCheck(L_72);
-		VirtualActionInvoker0::Invoke(6 /* System.Void System.IO.BinaryWriter::Flush() */, L_72);
+		VirtualActionInvoker0::Invoke(7 /* System.Void System.IO.BinaryWriter::Flush() */, L_72);
 		// var offsetOfDeviceList = stream.Position - positionOfDeviceList;
 		Stream_tF844051B786E8F7F4244DBD218D74E8617B9A2DE* L_73 = ___0_stream;
 		NullCheck(L_73);
 		int64_t L_74;
-		L_74 = VirtualFuncInvoker0< int64_t >::Invoke(11 /* System.Int64 System.IO.Stream::get_Position() */, L_73);
+		L_74 = VirtualFuncInvoker0< int64_t >::Invoke(12 /* System.Int64 System.IO.Stream::get_Position() */, L_73);
 		int64_t L_75 = V_2;
 		V_4 = ((int64_t)il2cpp_codegen_subtract(L_74, L_75));
 		// writer.Write(offsetOfDeviceList);
 		BinaryWriter_tFB94D67EDFA3F6A34744A163BDABE287FDF2ED1E* L_76 = V_0;
 		int64_t L_77 = V_4;
 		NullCheck(L_76);
-		VirtualActionInvoker1< int64_t >::Invoke(18 /* System.Void System.IO.BinaryWriter::Write(System.Int64) */, L_76, L_77);
+		VirtualActionInvoker1< int64_t >::Invoke(20 /* System.Void System.IO.BinaryWriter::Write(System.Int64) */, L_76, L_77);
 		// }
 		return;
 	}
@@ -37212,7 +37212,7 @@ CATCH_002f:
 		L_12 = Exception_GetType_mAD1230385BDC06119C339187CC37F22B6A79CF09(L_11, NULL);
 		NullCheck(L_12);
 		String_t* L_13;
-		L_13 = VirtualFuncInvoker0< String_t* >::Invoke(7 /* System.String System.Reflection.MemberInfo::get_Name() */, L_12);
+		L_13 = VirtualFuncInvoker0< String_t* >::Invoke(8 /* System.String System.Reflection.MemberInfo::get_Name() */, L_12);
 		int32_t L_14 = ___0_updateType;
 		int32_t L_15 = L_14;
 		RuntimeObject* L_16 = Box(((RuntimeClass*)il2cpp_codegen_initialize_runtime_metadata_inline((uintptr_t*)&NativeInputUpdateType_tBF672D1AE8F85E9FFC0D44EF6BD5FB96B5C9ACE8_il2cpp_TypeInfo_var)), &L_15);

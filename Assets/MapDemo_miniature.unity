@@ -218,7 +218,7 @@ Transform:
   m_GameObject: {fileID: 533287264}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.98, y: 0.98, z: 0.98}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1494454912}
@@ -369,8 +369,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1494454911}
-  m_LocalRotation: {x: 0.13746987, y: 0.8351381, z: -0.24193585, w: 0.47446123}
-  m_LocalPosition: {x: -3518.179, y: 1767.2224, z: 2155.165}
+  m_LocalRotation: {x: 0.15765901, y: 0.7735503, z: -0.21153595, w: 0.5762084}
+  m_LocalPosition: {x: -3027.29, y: 1305.6357, z: 1225.3931}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -404,14 +404,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   position:
-    x: 5.2904956608466245
-    y: 60.40086395290184
-    z: 1767.2223428371517
-    SRWkid: 4326
+    x: 589426.1719118188
+    y: 8488601.966451656
+    z: 1305.6357421875
+    SRWkid: 3857
   rotation:
-    Heading: 120.79685896634759
-    Pitch: 57.686744931179135
-    Roll: 0.002326725743351969
+    Heading: 106.63851146350068
+    Pitch: 59.40566753254012
+    Roll: 0.009102704789510679
 --- !u!114 &1494454915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426,10 +426,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UpdateClippingPlanes: 1
   UseCameraViewportProperties: 1
-  verticalFov: 0
-  horizontalFov: 0
-  viewportSizeX: 0
-  viewportSizeY: 0
+  verticalFov: 60
+  horizontalFov: 124.80924
+  viewportSizeX: 1975
+  viewportSizeY: 596
   qualityScalingFactor: 2
 --- !u!20 &1494454916
 Camera:
@@ -454,8 +454,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
+  near clip plane: 0.5
+  far clip plane: 130569.64
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -488,15 +488,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IsInitialized: 1
   m_LocalPosition:
-    x: 588935.2830094695
-    y: 1767.2223428371517
-    z: 8489531.738412261
+    x: 589426.1719118188
+    y: 1305.6357421875
+    z: 8488601.966451656
   m_LocalRotation:
     value:
-      x: 0.13746987
-      y: 0.8351381
-      z: -0.24193582
-      w: 0.47446123
+      x: 0.15765901
+      y: 0.7735503
+      z: -0.21153595
+      w: 0.5762084
   m_LocalScale:
     x: 1
     y: 1

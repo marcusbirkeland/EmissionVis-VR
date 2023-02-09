@@ -1,13 +1,13 @@
 {
   "DataTable": {
-    "attribute_total_count_eager_static_constructor": 8,
+    "attribute_total_count_eager_static_constructor": 80,
     "attribute_total_count_set_option": 0,
     "attribute_total_count_generate_into_own_cpp_file": 0,
     "extra_types_total_count": 0,
     "option_extra_types_file_count": 0,
     "option_jobs": 16,
     "option_debug_assembly_name_count": 0,
-    "option_additional_cpp_count": 0,
+    "option_additional_cpp_count": 1,
     "option_emit_null_checks": true,
     "option_enable_stacktrace": false,
     "option_enable_deep_profiler": false,
