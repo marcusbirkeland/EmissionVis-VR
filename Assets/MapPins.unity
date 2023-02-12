@@ -301,32 +301,32 @@ PrefabInstance:
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.0005653497
+      value: 0.00013187254
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.0005653497
+      value: 0.00013187254
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.0005653497
+      value: 0.00013187254
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.6869785
+      value: -0.16024347
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.38269618
+      value: 0.1659675
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.61037314
+      value: 0.14237462
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
@@ -548,32 +548,32 @@ PrefabInstance:
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.0005653914
+      value: 0.00013188226
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.0005653914
+      value: 0.00013188226
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.0005653914
+      value: 0.00013188226
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.4693835
+      value: -0.109487616
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.38271704
+      value: 0.16597377
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.7614214
+      value: 0.17760788
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
@@ -693,17 +693,17 @@ PrefabInstance:
     - target: {fileID: 7322406352324377835, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 100
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 7322406352324377835, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 100
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 7322406352324377835, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 100
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 7322406352324377835, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
@@ -718,32 +718,32 @@ PrefabInstance:
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.0005654279
+      value: 0.00013189077
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.0005654279
+      value: 0.00013189077
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.0005654279
+      value: 0.00013189077
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.6869785
+      value: -0.16024347
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.3827353
+      value: 0.16597676
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.8935977
+      value: 0.20843913
       objectReference: {fileID: 0}
     - target: {fileID: 7333696425959878544, guid: 8722443c7adef424990a1354ef94df43,
         type: 3}
@@ -986,7 +986,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1773437801}
-  m_LocalRotation: {x: -0, y: -2.8421713e-14, z: 0.2852465, w: 0.95845425}
+  m_LocalRotation: {x: 0.00000041816386, y: -0.000000089406974, z: 0.017365132, w: 0.99984926}
   m_LocalPosition: {x: 2.559, y: -1.374, z: -0.803}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
@@ -996,7 +996,7 @@ Transform:
   - {fileID: 1549714140}
   m_Father: {fileID: 120164446}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 33.147}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 1.99}
 --- !u!65 &1773437803
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1092,7 +1092,7 @@ MonoBehaviour:
   _center:
     _latitude: 60.3913
     _longitude: 5.32210000000001
-  _zoomLevel: 14.45
+  _zoomLevel: 12.35
   _minimumZoomLevel: 1
   _maximumZoomLevel: 20
   _mapTerrainType: 0
