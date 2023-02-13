@@ -28,7 +28,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3034
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -68,15 +68,17 @@ Material:
     - Vector1_EF0B7AAC: 1
     - Vector1_F5A27251: 0
     - Vector1_FEB1FFD5: -1
-    - _QueueControl: 0
+    - _NoiseAlpha: 15
+    - _Opacity: 1
+    - _QueueControl: 1
     - _QueueOffset: 34
-    - _Transparency: 0.1
+    - _Transparency: 1
     m_Colors:
-    - Color_6D35BD30: {r: 0, g: 0.5373578, b: 1, a: 0}
-    - Color_AD16EE5E: {r: 0, g: 0.3121109, b: 1, a: 1}
+    - Color_6D35BD30: {r: 0, g: 0.74767303, b: 1, a: 0}
+    - Color_AD16EE5E: {r: 0, g: 0.7061653, b: 1, a: 0.9019608}
     - Vector4_D3B3E943: {r: 1, g: 0, b: 0, a: 90}
     - Vector4_DA068D89: {r: 0, g: 1, b: -0.3, a: 2.7}
     - _ColorOffset: {r: 0, g: 0, b: 0, a: 0}
     - _ColorPeakMin: {r: 0.93580914, g: 1, b: 0.9103774, a: 1}
-    - _ColorValleyMin: {r: 0.5821185, g: 1, b: 0, a: 1}
+    - _ColorValleyMin: {r: 0.6829778, g: 1, b: 0.56037736, a: 1}
   m_BuildTextureStacks: []
