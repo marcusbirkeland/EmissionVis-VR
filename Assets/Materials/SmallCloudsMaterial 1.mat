@@ -57,7 +57,7 @@ Material:
     - Vector1_3BED982A: 0.5
     - Vector1_48A8130: 0.01
     - Vector1_58F7CCC1: 2.68
-    - Vector1_7E1AD4D6: 100
+    - Vector1_7E1AD4D6: 50
     - Vector1_8038C85: 2
     - Vector1_8AB010D0: 10000
     - Vector1_908E92C3: 2
@@ -68,7 +68,8 @@ Material:
     - Vector1_EF0B7AAC: 1
     - Vector1_F5A27251: 0
     - Vector1_FEB1FFD5: -1
-    - _NoiseAlpha: 15
+    - _AlphaClampMax: 0.675
+    - _NoiseAlpha: 100
     - _Opacity: 1
     - _QueueControl: 1
     - _QueueOffset: 34
