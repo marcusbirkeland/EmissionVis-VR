@@ -83,6 +83,9 @@
         },
         {
             "m_Id": "c3184dd622f24925a8c89e927648a718"
+        },
+        {
+            "m_Id": "60ee26815b6541a79038e545c384b5ad"
         }
     ],
     "m_Keywords": [],
@@ -7048,6 +7051,33 @@
 }
 
 {
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "60ee26815b6541a79038e545c384b5ad",
+    "m_Guid": {
+        "m_GuidSerialized": "8a1391be-756a-4104-9cfc-1533a2701775"
+    },
+    "m_Name": "BaseMapOpacity",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "BaseMapOpacity",
+    "m_DefaultReferenceName": "_BaseMapOpacity",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 100.0,
+    "m_FloatType": 1,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 100.0
+    }
+}
+
+{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.AddNode",
     "m_ObjectId": "6102ca5aa353628d8406d6769e3b4eaf",
@@ -8785,6 +8815,9 @@
         },
         {
             "m_Id": "c3184dd622f24925a8c89e927648a718"
+        },
+        {
+            "m_Id": "60ee26815b6541a79038e545c384b5ad"
         }
     ]
 }
@@ -11128,10 +11161,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 5652.0,
-            "y": 2287.0,
-            "width": 208.00048828125,
-            "height": 302.0
+            "x": 5647.0,
+            "y": 1810.0001220703125,
+            "width": 208.0,
+            "height": 301.9998779296875
         }
     },
     "m_Slots": [

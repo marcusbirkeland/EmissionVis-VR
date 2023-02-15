@@ -52,8 +52,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Vector1_2B98EB7D: 0.03
-    - Vector1_338070E0: 15
+    - Vector1_2B98EB7D: 0.01
+    - Vector1_338070E0: 10
     - Vector1_3BED982A: 0.5
     - Vector1_48A8130: 1111
     - Vector1_58F7CCC1: 2.25
@@ -69,14 +69,15 @@ Material:
     - Vector1_F5A27251: 0
     - Vector1_FEB1FFD5: -1
     - _AlphaClampMax: 0.675
+    - _BaseMapOpacity: 0
     - _NoiseAlpha: 100
     - _Opacity: 1
     - _OpacityMax: 1
-    - _OpacityMultipler: 13.1
+    - _OpacityMultipler: 62.6
     - _QueueControl: 1
     - _QueueOffset: 34
     - _Transparency: 1
-    - _ValleyColorMultipler: 0
+    - _ValleyColorMultipler: 1
     m_Colors:
     - Color_6D35BD30: {r: 0, g: 0.74767303, b: 1, a: 0}
     - Color_AD16EE5E: {r: 0, g: 0.7061653, b: 1, a: 0.9019608}
