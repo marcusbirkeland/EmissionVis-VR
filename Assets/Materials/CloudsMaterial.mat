@@ -35,7 +35,15 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _ColorMap:
-        m_Texture: {fileID: 2800000, guid: 7de7dca02d7bafc45869d85983fa258d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5617292e57420844bbaac533fb584880, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorMapMax:
+        m_Texture: {fileID: 2800000, guid: 217e1bc50948e1a4988d77f1701617c6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorMapMin:
+        m_Texture: {fileID: 2800000, guid: db8d149b269180c47afadadbf2ae8dcb, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -70,13 +78,18 @@ Material:
     - Vector1_FEB1FFD5: -1
     - _AlphaClampMax: 0.8
     - _BaseMapOpacity: 100
+    - _ColorBlendFac: 0.088
+    - _ColorLowTreshold: 0.418
+    - _ColorMapAlpha: 0
+    - _ColorMidTreshold: 0.725
+    - _ColorMinTreshold: 0.25
     - _NoiseAlpha: 50
     - _Opacity: 1
     - _OpacityMax: 0.876
-    - _OpacityMultipler: 3.6
+    - _OpacityMultipler: 9.2
     - _QueueControl: 1
     - _QueueOffset: -21
-    - _ValleyColorMultipler: 0.925
+    - _ValleyColorMultipler: 1
     m_Colors:
     - Color_6D35BD30: {r: 0, g: 0.5373578, b: 1, a: 0}
     - Color_AD16EE5E: {r: 0, g: 0.3121109, b: 1, a: 1}
