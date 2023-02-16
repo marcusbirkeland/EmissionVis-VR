@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-815197020183304033
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 5
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SmallCloudsMaterial 1
+  m_Shader: {fileID: -6465566751694194690, guid: 5f713c156d9e0f843b9609daf54cfd26,
+    type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _ColorMap:
+        m_Texture: {fileID: 2800000, guid: 7de7dca02d7bafc45869d85983fa258d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - Vector1_2B98EB7D: 0.01
+    - Vector1_338070E0: 10
+    - Vector1_3BED982A: 0.5
+    - Vector1_48A8130: 1111
+    - Vector1_58F7CCC1: 2.25
+    - Vector1_7E1AD4D6: 30
+    - Vector1_8038C85: 2
+    - Vector1_8AB010D0: 10000
+    - Vector1_908E92C3: 0
+    - Vector1_9A6C69D3: 20
+    - Vector1_A409D8BE: 200
+    - Vector1_A6F9214A: 400000
+    - Vector1_D2AA808A: 2
+    - Vector1_EF0B7AAC: 5
+    - Vector1_F5A27251: 0
+    - Vector1_FEB1FFD5: -1
+    - _AlphaClampMax: 0.675
+    - _BaseMapOpacity: 0
+    - _NoiseAlpha: 100
+    - _Opacity: 1
+    - _OpacityMax: 1
+    - _OpacityMultipler: 62.6
+    - _QueueControl: 1
+    - _QueueOffset: 34
+    - _Transparency: 1
+    - _ValleyColorMultipler: 1
+    m_Colors:
+    - Color_6D35BD30: {r: 0, g: 0.74767303, b: 1, a: 0}
+    - Color_AD16EE5E: {r: 0, g: 0.7061653, b: 1, a: 0.9019608}
+    - Vector4_D3B3E943: {r: 1, g: 0, b: 0, a: 90}
+    - Vector4_DA068D89: {r: 0, g: 1, b: -0.3, a: 2.7}
+    - _ColorLow: {r: 0.45466956, g: 1, b: 0.3820755, a: 1}
+    - _ColorMax: {r: 1, g: 0, b: 0, a: 0}
+    - _ColorMid: {r: 1, g: 0.44283178, b: 0.0039215684, a: 1}
+    - _ColorMin: {r: 0, g: 0.50980425, b: 1, a: 1}
+    - _ColorOffset: {r: 0, g: 0, b: 0, a: 0}
+    - _ColorPeakMin: {r: 0.93580914, g: 1, b: 0.9103774, a: 1}
+    - _ColorValleyMin: {r: 0.6829778, g: 1, b: 0.56037736, a: 1}
+  m_BuildTextureStacks: []
