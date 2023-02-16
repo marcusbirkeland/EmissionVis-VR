@@ -28,7 +28,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3034
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -43,7 +43,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorMapMin:
-        m_Texture: {fileID: 2800000, guid: 217e1bc50948e1a4988d77f1701617c6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2307199a3ee3e4a4a862351b45c050f3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -64,7 +64,7 @@ Material:
     - Vector1_338070E0: 10
     - Vector1_3BED982A: 0.5
     - Vector1_48A8130: 1111
-    - Vector1_58F7CCC1: 2.25
+    - Vector1_58F7CCC1: 0.36
     - Vector1_7E1AD4D6: 30
     - Vector1_8038C85: 2
     - Vector1_8AB010D0: 10000
@@ -78,30 +78,31 @@ Material:
     - Vector1_FEB1FFD5: -1
     - _AlphaClampMax: 0.675
     - _BaseMapOpacity: 0
-    - _ColorBlendFac: 0.1
-    - _ColorLowTreshold: 0.4
+    - _ColorBlendFac: 0.064
+    - _ColorLowTreshold: 0.163
     - _ColorMapAlpha: 0
-    - _ColorMapTransparency: 1.333
-    - _ColorMaxTreshold: 0.75
-    - _ColorMinTreshold: 0.25
-    - _DarkSpotBrightness: 0.2
+    - _ColorMapTransparency: 1.575
+    - _ColorMaxTreshold: 0.237
+    - _ColorMinOpacity: 1
+    - _ColorMinTreshold: 0.17
+    - _DarkSpotBrightness: 0
     - _NoiseAlpha: 100
     - _Opacity: 1
     - _OpacityMax: 1
     - _OpacityMultipler: 62.6
-    - _QueueControl: 1
+    - _QueueControl: 0
     - _QueueOffset: 34
     - _Transparency: 1
-    - _ValleyColorMultipler: 1
+    - _ValleyColorMultipler: 0
     m_Colors:
     - Color_6D35BD30: {r: 0, g: 0.74767303, b: 1, a: 0}
     - Color_AD16EE5E: {r: 0, g: 0.7061653, b: 1, a: 0.9019608}
     - Vector4_D3B3E943: {r: 1, g: 0, b: 0, a: 90}
     - Vector4_DA068D89: {r: 0, g: 1, b: -0.3, a: 2.7}
-    - _ColorLow: {r: 0.45466956, g: 1, b: 0.3820755, a: 1}
-    - _ColorMax: {r: 1, g: 0, b: 0, a: 0}
-    - _ColorMid: {r: 1, g: 0.44283178, b: 0.0039215684, a: 1}
-    - _ColorMin: {r: 0, g: 0.50980425, b: 1, a: 1}
+    - _ColorLow: {r: 0, g: 0, b: 1, a: 1}
+    - _ColorMax: {r: 10.680627, g: 4.708537, b: 0, a: 0}
+    - _ColorMid: {r: 0, g: 0.23921585, b: 1, a: 1}
+    - _ColorMin: {r: 0, g: 0.0015357615, b: 0.05882353, a: 1}
     - _ColorOffset: {r: 0, g: 0, b: 0, a: 0}
     - _ColorPeakMin: {r: 0.93580914, g: 1, b: 0.9103774, a: 1}
     - _ColorValleyMin: {r: 0.6829778, g: 1, b: 0.56037736, a: 1}
