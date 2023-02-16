@@ -21,11 +21,11 @@ public class CloudMap {
     }
 }
 
-public class GenerateCloudsMap : MonoBehaviour
+public class CloudMapManager : MonoBehaviour
 {
 
     public GameObject clouds;
-    public string imageDirectory = "ImageData/Bergen/Emission";
+    public string imageDirectory = "Assets/Resources/ImageData/Bergen/Emission";
 
     private int indexMin = 0;
     private int indexMax = 1;
@@ -47,23 +47,40 @@ public class GenerateCloudsMap : MonoBehaviour
         SetMaxMap(indexMax);
     }
 
-    public void IncrementTime(){
-        if (indexMax >= cloudMaps.Count-1){
+    private void IncrementTime(int steps){
+        if (indexMax+steps > cloudMaps.Count){
             throw new System.NullReferenceException("Index out of range");
         }
-        indexMin++;
-        indexMax++;
+        indexMin+= steps;
+        indexMax+= steps;
+    }
+
+    private void DecrementTime(int steps){
+        if(indexMin-steps < 0){
+            throw new System.IndexOutOfRangeException("Index out of range");
+        }
+        indexMin+= steps;
+        indexMax+= steps;
+    }
+
+    public void UpdateTime(int steps){
+        if(steps >= cloudMaps.Count){
+            throw new System.NullReferenceException("Index out of range. Too many timesteps jumped");
+        }
+
+        Debug.Log("Update time steps: " + steps);
+
+        if(steps < 0){
+            DecrementTime(steps);
+        }
+
+        else if(steps > 0){
+            IncrementTime(steps);
+        }
+        Debug.Log("INDEX MAX: " + indexMax + "\nINDEX MIN: " + indexMin);
         SetMaps();
     }
 
-    public void DecrementTime(){
-        if(indexMin <= 0 && indexMax != indexMin){
-            throw new System.IndexOutOfRangeException("Index out of range");
-        }
-        indexMin--;
-        indexMax--;
-        SetMaps();
-    }
 
     // Start is called before the first frame update
     void Start()
