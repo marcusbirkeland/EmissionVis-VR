@@ -1,24 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 
 public class CloudMap {
     
     private Texture2D texture;
-    private string timeString;
+    private int timeSeconds;
 
-    public CloudMap(Texture2D tex, string t){
+    public CloudMap(Texture2D tex, int t){
         this.texture = tex;
-        this.timeString = t;
+        this.timeSeconds = t;
     }
 
     public Texture2D getTexture(){
         return texture;
     }
 
-    public string getTime(){
-        return timeString;
+    public int getTime(){
+        return timeSeconds;
     }
 }
 
@@ -26,33 +27,49 @@ public class GenerateCloudsMap : MonoBehaviour
 {
 
     public GameObject clouds;
-    public string csvPath = "Assets/DATA/emission.csv";
+    public string imageDirectory = "ImageData/Bergen/Emission";
 
-    public string filename = "wspeed";
+
+    public int index = 0;
+
+    private int prevIndex = 0;
 
     private Renderer cloudsRenderer;
 
-    private List<CloudMap> CloudTextureMaps;
-
-    private Texture2D createCloudMap(string [] data, int offset=1){
-        // TODO: create texture.
-    }
+    private List<CloudMap> CloudMaps;
 
     // Start is called before the first frame update
     void Start()
     {
-       cloudsRenderer = clouds.GetComponent<Renderer>();
-        TextAsset data = Resources.Load<TextAsset>(filename);
-        string [] dataLines = data.text.Split('\n');
-
-        for (int i = 1; i < dataLines.Length; i++){
-            //TODO: make stuff
+        cloudsRenderer = clouds.GetComponent<Renderer>();
+        CloudMaps = new List<CloudMap>();
+        DirectoryInfo info = new DirectoryInfo(imageDirectory);
+        FileInfo [] fileInfo = info.GetFiles();
+        // Load all png's from folder into the CloudMaps list.
+        foreach(FileInfo file in fileInfo){
+            if(file.Extension.Equals(".png") || file.Extension.Equals(".PNG")){
+                Texture2D texture = new Texture2D(1,1);
+                Debug.Log("FOUND TEXUTRE: " + file.FullName);
+                byte [] bytes = File.ReadAllBytes(file.FullName);
+                
+                texture.LoadImage(bytes);
+                Debug.Log("Filename: " + file.Name);
+                int seconds = int.Parse(file.Name.Split('.')[0]);
+                CloudMap cm = new CloudMap(texture, seconds);
+                CloudMaps.Add(cm);
+            }
         }
+        // Sort mayb.
+
+        cloudsRenderer.material.SetTexture("_ColorMap", CloudMaps[index].getTexture());
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(index != prevIndex){
+            cloudsRenderer.material.SetTexture("_ColorMap", CloudMaps[index].getTexture());
+            prevIndex = index;
+        }
     }
 }
