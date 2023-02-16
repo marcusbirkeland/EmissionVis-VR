@@ -43,7 +43,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorMapMin:
-        m_Texture: {fileID: 2800000, guid: 2307199a3ee3e4a4a862351b45c050f3, type: 3}
+        m_Texture: {fileID: 2800000, guid: f8cbfeab3220d6946919763b8d666c72, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -80,7 +80,7 @@ Material:
     - _BaseMapOpacity: 0
     - _ColorBlendFac: 0.064
     - _ColorLowTreshold: 0.163
-    - _ColorMapAlpha: 0
+    - _ColorMapAlpha: 1
     - _ColorMapTransparency: 1.575
     - _ColorMaxTreshold: 0.237
     - _ColorMinOpacity: 1
