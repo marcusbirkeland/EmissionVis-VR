@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Globalization;
 using UnityEditor;
+using Microsoft.Maps.Unity;
+using Microsoft.Geospatial;
 
 public class BuildingSpawnerScript : MonoBehaviour
 {
     private const string EDITOR_NAME = "Building Spawner";
     private const int PROGRESS_UPDATE_RATE = 1;
     public string dataPath ="Assets/Resources/Bergen/Building/buildings.csv";
+
+    public LatLon latlon;
+    public double latitude = 60.35954907032411;
+    public double longitude = 5.314180944287559;
 
     public int data_y_index = 0;
     public int data_x_index = 1;
@@ -18,7 +24,6 @@ public class BuildingSpawnerScript : MonoBehaviour
     // Buildings to spawn
     public GameObject smallBuilding;
     public GameObject largeBuilding;
-
     private GameObject buildings;
 
     public void SpawnBuildings(){
@@ -73,7 +78,15 @@ public class BuildingSpawnerScript : MonoBehaviour
         sr.Close();
         EditorUtility.ClearProgressBar();
         Debug.Log("Stream successfully closed.");
+        Debug.Log("Spawned " + buildings.transform.childCount + " buildings.");
 
+        buildings.transform.Rotate(0,-90,0);
+
+        //Setup map pin 
+        MapPin mapPin = buildings.AddComponent<MapPin>();
+        mapPin.Location = new Microsoft.Geospatial.LatLon(latitude, longitude);
+        mapPin.UseRealWorldScale = true;
+        mapPin.enabled = true;
     }
 
     /* Parse building data from a data-line, and handle input.*/
@@ -88,15 +101,17 @@ public class BuildingSpawnerScript : MonoBehaviour
             SpawnBuilding(
             float.Parse(x, CultureInfo.InvariantCulture.NumberFormat), 
             float.Parse(y,CultureInfo.InvariantCulture.NumberFormat), 
-            float.Parse(height,CultureInfo.InvariantCulture.NumberFormat)
+            float.Parse(height,CultureInfo.InvariantCulture.NumberFormat),
+            "Small Building " + (buildings.transform.childCount +1)
             );
         }
 
     }
 
-    private void SpawnBuilding(float x, float z, float height){
+    private void SpawnBuilding(float x, float z, float height, string name){
         Vector3 pos = new Vector3(x, height, z);
         GameObject building = Instantiate(smallBuilding, buildings.transform, false);
+        building.name = name;
         building.transform.position += pos;
     }
 
