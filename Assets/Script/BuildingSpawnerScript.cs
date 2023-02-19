@@ -12,7 +12,15 @@ public class BuildingSpawnerScript : MonoBehaviour
     private const int PROGRESS_UPDATE_RATE = 1;
     public string dataPath ="Assets/Resources/Bergen/Building/buildings.csv";
 
-    public LatLon latlon;
+    public bool useElevationData = true;
+    public string elevationDataPath="Assets/Resources/Bergen/Elevation/elevation.csv";
+
+    public Vector3 positionOffset;
+
+    public float xAngle=0, yAngle=-90, zAngle=0;
+
+    public float altitudeOffset = -250;
+
     public double latitude = 60.35954907032411;
     public double longitude = 5.314180944287559;
 
@@ -21,10 +29,11 @@ public class BuildingSpawnerScript : MonoBehaviour
     public int data_height_index = 2;
 
     public GameObject map;
-    // Buildings to spawn
     public GameObject smallBuilding;
     public GameObject largeBuilding;
     private GameObject buildings;
+
+    private string[] elevationData;
 
     public void SpawnBuildings(){
         Debug.Log("Spawning buildings...");
@@ -38,9 +47,12 @@ public class BuildingSpawnerScript : MonoBehaviour
             throw new System.ArgumentException("The file at " + dataPath + " is empty!");
         }
 
-        //TODO: Can expand to automatically set data indecies based on header.
+        //TODO: Expand to automatically set data indecies based on header.
+
         // Read first line
         sr.ReadLine();
+
+        elevationData = System.IO.File.ReadAllLines(elevationDataPath);
 
         // Draw a progressbar to show that work is being done
         float progressBar = 0.0f;
@@ -49,18 +61,17 @@ public class BuildingSpawnerScript : MonoBehaviour
             "Parsing building data...",
             progressBar
         );
-
         long numLines = sr.BaseStream.Length;
         long currentLine = 1;
         long counter = 0; // Counter variable to prevent writing to progress bar too often.
-        Debug.Log("Num lines: " + numLines);
+
         // Read file line by line
         while(sr.Peek() >= 0){
             string line = sr.ReadLine();
             //Debug.Log("line: " + line);
 
             string [] data = line.Split(',');
-            ParseBuilding(data);
+            ParseBuilding(data, currentLine);
 
             // Update progress-bar
             if(counter >= PROGRESS_UPDATE_RATE){
@@ -80,17 +91,19 @@ public class BuildingSpawnerScript : MonoBehaviour
         Debug.Log("Stream successfully closed.");
         Debug.Log("Spawned " + buildings.transform.childCount + " buildings.");
 
-        buildings.transform.Rotate(0,-90,0);
+        buildings.transform.Rotate(xAngle, yAngle, zAngle);
 
-        //Setup map pin 
+        //Setup map pin component
         MapPin mapPin = buildings.AddComponent<MapPin>();
         mapPin.Location = new Microsoft.Geospatial.LatLon(latitude, longitude);
         mapPin.UseRealWorldScale = true;
+        mapPin.Altitude = altitudeOffset;
         mapPin.enabled = true;
+
     }
 
     /* Parse building data from a data-line, and handle input.*/
-    private void ParseBuilding(string [] data){
+    private void ParseBuilding(string [] data, long currentLine){
         string y = data[data_y_index];
         string x = data[data_x_index];
         string height = data[data_height_index];
@@ -102,14 +115,24 @@ public class BuildingSpawnerScript : MonoBehaviour
             float.Parse(x, CultureInfo.InvariantCulture.NumberFormat), 
             float.Parse(y,CultureInfo.InvariantCulture.NumberFormat), 
             float.Parse(height,CultureInfo.InvariantCulture.NumberFormat),
-            "Small Building " + (buildings.transform.childCount +1)
+            "Small Building " + (buildings.transform.childCount +1),
+            currentLine
             );
         }
 
     }
 
-    private void SpawnBuilding(float x, float z, float height, string name){
-        Vector3 pos = new Vector3(x, height, z);
+    private void SpawnBuilding(float x, float z, float height, string name, long buildingIndex){
+        string [] elevationString = elevationData[buildingIndex].Split(',');
+
+        //TODO: Throw error if x and y values mismatch between building-data and elevation-data.
+
+        float y = float.Parse(
+            elevationString[data_height_index] ,
+            CultureInfo.InvariantCulture.NumberFormat
+        );
+
+        Vector3 pos = new Vector3(x, y, z);
         GameObject building = Instantiate(smallBuilding, buildings.transform, false);
         building.name = name;
         building.transform.position += pos;
