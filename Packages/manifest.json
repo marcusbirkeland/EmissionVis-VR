@@ -1,5 +1,5 @@
 {
-    "scopedRegistries": [
+  "scopedRegistries": [
     {
       "name": "Maps SDK for Unity",
       "url": "https://unity.virtualearth.net/npm/registry/",
@@ -9,17 +9,17 @@
     }
   ],
   "dependencies": {
+    "com.esri.arcgis-maps-sdk": "file:E:/Downloads/arcgis-maps-sdk-unity-1.1.0.tgz",
     "com.microsoft.maps.unity": "0.11.2",
     "com.microsoft.maps.unity.urp": "https://github.com/microsoft/MapsSDK-Unity.git?path=/UPM/com.microsoft.maps.unity.urp",
-    "com.esri.arcgis-maps-sdk": "file:E:/Downloads/arcgis-maps-sdk-unity-1.1.0.tgz",
-    "com.unity.collab-proxy": "1.17.7",
+    "com.unity.collab-proxy": "2.0.0",
     "com.unity.feature.development": "1.0.1",
     "com.unity.feature.vr": "1.0.0",
     "com.unity.ide.rider": "3.0.18",
     "com.unity.ide.visualstudio": "2.0.17",
     "com.unity.ide.vscode": "1.2.5",
     "com.unity.learn.iet-framework": "3.1.1",
-    "com.unity.render-pipelines.universal": "12.1.9",
+    "com.unity.render-pipelines.universal": "12.1.10",
     "com.unity.test-framework": "1.1.31",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.6.4",
