@@ -66,7 +66,6 @@ public class MapDragging : MonoBehaviour
             previousPos = hit.point; 
         }
 
-        Debug.Log(previousPos.x);
         deltaX = (previousPos.x - hit.point.x);
         deltaY = (previousPos.y - hit.point.y);
         deltaZ = (previousPos.z - hit.point.z);
