@@ -6,7 +6,9 @@ nc["rad_net*_xy"].to_dataframe().to_csv('rad.csv')
 nc.close()
 
 nc = xr.open_dataset('bergen_buildings.nc')
-nc["buildings_2d"].to_dataframe().to_csv('buildings.csv')
+nc["zt"].to_dataframe().to_csv('elevation.csv')
+# nc["buildings_2d"].to_dataframe().to_csv('buildings.csv')
+
 
 nc.close()
 
