@@ -6,16 +6,14 @@ using UnityEditor;
 using Microsoft.Maps.Unity;
 using Microsoft.Geospatial;
 
-public class BuildingSpawnerScript : MonoBehaviour
+public class BuildingSpawner : EditorWindow
 {
     private const string EDITOR_NAME = "Building Spawner";
     private const int PROGRESS_UPDATE_RATE = 1;
+
     public string dataPath ="Assets/Resources/Bergen/Building/buildings.csv";
-
-    public bool useElevationData = true;
-    public string elevationDataPath="Assets/Resources/Bergen/Elevation/elevation.csv";
-
-    public Vector3 positionOffset;
+    public string elevationDataPath="Assets/Resources/Bergen/Elevation/elevation.csv";  
+    //public Vector3 positionOffset;
 
     public float xAngle=0, yAngle=-90, zAngle=0;
 
@@ -30,10 +28,47 @@ public class BuildingSpawnerScript : MonoBehaviour
 
     public GameObject map;
     public GameObject smallBuilding;
-    public GameObject largeBuilding;
+    //public GameObject largeBuilding;
     private GameObject buildings;
 
     private string[] elevationData;
+
+    [MenuItem("SINTEF / Building Generator")]
+    public static void ShowWindow()
+    {
+        GetWindow(typeof(BuildingSpawner)); // Inherited from EditorWindow
+    }
+
+    private void OnGUI()
+    {
+        GUILayout.Label("Building generator!");
+        //textureFolderPath = EditorGUILayout.TextField("Path to textures folder", textureFolderPath);
+        dataPath = EditorGUILayout.TextField("Path to building data: ", dataPath);
+        xAngle = EditorGUILayout.FloatField("x-angle", xAngle);
+        yAngle = EditorGUILayout.FloatField("y-angle", yAngle);
+        zAngle = EditorGUILayout.FloatField("z-angle", zAngle);
+
+        data_y_index = EditorGUILayout.IntField("y-index in data", data_y_index);
+        data_x_index = EditorGUILayout.IntField("x-index in data", data_x_index);
+        data_height_index = EditorGUILayout.IntField("height-index in data", data_height_index);
+
+
+
+        altitudeOffset = EditorGUILayout.FloatField("Altitude offset", altitudeOffset);
+
+        latitude = EditorGUILayout.DoubleField("Latitude", latitude);
+        longitude = EditorGUILayout.DoubleField("Longitude", longitude);
+
+        map = EditorGUILayout.ObjectField("Map", map, typeof(GameObject)) as GameObject;
+        smallBuilding = EditorGUILayout.ObjectField("Building model", smallBuilding, typeof(GameObject)) as GameObject;
+
+        if (GUILayout.Button("Generate Buildings"))
+        {
+            SpawnBuildings();
+        }
+    }
+
+
 
     public void SpawnBuildings(){
         Debug.Log("Spawning buildings...");
