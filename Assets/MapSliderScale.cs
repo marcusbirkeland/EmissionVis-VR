@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Microsoft.Maps.Unity;
 
 public class MapSliderScale : MonoBehaviour
 {
-    public GameObject target;
+    public MapRenderer target;
     public Slider slider;
     // Start is called before the first frame update
     void Start()
@@ -16,7 +17,6 @@ public class MapSliderScale : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float newScale = slider.value;
-        target.transform.localScale = new Vector3(slider.value, slider.value, slider.value);
+        target.ZoomLevel = slider.value;
     }
 }
