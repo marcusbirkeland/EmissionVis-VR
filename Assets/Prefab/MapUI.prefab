@@ -2674,10 +2674,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 9041054952940795030}
   m_HandleRect: {fileID: 9041054953608250632}
   m_Direction: 0
-  m_MinValue: 1
-  m_MaxValue: 2
+  m_MinValue: 0
+  m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 1.642
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3219,8 +3219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectToToggle: {fileID: 0}
-  toggle: {fileID: 0}
-  showObject: 1
+  toggleUI: {fileID: 0}
 --- !u!1 &9041054954604030968
 GameObject:
   m_ObjectHideFlags: 0
@@ -3334,5 +3333,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectToToggle: {fileID: 0}
-  toggle: {fileID: 0}
-  showObject: 1
+  toggleUI: {fileID: 0}
