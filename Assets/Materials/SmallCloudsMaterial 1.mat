@@ -87,7 +87,7 @@ Material:
     - _ColorMinTreshold: 0.223
     - _DarkSpotBrightness: 0
     - _NoiseAlpha: 100
-    - _Opacity: 1
+    - _Opacity: 0.671
     - _OpacityMax: 1
     - _OpacityMultipler: 62.6
     - _QueueControl: 0
