@@ -1100,7 +1100,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &5386549679314206135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1409,7 +1409,7 @@ GameObject:
   - component: {fileID: 9041054952941355549}
   - component: {fileID: 9041054952941355551}
   m_Layer: 5
-  m_Name: HorisontalScrollSlider
+  m_Name: HorizontalScrollSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3630,7 +3630,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Horisontal
+  m_Text: Horizontal
 --- !u!1 &9041054954315598101
 GameObject:
   m_ObjectHideFlags: 0
@@ -4029,7 +4029,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9041054954575237819}
   - component: {fileID: 9041054954575237820}
-  - component: {fileID: 7882233123525122301}
+  - component: {fileID: 5058050915729874744}
   m_Layer: 5
   m_Name: ConstructionDataToggle
   m_TagString: Untagged
@@ -4107,7 +4107,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
---- !u!114 &7882233123525122301
+--- !u!114 &5058050915729874744
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4116,11 +4116,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 9041054954575237818}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ea61dd694e3c478e9404d0f5f9e82ce, type: 3}
+  m_Script: {fileID: 11500000, guid: 3965370b47baa7c4e9f583e989f3d4df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Cube: {fileID: 0}
-  ConstructionDataToggle: {fileID: 9041054954575237820}
+  objectToToggle: {fileID: 0}
+  toggle: {fileID: 0}
+  showObject: 1
 --- !u!1 &9041054954604030968
 GameObject:
   m_ObjectHideFlags: 0
@@ -4131,7 +4132,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9041054954604030969}
   - component: {fileID: 9041054954604030970}
-  - component: {fileID: 4161604440927920641}
+  - component: {fileID: 3712548103767494360}
   m_Layer: 5
   m_Name: RadiationToggle
   m_TagString: Untagged
@@ -4221,7 +4222,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 1
---- !u!114 &4161604440927920641
+--- !u!114 &3712548103767494360
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4230,11 +4231,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 9041054954604030968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de6588c45ab0a4cea97df2ac06005c30, type: 3}
+  m_Script: {fileID: 11500000, guid: 3965370b47baa7c4e9f583e989f3d4df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RadiationCube: {fileID: 0}
-  RadiationToggle: {fileID: 9041054954604030970}
+  objectToToggle: {fileID: 0}
+  toggle: {fileID: 0}
+  showObject: 1
 --- !u!1 &9041054954606139518
 GameObject:
   m_ObjectHideFlags: 0
