@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class EmissionVisibilityScript : MonoBehaviour
 {
 
-    public GameObject currentGameObject;
-    public float alpha = 0.5f;//half transparency
+    private  GameObject currentGameObject;
+    public float alpha = 1f;
     //Get current material
     private Material currentMat;
 
@@ -19,21 +19,15 @@ public class EmissionVisibilityScript : MonoBehaviour
 
     }
 
-/*
     // Update is called once per frame
     void Update()
     {
-        ChangeAlpha(currentMat, alpha);
-    }
 
-*/
+    }
 
     void ChangeAlpha(Material mat, float alphaVal)
     {
-        Color oldColor = mat.color;
-        Color newColor = new Color(oldColor.r, oldColor.g, oldColor.b, alphaVal);
-        mat.SetColor("_Color", newColor);
-
+        mat.SetFloat("_Opacity", alphaVal);
     }
 
     public void ChangeAlphaOnValueChange(Slider slider)
