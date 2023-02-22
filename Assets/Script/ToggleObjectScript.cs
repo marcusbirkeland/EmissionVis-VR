@@ -9,13 +9,11 @@ public class ToggleObjectScript : MonoBehaviour
     public MapPin pinToToggle; // Reference to the cube object
     public Toggle toggleUI; // Reference to the UI toggle object
 
-    private bool showObject = true;
+    private bool showObject;
 
     // Start is called before the first frame update
     void Start()
     {
-        // Set the toggle to match the initial state of the cube object
-        toggleUI.isOn = showObject;
         // Enable the MapPin script (disabling it hides all game objects associated with it)
         pinToToggle.enabled = showObject;
     }
