@@ -42,6 +42,7 @@ public class CloudSlider : MonoBehaviour
         slider.maxValue = mapManager.GetMapCount() - 1.01f;
         slider.value = 0;
         slider.onValueChanged.AddListener(delegate {OnSliderChange ();});
+        text.text = slider.value.ToString("F2");
     }
 
     // Update is called once per frame
@@ -55,7 +56,7 @@ public class CloudSlider : MonoBehaviour
     public void OnSliderChange(){
         Debug.Log("Slider value: " + slider.value);
         ChangeTime(slider.value);
-        text.text = "" + slider.value;
+        text.text = slider.value.ToString("F2");
     }
 
     private void ChangeTime(float value)
