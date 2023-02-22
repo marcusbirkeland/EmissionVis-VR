@@ -8,6 +8,9 @@ public class CloudSlider : MonoBehaviour
 
     public GameObject cloudManager;
     public Slider slider;
+
+    [Range(0.0f, 2.99f)]
+    public float floatSlider = 0;
     public Text text;
 
     private float time =  0;
@@ -37,26 +40,33 @@ public class CloudSlider : MonoBehaviour
 
         slider.minValue = 0;
         slider.maxValue = mapManager.GetMapCount() - 1.01f;
+        slider.value = 0;
+        slider.onValueChanged.AddListener(delegate {OnSliderChange ();});
     }
 
     // Update is called once per frame
     void Update()
     {
-        slider.minValue = 0;
-        slider.maxValue = mapManager.GetMapCount() - 1.01f;
-        text.text = mapManager.GetMapCount().ToString();
+        if(slider.maxValue < 1){
+            slider.maxValue = mapManager.GetMapCount() - 1.01f;
+        }
     }
 
-    public void ChangeTime()
+    public void OnSliderChange(){
+        Debug.Log("Slider value: " + slider.value);
+        ChangeTime(slider.value);
+        text.text = "" + slider.value;
+    }
+
+    private void ChangeTime(float value)
     {
-        time = slider.value;
+        time = value; 
         if (prevTime != time)
         {
             int nSteps = numSteps(prevTime, time);
             //Debug.Log("NSteps: " + nSteps);
             if (nSteps != 0)
             {
-
                 mapManager.UpdateTime(nSteps);
             }
             prevTime = time;
