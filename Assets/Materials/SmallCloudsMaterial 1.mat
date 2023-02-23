@@ -80,8 +80,8 @@ Material:
     - _BaseMapOpacity: 0
     - _ColorBlendFac: 0.271
     - _ColorLowTreshold: 0.295
-    - _ColorMapAlpha: 0
-    - _ColorMapTransparency: 2.083
+    - _ColorMapAlpha: 1
+    - _ColorMapTransparency: 2.354
     - _ColorMaxTreshold: 0.476
     - _ColorMinOpacity: 2
     - _ColorMinTreshold: 0.223

@@ -43,6 +43,11 @@ public class CloudSlider : MonoBehaviour
         slider.value = 0;
         slider.onValueChanged.AddListener(delegate {OnSliderChange ();});
         text.text = slider.value.ToString("F2");
+
+        foreach (Renderer ren in cloudRenderers)
+        {
+            ren.material.SetFloat("_ColorMapAlpha", time % 1);
+        }
     }
 
     // Update is called once per frame
