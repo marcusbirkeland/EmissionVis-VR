@@ -30,3 +30,9 @@ Unity VR project to visualize real-world locations with emission-data.
 
  Here's how to get an arcGIS [API-key](https://developers.arcgis.com/documentation/mapping-apis-and-services/security/api-keys/)
 
+# Credits
+
+icons from: 
+
+<a href="https://www.flaticon.com/free-icons/augmented-reality" title="augmented reality icons">Augmented reality icons created by Ilham Fitrotul Hayat - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/virtual-tour" title="virtual tour icons">Virtual tour icons created by Freepik - Flaticon</a>

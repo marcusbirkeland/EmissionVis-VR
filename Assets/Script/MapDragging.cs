@@ -39,6 +39,7 @@ public class MapDragging : MonoBehaviour
 
     private void Pressed(InputAction.CallbackContext context)
     {
+        // "enabled" variable refers to whether this script is enabled or disabled
         enabled = true;
         previousPos = new Vector3(0.0f, 0.0f, 0.0f);
     }

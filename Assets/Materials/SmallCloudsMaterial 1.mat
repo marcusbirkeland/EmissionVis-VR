@@ -39,11 +39,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorMapMax:
-        m_Texture: {fileID: 2800000, guid: 217e1bc50948e1a4988d77f1701617c6, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorMapMin:
-        m_Texture: {fileID: 2800000, guid: d2eac57af8731d345ac430800d2442a3, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -60,28 +60,28 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Vector1_2B98EB7D: 0.008
+    - Vector1_2B98EB7D: 0.012
     - Vector1_338070E0: 10
     - Vector1_3BED982A: 0.5
     - Vector1_48A8130: 1111
     - Vector1_58F7CCC1: 0.12
-    - Vector1_7E1AD4D6: 40
+    - Vector1_7E1AD4D6: 80
     - Vector1_8038C85: 2
     - Vector1_8AB010D0: 10000
     - Vector1_908E92C3: 0
     - Vector1_9A6C69D3: 20
-    - Vector1_A409D8BE: 200.64
+    - Vector1_A409D8BE: 100
     - Vector1_A6F9214A: 400000
     - Vector1_D2AA808A: 1.5
-    - Vector1_EF0B7AAC: 15
+    - Vector1_EF0B7AAC: 3
     - Vector1_F5A27251: 0
-    - Vector1_FEB1FFD5: -1.02
+    - Vector1_FEB1FFD5: -1.5
     - _AlphaClampMax: 0.675
     - _BaseMapOpacity: 0
-    - _ColorBlendFac: 0.043
+    - _ColorBlendFac: 0.271
     - _ColorLowTreshold: 0.295
     - _ColorMapAlpha: 0
-    - _ColorMapTransparency: 1.91
+    - _ColorMapTransparency: 2.354
     - _ColorMaxTreshold: 0.476
     - _ColorMinOpacity: 2
     - _ColorMinTreshold: 0.223
@@ -93,16 +93,16 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 34
     - _Transparency: 1
-    - _ValleyColorMultipler: 0
+    - _ValleyColorMultipler: 10
     m_Colors:
     - Color_6D35BD30: {r: 0, g: 0.74767303, b: 1, a: 0}
     - Color_AD16EE5E: {r: 0, g: 0.7061653, b: 1, a: 0.9019608}
-    - Vector4_D3B3E943: {r: 1, g: 0, b: 0, a: 90}
+    - Vector4_D3B3E943: {r: 2, g: 0, b: 0, a: 90}
     - Vector4_DA068D89: {r: 0, g: 1, b: -0.3, a: 2.7}
     - _ColorLow: {r: 1, g: 0.5678599, b: 0, a: 1}
-    - _ColorMax: {r: 1, g: 0, b: 0, a: 0}
-    - _ColorMid: {r: 0.4627451, g: 0.097842075, b: 0, a: 1}
-    - _ColorMin: {r: 0.0025574106, g: 0, b: 0.03773582, a: 1}
+    - _ColorMax: {r: 1, g: 0, b: 0.06661177, a: 0}
+    - _ColorMid: {r: 0.754717, g: 0.07704885, b: 0, a: 1}
+    - _ColorMin: {r: 0, g: 0.26057076, b: 1, a: 1}
     - _ColorOffset: {r: 0, g: 0, b: 0, a: 0}
     - _ColorPeakMin: {r: 0.93580914, g: 1, b: 0.9103774, a: 1}
     - _ColorValleyMin: {r: 0.6829778, g: 1, b: 0.56037736, a: 1}
