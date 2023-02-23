@@ -48,6 +48,7 @@ public class CloudSlider : MonoBehaviour
         {
             ren.material.SetFloat("_ColorMapAlpha", time % 1);
         }
+        //ChangeTime(slider.value);
     }
 
     // Update is called once per frame
@@ -55,7 +56,9 @@ public class CloudSlider : MonoBehaviour
     {
         if(slider.maxValue < 1){
             slider.maxValue = mapManager.GetMapCount() - 1.01f;
+            //ChangeTime(slider.value);
         }
+        //ChangeTime(floatSlider);
     }
 
     public void OnSliderChange(){

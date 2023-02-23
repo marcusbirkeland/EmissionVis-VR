@@ -106,6 +106,7 @@ public class CloudMapManager : MonoBehaviour
             {
                 cloudsRenderers.Add(ren);
             }
+
         }
         //cloudsRenderers = clouds.GetComponent<Renderer>();
 
@@ -118,8 +119,8 @@ public class CloudMapManager : MonoBehaviour
             {
                 string fileName = i.ToString() + ".png";
                 StartCoroutine(GetAndroidImageFromPath(fileName));
-
             }
+                //SetMaps();
         } 
         else
         {
@@ -147,23 +148,19 @@ public class CloudMapManager : MonoBehaviour
         if(cloudMaps.Count <= 0){
             throw new System.IndexOutOfRangeException("No textures found at: " + imageDirectory);
         }
-
-        if(cloudMaps.Count == 1){
-            indexMax = 0;
-        }
-
-        // Sort by time
-        cloudMaps.Sort((c1,c2) => {
-            return c1.GetTime() -c2.GetTime();
-        });
-
-        SetMaps();
+        //SetMaps();
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if(cloudMaps.Count == 4 && cloudsRenderers[0].material.GetTexture("_ColorMapMin") == null){
+            // Sort by time
+            cloudMaps.Sort((c1,c2) => {
+                return c1.GetTime() -c2.GetTime();
+            });
+            SetMaps();
+        }
     }
 
     IEnumerator GetAndroidImageFromPath(string fileName)
