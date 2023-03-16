@@ -20,7 +20,6 @@ variable_name = input_fields[1]
 output_path = input_fields[2]
 interpolation_factor = int(input_fields[3])
 
-
 # Check the shape of the variable data and create either a single png file or multiple png files
 with netCDF4.Dataset(nc_path, "r") as nc_file:
 

@@ -12,7 +12,6 @@ nc_path = input_fields[0]
 variable_name = input_fields[1]
 output_path = input_fields[2]
 
-
 # Check the shape of the variable data and create either a single CSV file or multiple CSV files
 with netCDF4.Dataset(nc_path, "r") as nc_file:
     variable_data = nc_file.variables[variable_name][:]
@@ -21,6 +20,11 @@ with netCDF4.Dataset(nc_path, "r") as nc_file:
 
         # Create a single CSV file for the variable data
         output_path = output_path + ".csv"
+        dir = os.path.dirname(output_path)
+
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+
         with open(output_path, "w", newline="") as csv_file:
             writer = csv.writer(csv_file)
             for row in variable_data:
