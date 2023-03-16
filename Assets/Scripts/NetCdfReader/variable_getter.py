@@ -3,8 +3,6 @@ import netCDF4
 import json
 import os
 
-#input_paths = r"C:\Users\Lars\Downloads\bergen_24_summer_L_av_xy.003.nc$C:\Users\Lars\Downloads\bergen_24_summer_L_topo_surf.003.nc$C:\Users\Lars\Downloads".split('$')
-
 input_paths = __name__.split('$')
 output = []
 

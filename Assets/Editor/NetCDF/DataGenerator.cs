@@ -23,7 +23,7 @@ namespace Editor.NetCDF
         {
             var inputString = "";
 
-            //Adds every valid filepath to the inputstring
+            //Adds every valid filepath to the inputString
             foreach (var file in ncFiles)
             {
                 if (File.Exists(file) && Path.GetExtension(file).ToLower() == ".nc" && !inputString.Contains(file))
@@ -44,12 +44,28 @@ namespace Editor.NetCDF
         }
 
 
+        /**
+         * <summary>
+         * Generates both CSV and PNG files for the given NetCDF variable.
+         * </summary>
+         * <param name="variable">The NetCDF variable used to generate the data files.</param>
+         * <param name="dataPath">The folder path where the generated files will be saved. Should not end in a "/"</param>
+         * <param name="interpolationFactor">The interpolation factor used when generating PNG files (default is 1).</param>
+         */
         public static void GenerateAllData(NcVariable variable, string dataPath, int interpolationFactor = 1)
         {
             GenerateCsv(variable, dataPath);
             GeneratePng(variable, dataPath, interpolationFactor);
         }
 
+        
+        /**
+         * <summary>
+         * Generates one or several CSV files for the given NetCDF variable.
+         * </summary>
+         * <param name="variable">The NetCDF variable used to generate the CSV file(s).</param>
+         * <param name="dataPath">The folder path where the generated CSV file will be saved. Should not end in a "/"</param>
+         */
         public static void GenerateCsv(NcVariable variable, string dataPath)
         {
             var inputString = variable + dataPath;
@@ -57,6 +73,16 @@ namespace Editor.NetCDF
             PythonRunner.RunFile($"{Application.dataPath}/Scripts/NetCdfReader/create_csv.py", inputString);
         }
 
+        
+        /**
+         * <summary>
+         * Generates one or several PNG files for the given NetCDF variable.
+         * Uses the specified interpolation factor to smooth the image.
+         * </summary>
+         * <param name="variable">The NetCDF variable used to generate the PNG file(s).</param>
+         * <param name="dataPath">The folder path where the generated PNG file will be saved. Should not end in a "/"</param>
+         * <param name="interpolationFactor">The interpolation factor used when generating the PNG file.</param>
+         */
         public static void GeneratePng(NcVariable variable, string dataPath, int interpolationFactor)
         {
             var inputString = variable + dataPath + "$" + interpolationFactor;

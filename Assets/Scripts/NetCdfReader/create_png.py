@@ -9,10 +9,6 @@ from matplotlib import pyplot as plt
 from netCDF4 import Dataset
 from scipy.interpolate import interp2d
 
-#testing values, one for a variable with timestamps and one without
-#input_fields = r"C:\Users\Lars\Downloads\bergen_24_summer_L_av_xy.003.nc$wspeed_10m*_xy$C:\Users\Lars\Downloads\windspeed$30".split('$')
-#input_fields = r"C:\Users\Lars\Downloads\bergen_24_summer_L_topo_surf.003.nc$buildings_2d$C:\Users\Lars\Downloads\buildings$30".split('$')
-
 input_fields = __name__.split('$')
 
 nc_path = input_fields[0]
