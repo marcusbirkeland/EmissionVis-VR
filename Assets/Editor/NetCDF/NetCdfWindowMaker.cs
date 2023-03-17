@@ -1,10 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Unity.Tutorials.Core.Editor;
 using UnityEditor;
-using UnityEditor.Scripting.Python;
 using UnityEngine;
 
 namespace Editor.NetCDF
@@ -30,7 +28,9 @@ namespace Editor.NetCDF
 
         
         /**
-         * Sets the file location for the json data. Runs at launch.
+         * <summary>
+         *  Sets the file location for the JSON data.
+         * </summary>
          */
         private void OnEnable()
         {
@@ -39,7 +39,9 @@ namespace Editor.NetCDF
 
         
         /**
-         * Creates a menu button to open the editor window.
+         * <summary>
+         *  Creates a menu button to open the editor window.
+         * </summary>
          */
         [MenuItem("NetCDF/Open Window")]
         private static void ShowWindow()
@@ -87,15 +89,16 @@ namespace Editor.NetCDF
 
         
         /**
-         * Runs a python script to create a json file with the netCDF data.
+         * <summary>
+         *  Loads every variable from the selected netCDF files into unity.
+         *  Then, instantiates the dropdown menus with the list of variables.
+         * </summary>
          */
         private void GetVariables()
         {
             DataGenerator.GenerateVariableJson(_fileSelector.NcFiles, _jsonFolderPath);
-            
             LoadVariables();
             
-            //Instantiates the dropdown menus after creating the list of variables.
             _buildingData = new SingleVariableDropdown(_allVariables, "Building data:");
             _heightMap = new SingleVariableDropdown(_allVariables, "Heightmap:");
             _windSpeed = new SingleVariableDropdown(_allVariables, "Windspeed:");
@@ -104,7 +107,9 @@ namespace Editor.NetCDF
 
         
         /**
-         * Loads the variables into Unity from a Json file.
+         * <summary>
+         *  Populates the _allVariables field with JSON data created earlier.
+         * </summary>
          */
         private void LoadVariables()
         {
@@ -131,6 +136,11 @@ namespace Editor.NetCDF
         }
 
 
+        /**
+         * <summary>
+         *  Creates all the necessary data files and folder structures based on the variables selected by the user.
+         * </summary>
+         */
         private void CreateDataFiles()
         {
             if (_mapName.IsNullOrWhiteSpace())
@@ -145,6 +155,12 @@ namespace Editor.NetCDF
             GenerateRadiationData();
         }
 
+        
+        /**
+         * <summary>
+         *  Creates both csv and png files containing data from the selected _buildingData variable.
+         * </summary>
+         */
         private void GenerateBuildingData()
         {
             var outputPath = $"{Application.dataPath}/Resources/MapData/{_mapName}/BuildingData/buildingData";
@@ -153,6 +169,12 @@ namespace Editor.NetCDF
                 DataGenerator.GenerateAllData((NcVariable) _buildingData.SelectedVariable, outputPath);
         }
 
+        
+        /**
+         * <summary>
+         *  Creates both csv and png files containing data from the selected _heightMap variable.
+         * </summary>
+         */
         private void GenerateHeightMap()
         {
             var outputPath = $"{Application.dataPath}/Resources/MapData/{_mapName}/HeightMap/heightMap";
@@ -161,6 +183,12 @@ namespace Editor.NetCDF
                 DataGenerator.GenerateAllData((NcVariable) _heightMap.SelectedVariable, outputPath);
         }
 
+        
+        /**
+         * <summary>
+         *  Creates png files containing data from the selected _windSpeed variable.
+         * </summary>
+         */
         private void GenerateWindSpeedData()
         {
             var outputPath = $"{Application.dataPath}/Resources/MapData/{_mapName}/WindSpeed";
@@ -169,6 +197,12 @@ namespace Editor.NetCDF
                 DataGenerator.GeneratePng((NcVariable) _windSpeed.SelectedVariable, outputPath, 30);
         }
 
+        
+        /**
+         * <summary>
+         *  Creates png files containing data for every selected _radiationData variable.
+         * </summary>
+         */
         private void GenerateRadiationData()
         {
             foreach (var variable in _radiationData.SelectedVariables)
@@ -180,6 +214,16 @@ namespace Editor.NetCDF
             }
         }
 
+        
+        /**
+         * <summary>
+         *  Removes every character from a string that cannot be used as a fileName on the current os.
+         * </summary>
+         *
+         * <param name="input">The string to modify</param>
+         *
+         * <returns> A modified string without invalid characters.</returns>
+         */
         private static string RemoveInvalidFilenameChars(string input)
         {
             var invalidChars = new List<char>(Path.GetInvalidFileNameChars());

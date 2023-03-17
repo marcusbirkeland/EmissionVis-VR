@@ -12,10 +12,16 @@ namespace Editor.NetCDF
     {
         protected readonly List<NcVariable> NcVariables;
         protected readonly string Label;
-        
-        public abstract void Draw();
-        
-        
+
+
+        /**
+         * <summary>
+         *  Constructor.
+         * </summary>
+         * 
+         * <param name="ncVariables">A List of ncVariables to populate the dropdown with.</param>
+         * <param name="label">The GUI label to indicate what the variable will be used for.</param>
+         */
         protected BaseVariableDropdown(List<NcVariable> ncVariables, string label)
         {
             NcVariables = ncVariables;
@@ -24,8 +30,14 @@ namespace Editor.NetCDF
         
         
         /**
-         * Creates a list of all available variables.
-         * If a variable exists in several files, it also includes the filename. 
+         * <summary>
+         *  Gets an array of labels, one for each variable in the dropdown.
+         *  If a variable exists in multiple files, the label includes the filename.
+         * </summary>
+         *
+         * <returns>
+         *  An array of variable labels.
+         * </returns>
          */
         protected string[] VariableLabels =>
             NcVariables.Select(info =>

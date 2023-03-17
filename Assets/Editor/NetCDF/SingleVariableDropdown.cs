@@ -12,11 +12,32 @@ namespace Editor.NetCDF
     {
         private int _selectedIndex;
 
+        /**
+         * <summary>
+         *  Gets the currently selected ncVariable if it exists.
+         *  If no variable is selected, it returns null.
+         * </summary>
+         */
         public NcVariable? SelectedVariable => _selectedIndex > 0 ? NcVariables[_selectedIndex - 1] : null;
 
+        
+        /**
+         * <summary>
+         *  Constructor. Inherited from BaseVariableDropdown.
+         * </summary>
+         * 
+         * <param name="ncVariables">A List of ncVariables to populate the dropdown with.</param>
+         * <param name="label">The GUI label to indicate what the variable will be used for.</param>
+         */
         public SingleVariableDropdown(List<NcVariable> ncVariables, string label) : base(ncVariables, label) { }
 
-        public override void Draw()
+        
+        /**
+         * <summary>
+         *  Draws the dropdowns GUI on the EditorWindow. Must be called via an OnGUI event.
+         * </summary>
+         */
+        public void Draw()
         {
             if (NcVariables == null || NcVariables.Count == 0) return;
 

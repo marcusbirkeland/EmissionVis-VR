@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Editor.NetCDF
 {
     /**
-     * Creates the GUI for selecting file locations
+     * Creates the GUI for selecting file locations.
      */
     public class FileSelector
     {
@@ -16,6 +16,12 @@ namespace Editor.NetCDF
         private GUIStyle _removeButtonStyle;
         private GUIStyle _folderIconStyle;
 
+        
+        /**
+         * <summary>
+         *  Draws the file selector GUI. Must be called inside an OnGUI event.
+         * </summary>
+         */
         public void Draw()
         {
             ApplyStyling();
@@ -61,6 +67,12 @@ namespace Editor.NetCDF
             }
         }
         
+        
+        /**
+         * <summary>
+         *  Applies styling to the file selector GUI elements.
+         * </summary>
+         */
         private void ApplyStyling()
         {
             _folderIconStyle ??= new GUIStyle

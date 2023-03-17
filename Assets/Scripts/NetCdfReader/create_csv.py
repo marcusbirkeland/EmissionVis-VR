@@ -1,3 +1,4 @@
+import UnityEngine
 import netCDF4
 import csv
 import os
@@ -47,3 +48,4 @@ with netCDF4.Dataset(nc_path, "r") as nc_file:
 
     else:
         print("Variable data has an unsupported shape")
+        UnityEngine.Debug.Log("Variable data has an unsupported shape: " + variable_name)
