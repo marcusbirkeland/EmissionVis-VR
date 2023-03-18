@@ -60,7 +60,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Vector1_2B98EB7D: 5
+    - Vector1_2B98EB7D: 30
     - Vector1_338070E0: 0.03
     - Vector1_3BED982A: 0.5
     - Vector1_48A8130: 0.01
@@ -70,7 +70,7 @@ Material:
     - Vector1_8AB010D0: -20
     - Vector1_908E92C3: 2
     - Vector1_9A6C69D3: 20
-    - Vector1_A409D8BE: 200
+    - Vector1_A409D8BE: 1e+9
     - Vector1_A6F9214A: 0
     - Vector1_D2AA808A: 2
     - Vector1_EF0B7AAC: 3
@@ -83,9 +83,10 @@ Material:
     - _ColorLowTreshold: 0.377
     - _ColorMapAlpha: 0
     - _ColorMapOpacity: 1.49
-    - _ColorMapTransparency: 1.504
+    - _ColorMapTransparency: 0
     - _ColorMaxTreshold: 0.75
     - _ColorMidTreshold: 0.573
+    - _ColorMinOpacity: 1
     - _ColorMinTreshold: 0.191
     - _DarkSpotBrightness: 0
     - _NoiseAlpha: 50

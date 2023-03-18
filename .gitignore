@@ -66,3 +66,4 @@ ArcGISProjectSettingsAsset.asset
 ArcGISProjectSettings.asset
 
 .vscode
+.DS_Store
