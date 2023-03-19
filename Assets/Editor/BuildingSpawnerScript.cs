@@ -33,6 +33,8 @@ public class BuildingSpawner : EditorWindow
     //public GameObject largeBuilding;
     private GameObject buildings;
 
+    public bool raycasting = true;
+
     private string[] elevationData;
 
     [MenuItem("SINTEF / Building Generator")]
@@ -51,8 +53,6 @@ public class BuildingSpawner : EditorWindow
         data_x_index = EditorGUILayout.IntField("x-index in data", data_x_index);
         data_height_index = EditorGUILayout.IntField("height-index in data", data_height_index);
 
-
-
         altitudeOffset = EditorGUILayout.FloatField("Altitude offset", altitudeOffset);
 
         latitude = EditorGUILayout.DoubleField("Latitude", latitude);
@@ -60,6 +60,8 @@ public class BuildingSpawner : EditorWindow
 
         map = EditorGUILayout.ObjectField("Map", map, typeof(GameObject)) as GameObject;
         smallBuilding = EditorGUILayout.ObjectField("Building model", smallBuilding, typeof(GameObject)) as GameObject;
+
+        raycasting = EditorGUILayout.Toggle("Use raycasting", raycasting);
 
         if (GUILayout.Button("Generate Buildings"))
         {
@@ -153,7 +155,7 @@ public class BuildingSpawner : EditorWindow
         MapPin mapPin = buildings.AddComponent<MapPin>();
         mapPin.Location = new Microsoft.Geospatial.LatLon(latitude, longitude);
         mapPin.UseRealWorldScale = true;
-        mapPin.Altitude = altitudeOffset;
+        if (!raycasting) mapPin.Altitude = altitudeOffset;
         mapPin.enabled = true;
 
         // Ellipsoid: "The altitude reference is based on an ellipsoid which is a mathematical approximation of the shape of the Earth."
@@ -186,37 +188,39 @@ public class BuildingSpawner : EditorWindow
 
         //TODO: Throw error if x and y values mismatch between building-data and elevation-data.
 
-        // Elevation data from dataset:
-        /*
-        float y = float.Parse(
-            elevationString[data_height_index] ,
-            CultureInfo.InvariantCulture.NumberFormat
-        );
-        Vector3 pos = new Vector3(x, y, z);
-        */
-        
+        Vector3 pos;
+        if (!raycasting)
+        {
+            // Elevation data from dataset:
+            float y = float.Parse(
+                elevationString[data_height_index],
+                CultureInfo.InvariantCulture.NumberFormat
+            );
+            pos = new Vector3(x, y, z);
+        }
+        else
+        {
+            // Elevation data from ray casting:
+            Vector3 worldSpacePin = MapRendererTransformExtensions.TransformLatLonAltToWorldPoint(map.GetComponent<MapRenderer>(), new LatLonAlt(latitude, longitude, 0.0));
 
-        // Elevation data from ray casting:
-        Vector3 worldSpacePin = MapRendererTransformExtensions.TransformLatLonAltToWorldPoint(map.GetComponent<MapRenderer>(), new LatLonAlt(latitude, longitude, 0.0));
+            // Note: Ray casting can only be done in world space, meaning all coordinates have to be converted from local to world space 
+            // before ray casting, and back again afterwards.
+            // x and z coordinates are provided in meters, which must be converted to Unity coordinate units through division by metersPerUnit.
+            Vector3 origin = worldSpacePin + map.transform.right * (x / (float)metersPerUnit) + map.transform.forward * (z / (float)metersPerUnit);
 
-        // Note: Ray casting can only be done in world space, meaning all coordinates have to be converted from local to world space 
-        // before ray casting, and back again afterwards.
-        // x and z coordinates are provided in meters, which must be converted to Unity coordinate units through division by metersPerUnit.
-        Vector3 origin = worldSpacePin + map.transform.right * (x / (float)metersPerUnit) + map.transform.forward * (z / (float)metersPerUnit);
+            // Place all points in world space some (10 for example) units away from the top of the map when ray casting towards the map.
+            Vector3 originOffset = origin + map.transform.up * (10.0f * map.transform.lossyScale.y);
 
-        // Place all points in world space some (10 for example) units away from the top of the map when ray casting towards the map.
-        Vector3 originOffset = origin + map.transform.up * (10.0f * map.transform.lossyScale.y);
+            // (map.transform.up * -1) will point towards the "top" (side with the texture) of the map from a point "origin",
+            // if "origin" is placed at a positive multiple of map.transform.up away from the map. 
+            Ray ray = new Ray(originOffset, map.transform.up * -1);
 
-        // (map.transform.up * -1) will point towards the "top" (side with the texture) of the map from a point "origin",
-        // if "origin" is placed at a positive multiple of map.transform.up away from the map. 
-        Ray ray = new Ray(originOffset, map.transform.up * -1);
+            MapRendererRaycastHit hitInfo;
+            map.GetComponent<MapRenderer>().Raycast(ray, out hitInfo);
 
-        MapRendererRaycastHit hitInfo;
-        map.GetComponent<MapRenderer>().Raycast(ray, out hitInfo);
-
-        // Transform from world space to local space
-        Vector3 pos = map.transform.InverseTransformVector((hitInfo.Point - worldSpacePin)) * (float)metersPerUnit * map.transform.lossyScale.x;
-
+            // Transform from world space to local space
+            pos = map.transform.InverseTransformVector((hitInfo.Point - worldSpacePin)) * (float)metersPerUnit * map.transform.lossyScale.x;
+        }
 
 
         GameObject building = Instantiate(smallBuilding, buildings.transform, false);
