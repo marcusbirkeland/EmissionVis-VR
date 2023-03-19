@@ -16,7 +16,7 @@ public class BuildingSpawner : EditorWindow
     public string elevationDataPath="Assets/Resources/Bergen/Elevation/elevation.csv";  
     //public Vector3 positionOffset;
 
-    public float altitudeOffset = -250;
+    public float altitudeOffset = 0;
 
     public double latitude = 60.35954907032411;
     public double longitude = 5.314180944287559;
