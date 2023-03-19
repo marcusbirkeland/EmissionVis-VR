@@ -10,17 +10,18 @@ using UnityEngine.InputSystem;
 
 public class MapDragging : MonoBehaviour
 {
-    public MapRenderer target;
-    public Collider targetCollider;
+    public GameObject map;
     public ActionBasedController rightController;
     public ActionBasedController leftController;
 
-    private float zoomSpeed = 3;
+    private MapRenderer target;
+    private Collider targetCollider;
+    public float zoomSpeed = 3;
+    public float zoomSpeedF = 1; // TODO: remove
     private XRRayInteractor rightRayInteractor; 
-    
     private XRRayInteractor leftRayInteractor;
     
-    private double dragSpeed = 500; 
+    public double dragSpeed = 500; 
     private Vector3 rightPreviousPos;
     private Vector3 leftPreviousPos;
 
@@ -30,6 +31,8 @@ public class MapDragging : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        target = map.GetComponent<MapRenderer>();
+        targetCollider = map.GetComponent<Collider>();
         rightRayInteractor = InitController(rightController, RightPressed, RightReleased);
         leftRayInteractor = InitController(leftController, LeftPressed, LeftReleased);
         //enabled = false;
@@ -69,93 +72,102 @@ public class MapDragging : MonoBehaviour
     }
 
     // Delta controller movement in world space, adjusted for map rotation
-    private LatLon DragDelta(XRRayInteractor rayInteractor, ref Vector3 previousPos)
+    private Vector3 GetRayHit(XRRayInteractor rayInteractor)
     {
         RaycastHit hit;
         if (!rayInteractor.TryGetCurrent3DRaycastHit(out hit))
         {
-            return new LatLon(0.0, 0.0);
+            return Vector3.zero;
         }
 
         if (hit.collider != targetCollider)
         {
-            return new LatLon(0.0, 0.0);
+            return Vector3.zero;
         }
 
-        if (previousPos == new Vector3(0.0f, 0.0f, 0.0f))
-        {
-            previousPos = hit.point;
-        }
+        return hit.point;
+    }
 
-        Vector3 delta = previousPos - hit.point;
-        previousPos = hit.point;
+    private Vector3 Delta(Vector3 hit, ref Vector3 previousHit)
+    {
+        if (previousHit == Vector3.zero) previousHit = hit;
+        Vector3 deltaHit = previousHit - hit;
+        previousHit = hit;
+        return deltaHit;
+    }
 
-
+    private LatLon TranslateMap(Vector3 delta)
+    {
         // initially (if not rotated) target.transform.right = Vector3(1.0, 0.0, 0.0), correspongding to the positive direction of latitude movement
         Vector3 latVector = target.transform.right;
         float latVectorLength = latVector.x * delta.x + latVector.y * delta.y + latVector.z * delta.z;
+
 
         // initially (if not rotated) target.transform.forward = Vector3(0.0, 0.0, 1.0), correspongding to the positive direction of longitude movement
         Vector3 lonVector = target.transform.forward;
         float lonVectorLength = lonVector.x * delta.x + lonVector.y * delta.y + lonVector.z * delta.z;
 
-        return new LatLon(latVectorLength, lonVectorLength);
-    }
 
-    private LatLon TranslateMap(LatLon delta)
-    {
+        LatLon deltaLatLon = new LatLon(latVectorLength, lonVectorLength);
+
         double currentLat = target.Center.LatitudeInDegrees;
         double currentLon = target.Center.LongitudeInDegrees;
 
         // Increasing ZoomLevel by 1 means doubling the map zoom. To retain proper movement on
         // different ZoomLevels, divide by 2^ZoomLevel
         // https://learn.microsoft.com/en-us/bingmaps/articles/understanding-scale-and-resolution
-        float correctedDragSpeed = (float)(dragSpeed / Math.Pow(2.0, target.ZoomLevel));
+        float correctedDragSpeed = (float)(dragSpeed / Math.Pow(2.0, target.ZoomLevel)) / target.transform.lossyScale.x;
 
         // divide by cos(lat) as to adjust for the change in circumference (lon) at different latitutes
-        return new LatLon(currentLat + delta.LongitudeInDegrees * correctedDragSpeed, currentLon +
-            (delta.LatitudeInDegrees / Math.Cos((Math.PI / 180) * currentLat)) * correctedDragSpeed);
+        return new LatLon(currentLat + deltaLatLon.LongitudeInDegrees * correctedDragSpeed, currentLon +
+            (deltaLatLon.LatitudeInDegrees / Math.Cos((Math.PI / 180) * currentLat)) * correctedDragSpeed);
     }
 
   
     // Update is called once per frame
     void Update()
     {
-        LatLon deltaRight = DragDelta(rightRayInteractor, ref rightPreviousPos);
-        LatLon deltaLeft = DragDelta(leftRayInteractor, ref leftPreviousPos);
+        // hit points:
+        Vector3 rightHit = Vector3.zero;
+        Vector3 leftHit = Vector3.zero;
+        if (rightEnabled)
+        {
+            rightHit = GetRayHit(rightRayInteractor);
+            if (rightHit == Vector3.zero) return;
+        }
+        if (leftEnabled)
+        {
+            leftHit = GetRayHit(leftRayInteractor);
+            if (leftHit == Vector3.zero) return;
+        }
+        
+        
+        Vector3 deltaRight = Delta(rightHit, ref rightPreviousPos) * ((float) Math.Cos(MapRendererTransformExtensions.TransformWorldPointToLatLon(target, rightHit).LatitudeInRadians));
+        Vector3 deltaLeft = Delta(leftHit, ref leftPreviousPos) * ((float) Math.Cos(MapRendererTransformExtensions.TransformWorldPointToLatLon(target, leftHit).LatitudeInRadians));
 
-        // Highly scuffed implementation atm
-        Vector3 prevRight = new Vector3(0.1f, 0.1f, 0.1f);
-        Vector3 prevLeft = new Vector3(0.1f, 0.1f, 0.1f);
-        LatLon rightHit = DragDelta(rightRayInteractor, ref prevRight);
-        LatLon leftHit = DragDelta(leftRayInteractor, ref prevLeft);
 
-        // Zoom (fix, don't use so many ifs) 
         if (rightEnabled && leftEnabled)
         {
             float deltaZoom = 0;
-            if (leftHit.LatitudeInDegrees > rightHit.LatitudeInDegrees)
-            {
-                deltaZoom += (float)(((deltaLeft.LatitudeInDegrees - deltaRight.LatitudeInDegrees)) * zoomSpeed);
-            }
-            else
-            {
-                deltaZoom += (float)(((deltaRight.LatitudeInDegrees - deltaLeft.LatitudeInDegrees)) * zoomSpeed);
-            }
-            if (leftHit.LongitudeInDegrees > rightHit.LongitudeInDegrees)
-            {
-                deltaZoom += (float)(((deltaLeft.LongitudeInDegrees - deltaRight.LongitudeInDegrees)) * zoomSpeed);
-            }
-            else
-            {
-                deltaZoom += (float)(((deltaRight.LongitudeInDegrees - deltaLeft.LongitudeInDegrees)) * zoomSpeed);
-            }
 
-            target.ZoomLevel += deltaZoom;
-            return;
+            deltaZoom += (float)(zoomSpeed * (deltaRight.x - deltaLeft.x) * (leftHit.x > rightHit.x ? 1 : -1));
+            deltaZoom += (float)(zoomSpeed * (deltaRight.y - deltaLeft.y) * (leftHit.y > rightHit.y ? 1 : -1));
+            deltaZoom += (float)(zoomSpeed * (deltaRight.z - deltaLeft.z) * (leftHit.z > rightHit.z ? 1 : -1));
+
+            Vector3 midpoint = (rightHit + leftHit) / 2;
+            Vector3 center = MapRendererTransformExtensions.TransformLatLonAltToWorldPoint(target, new LatLonAlt(target.Center.LatitudeInDegrees, target.Center.LongitudeInDegrees, 0.0));
+            if (deltaZoom > zoomSpeed / 300 || deltaZoom < -zoomSpeed / 300)
+            {
+                target.ZoomLevel += deltaZoom;
+                // panning to the midpoint of the two controller rays that hit the map
+                target.Center = TranslateMap((midpoint - center) * deltaZoom * zoomSpeedF);
+            }
+            ;
         }
         // Map movement
-        if (rightEnabled) { target.Center = TranslateMap(deltaRight); return; }
-        if (leftEnabled) { target.Center = TranslateMap(deltaLeft); return; }
+        Vector3 translate = new Vector3(0.0f, 0.0f, 0.0f);
+        if (rightEnabled) { translate += deltaRight; }
+        if (leftEnabled) { translate += deltaLeft; }
+        target.Center = TranslateMap(translate * (rightEnabled && leftEnabled ? 0.5f : 1.0f));
     }
 }
