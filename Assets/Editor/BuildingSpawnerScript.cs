@@ -22,7 +22,8 @@ public class BuildingSpawner : EditorWindow
     public double longitude = 5.314180944287559;
 
     // How many meters on the map go into one coordinate unit in Unity world Space. 
-    double metersPerUnit; 
+    private double metersPerUnit;
+    private Vector3 worldSpacePin;
 
     public int data_y_index = 0;
     public int data_x_index = 1;
@@ -110,18 +111,9 @@ public class BuildingSpawner : EditorWindow
         long currentLine = 1;
         long counter = 0; // Counter variable to prevent writing to progress bar too often.
 
-
-        // Calculations for finding the number of meters that go into 1 Unity coordinate unit
-        Vector3 worldSpacePin = MapRendererTransformExtensions.TransformLatLonAltToWorldPoint(map.GetComponent<MapRenderer>(), new LatLonAlt(latitude, longitude, 0.0));
-        // (map.GetComponent<MapRenderer>().MapDimension.x / 2) is the amount of world space units from the center of the map to the edge. 
-        Vector3 destinationWorld = worldSpacePin + map.transform.right * (map.GetComponent<MapRenderer>().MapDimension.x / 2);
-        LatLon destination = MapRendererTransformExtensions.TransformWorldPointToLatLon(map.GetComponent<MapRenderer>(), destinationWorld);
-        double angle = destination.LongitudeInDegrees - longitude;
-        double metersPerDegree = MapRendererTransformExtensions.EquatorialCircumferenceInWgs84Meters / 360.0;
-        metersPerUnit = metersPerDegree * angle * Math.Cos((Math.PI / 180) * latitude);
-        // dividing by only the x scale (world space) doesn't matter, as the map is guaranteed to be scaled equally on all axis
-        metersPerUnit = metersPerUnit / map.transform.lossyScale.x; 
-
+        // Needed for raycasting:
+        metersPerUnit = MapScaleRatioExtensions.ComputeUnityToMapScaleRatio(map.GetComponent<MapRenderer>(), new LatLon(latitude, longitude)) / map.transform.lossyScale.x;
+        worldSpacePin = MapRendererTransformExtensions.TransformLatLonAltToWorldPoint(map.GetComponent<MapRenderer>(), new LatLonAlt(latitude, longitude, 0.0));
 
         // Read file line by line
         while (sr.Peek() >= 0){
@@ -201,7 +193,6 @@ public class BuildingSpawner : EditorWindow
         else
         {
             // Elevation data from ray casting:
-            Vector3 worldSpacePin = MapRendererTransformExtensions.TransformLatLonAltToWorldPoint(map.GetComponent<MapRenderer>(), new LatLonAlt(latitude, longitude, 0.0));
 
             // Note: Ray casting can only be done in world space, meaning all coordinates have to be converted from local to world space 
             // before ray casting, and back again afterwards.
