@@ -194,7 +194,7 @@ namespace Editor.NetCDF
             var outputPath = $"{Application.dataPath}/Resources/MapData/{_mapName}/WindSpeed";
 
             if (_windSpeed.SelectedVariable != null)
-                DataGenerator.GeneratePng((NcVariable) _windSpeed.SelectedVariable, outputPath, 30);
+                DataGenerator.GeneratePng((NcVariable) _windSpeed.SelectedVariable, outputPath, 10);
         }
 
         

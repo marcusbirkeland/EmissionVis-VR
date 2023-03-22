@@ -23,7 +23,7 @@ with netCDF4.Dataset(nc_path, "r") as nc_file:
     variable_data = nc_file.variables[variable_name][:]
 
     # Set up the blur kernel
-    kernel_size = 25
+    kernel_size = 20
     kernel = np.ones((kernel_size, kernel_size), np.float32) / (kernel_size * kernel_size)
 
     if len(variable_data.shape) == 2:
@@ -61,7 +61,7 @@ with netCDF4.Dataset(nc_path, "r") as nc_file:
             # Create a 2D interpolation of the data
             x = np.arange(data.shape[1])
             y = np.arange(data.shape[0])
-            f = interp2d(x, y, data, kind='linear')
+            f = interp2d(x, y, data, kind='cubic')
 
             # Generate a grid of x and y values for the interpolated data
             x_new = np.linspace(x.min(), x.max(), data.shape[1] * interpolation_factor)
