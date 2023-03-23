@@ -43,6 +43,8 @@ namespace Editor.NetCDF
             inputString += jsonFolderPath;
             
             PythonRunner.RunFile($"{Application.dataPath}/Scripts/NetCdfReader/variable_getter.py", inputString);
+            PythonRunner.RunFile($"{Application.dataPath}/Scripts/NetCdfReader/attribute_getter.py", inputString);
+
         }
 
 
