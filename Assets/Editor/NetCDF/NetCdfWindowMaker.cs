@@ -153,6 +153,8 @@ namespace Editor.NetCDF
             GenerateHeightMap();
             GenerateWindSpeedData();
             GenerateRadiationData();
+            
+            Debug.Log("Finished making data files");
         }
 
         

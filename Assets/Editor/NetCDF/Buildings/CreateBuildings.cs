@@ -1,18 +1,19 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CreateBuildings : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private void LoadVariables()
     {
-        
+        return;
     }
+    
+    
 
-    // Update is called once per frame
-    void Update()
+    public void GenerateBuildings()
     {
-        
+        return;
     }
 }
