@@ -96,5 +96,12 @@ namespace Editor.NetCDF
 
             PythonRunner.RunFile($"{Application.dataPath}/Scripts/NetCdfReader/create_png.py", inputString);
         }
+
+        public static void GenerateBuildingCsv(NcVariable variable, string dataPath)
+        {
+            var inputString = variable + dataPath;
+            
+            PythonRunner.RunFile($"{Application.dataPath}/Scripts/NetCdfReader/create_building_csv.py", inputString);
+        }
     }
 }

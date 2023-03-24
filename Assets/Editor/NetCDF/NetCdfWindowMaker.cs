@@ -97,6 +97,7 @@ namespace Editor.NetCDF
         private void GetVariables()
         {
             DataGenerator.GenerateVariableJson(_fileSelector.NcFiles, _jsonFolderPath);
+            AssetDatabase.Refresh();
             LoadVariables();
             
             _buildingData = new SingleVariableDropdown(_allVariables, "Building data:");
@@ -154,6 +155,8 @@ namespace Editor.NetCDF
             GenerateWindSpeedData();
             GenerateRadiationData();
             
+            AssetDatabase.Refresh();
+            
             Debug.Log("Finished making data files");
         }
 
@@ -168,7 +171,7 @@ namespace Editor.NetCDF
             var outputPath = $"{Application.dataPath}/Resources/MapData/{_mapName}/BuildingData/buildingData";
 
             if (_buildingData.SelectedVariable != null)
-                DataGenerator.GenerateAllData((NcVariable) _buildingData.SelectedVariable, outputPath);
+                DataGenerator.GenerateBuildingCsv((NcVariable) _buildingData.SelectedVariable, outputPath);
         }
 
         

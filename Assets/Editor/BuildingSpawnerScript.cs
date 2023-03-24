@@ -1,209 +1,239 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Globalization;
-using UnityEditor;
-using Microsoft.Maps.Unity;
-using Microsoft.Geospatial;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using Microsoft.Geospatial;
+using Microsoft.Maps.Unity;
+using UnityEditor;
+using UnityEngine;
 
-public class BuildingSpawner : EditorWindow
+namespace Editor
 {
-    private const string EditorName = "Building Spawner";
-    private const int ProgressUpdateRate = 1;
-
-    public string dataPath = "Assets/Resources/Bergen/Building/buildings.csv";
-    public string elevationDataPath = "Assets/Resources/Bergen/Elevation/elevation.csv";
-    public float altitudeOffset = 0;
-
-    public double latitude = 60.35954907032411;
-    public double longitude = 5.314180944287559;
-
-    private double metersPerUnit;
-    private Vector3 worldSpacePin;
-
-    public int dataYIndex = 0;
-    public int dataXIndex = 1;
-    public int dataHeightIndex = 2;
-
-    public GameObject map;
-    public GameObject smallBuilding;
-    private GameObject buildings;
-
-    public bool raycasting = true;
-
-    private string[] elevationData;
-
-    [MenuItem("SINTEF/Building Generator")]
-    public static void ShowWindow()
+    public class BuildingSpawner : EditorWindow
     {
-        GetWindow(typeof(BuildingSpawner));
-    }
-
-    private void OnGUI()
-    {
-        GUILayout.Label("Building generator!");
-        dataPath = EditorGUILayout.TextField("Path to building data: ", dataPath);
-
-        dataYIndex = EditorGUILayout.IntField("y-index in data", dataYIndex);
-        dataXIndex = EditorGUILayout.IntField("x-index in data", dataXIndex);
-        dataHeightIndex = EditorGUILayout.IntField("height-index in data", dataHeightIndex);
-
-        altitudeOffset = EditorGUILayout.FloatField("Altitude offset", altitudeOffset);
-
-        latitude = EditorGUILayout.DoubleField("Latitude", latitude);
-        longitude = EditorGUILayout.DoubleField("Longitude", longitude);
-
-        map = EditorGUILayout.ObjectField("Map", map, typeof(GameObject), true) as GameObject;
-        smallBuilding = EditorGUILayout.ObjectField("Building model", smallBuilding, typeof(GameObject), true) as GameObject;
-
-        raycasting = EditorGUILayout.Toggle("Use raycasting", raycasting);
-
-        if (GUILayout.Button("Generate Buildings"))
+        [Serializable]
+        public class Position
         {
-            if (map == null)
-            {
-                EditorUtility.DisplayDialog("Error", "Map GameObject is not assigned. Please assign a Map GameObject.", "Ok");
-            }
-            else if (smallBuilding == null)
-            {
-                EditorUtility.DisplayDialog("Error", "Building model is not assigned. Please assign a Building GameObject.", "Ok");
-            }
-            else if (string.IsNullOrEmpty(dataPath) || !File.Exists(dataPath))
-            {
-                EditorUtility.DisplayDialog("Error", "Invalid path to building data. Please provide a valid path.", "Ok");
-            }
-            else
-            {
-                SpawnBuildings();
-            }
+            public double lat;
+            public double lon;
         }
 
+        [Serializable]
+        public class MapData
+        {
+            public string filePath;
+            public Position position;
+        }
 
-        GUIStyle textStyle = GUI.skin.GetStyle("PR TextField");
-        textStyle.wordWrap = true;
-        EditorGUILayout.TextArea(@"NOTE:
-        1) At lower zoom levels (zoomed out) the altitude of the ray cast hit becomes inaccurate (zoomLevel < ~12). Try to zoom in as far as possible, BUT
-        2) at very high zoom levels (zoomed in) the ray casts move outside of the map collider and won't intersect with it. Make sure the map is zoomed out sufficiently enough to include the entire area that will be covered with buildings. ",
-        textStyle);
-    }
+        [Serializable]
+        public class MapDataList
+        {
+            public List<MapData> mapData;
+        }
 
-    private void SpawnBuildings()
-    {
-        Debug.Log("Spawning buildings...");
+        private const string EditorName = "Building Spawner";
+        private const int ProgressUpdateRate = 1;
         
-        // Check if the MapRenderer component is missing
-        MapRenderer mapRenderer = map.GetComponent<MapRenderer>();
-        if (mapRenderer == null)
+        public string dataPath = "Assets/Resources/MapData/Trondheim/BuildingData/buildingData.csv";
+
+        private double _latitude;
+        private double _longitude;
+
+        private double _metersPerUnit;
+        private Vector3 _worldSpacePin;
+
+        public GameObject map;
+        public GameObject smallBuilding;
+        
+        private GameObject _buildingsHolder;
+        
+        private MapData _selectedMapData;
+    
+    
+        private void OnEnable()
         {
-            EditorUtility.DisplayDialog("Error", "The selected Map GameObject does not have a MapRenderer component. Please select a GameObject with the MapRenderer component.", "Ok");
-            return;
+            LoadMapData();
         }
 
-        buildings = new GameObject("Map Buildings");
-        buildings.transform.SetParent(map.transform, false);
-
-        StreamReader sr = new StreamReader(dataPath);
-
-        if (sr.Peek() < 0)
+    
+        private void LoadMapData()
         {
-            throw new ArgumentException("The file at " + dataPath + " is empty!");
-        }
-
-        sr.ReadLine();
-        elevationData = File.ReadAllLines(elevationDataPath);
-
-        float progressBar = 0.0f;
-        EditorUtility.DisplayCancelableProgressBar(
-            EditorName,
-            "Parsing building data...",
-            progressBar
-        );
-
-        long numLines = sr.BaseStream.Length;
-        long currentLine = 1;
-        long counter = 0;
-
-        metersPerUnit = MapScaleRatioExtensions.ComputeUnityToMapScaleRatio(mapRenderer, new LatLon(latitude, longitude)) / map.transform.lossyScale.x;
-        worldSpacePin = MapRendererTransformExtensions.TransformLatLonAltToWorldPoint(mapRenderer, new LatLonAlt(latitude, longitude, 0.0));
-
-        while (sr.Peek() >= 0)
-        {
-            string line = sr.ReadLine();
-            string[] data = line.Split(',');
-            ParseBuilding(data, currentLine);
-
-            if (counter >= ProgressUpdateRate)
+            const string jsonFilePath = "Assets/Resources/MapData/attributes.json";
+            if (!File.Exists(jsonFilePath))
             {
-                string progressStr = $"Parsing building data ({currentLine}/{numLines})";
-                float progress = (float)currentLine / numLines * 10f;
-                EditorUtility.DisplayCancelableProgressBar(EditorName, progressStr, progress);
-                counter = 0;
+                Debug.LogError("JSON file not found.");
+                return;
             }
-            currentLine++;
-            counter++;
+
+            try
+            {
+                var jsonContent = File.ReadAllText(jsonFilePath);
+                var mapDataList = JsonUtility.FromJson<MapDataList>("{\"mapData\":" + jsonContent + "}");
+                if (mapDataList.mapData.Count > 0)
+                {
+                    _selectedMapData = mapDataList.mapData[0]; // Select the first MapData object by default
+                }
+                else
+                {
+                    Debug.LogError("Invalid JSON format.");
+                }
+            }
+            catch (Exception e) when (e is ArgumentException or InvalidOperationException)
+            {
+                Debug.LogError($"Error parsing JSON content: {e.Message}");
+            }
         }
 
-        Debug.Log("Finished reading file. Closing...");
-        sr.Close();
-        EditorUtility.ClearProgressBar();
-        Debug.Log("Stream successfully closed.");
-        Debug.Log($"Spawned {buildings.transform.childCount} buildings.");
-
-        MapPin mapPin = buildings.AddComponent<MapPin>();
-        mapPin.Location = new LatLon(latitude, longitude);
-        mapPin.UseRealWorldScale = true;
-        if (!raycasting) mapPin.Altitude = altitudeOffset;
-        mapPin.enabled = true;
-
-        mapPin.AltitudeReference = AltitudeReference.Ellipsoid;
-    }
-
-    private void ParseBuilding(string[] data, long currentLine)
-    {
-        string y = data[dataYIndex];
-        string x = data[dataXIndex];
-        string height = data[dataHeightIndex];
-
-        if (!string.IsNullOrEmpty(height))
+    
+        [MenuItem("SINTEF/Building Generator")]
+        public static void ShowWindow()
         {
-            SpawnBuilding(
-                float.Parse(x, CultureInfo.InvariantCulture.NumberFormat),
-                float.Parse(y, CultureInfo.InvariantCulture.NumberFormat),
-                float.Parse(height, CultureInfo.InvariantCulture.NumberFormat),
-                $"Small Building {buildings.transform.childCount + 1}",
-                currentLine
+            GetWindow(typeof(BuildingSpawner));
+        }
+
+    
+        private void OnGUI()
+        {
+            GUILayout.Label("Building generator!");
+
+            map = EditorGUILayout.ObjectField("Map", map, typeof(GameObject), true) as GameObject;
+            smallBuilding = EditorGUILayout.ObjectField("Building model", smallBuilding, typeof(GameObject), true) as GameObject;
+
+            if (GUILayout.Button("Generate Buildings"))
+            {
+                if (map == null)
+                {
+                    EditorUtility.DisplayDialog("Error", "Map GameObject is not assigned. Please assign a Map GameObject.", "Ok");
+                }
+                else if (smallBuilding == null)
+                {
+                    EditorUtility.DisplayDialog("Error", "Building model is not assigned. Please assign a Building GameObject.", "Ok");
+                }
+                else if (_selectedMapData == null)
+                {
+                    EditorUtility.DisplayDialog("Error", "No valid MapData loaded. Please check the JSON file.", "Ok");
+                }
+                else
+                {
+                    _latitude = _selectedMapData.position.lat;
+                    _longitude = _selectedMapData.position.lon;
+
+                    SpawnBuildings();
+                }
+            }
+        }
+
+    
+        private void SpawnBuildings()
+        {
+            Debug.Log("Spawning buildings...");
+        
+            // Check if the MapRenderer component is missing
+            MapRenderer mapRenderer = map.GetComponent<MapRenderer>();
+            if (mapRenderer == null)
+            {
+                EditorUtility.DisplayDialog("Error", "The selected Map GameObject does not have a MapRenderer component. Please select a GameObject with the MapRenderer component.", "Ok");
+                return;
+            }
+
+            _buildingsHolder = new GameObject("Map Buildings");
+            _buildingsHolder.transform.SetParent(map.transform, false);
+
+            StreamReader sr = new StreamReader(dataPath);
+
+            if (sr.Peek() < 0)
+            {
+                throw new ArgumentException("The file at " + dataPath + " is empty!");
+            }
+
+            float progressBar = 0.0f;
+            EditorUtility.DisplayCancelableProgressBar(
+                EditorName,
+                "Parsing building data...",
+                progressBar
             );
-        }
-    }
 
-    private void SpawnBuilding(float x, float z, float height, string name, long buildingIndex)
-    {
-        string[] elevationString = elevationData[buildingIndex].Split(',');
+            long numLines = sr.BaseStream.Length;
+            long currentLine = 0;
+            long counter = 0;
 
-        Vector3 pos;
-        if (!raycasting)
-        {
-            float y = float.Parse(elevationString[dataHeightIndex], CultureInfo.InvariantCulture.NumberFormat);
-            pos = new Vector3(x, y, z);
+            _metersPerUnit = mapRenderer.ComputeUnityToMapScaleRatio(new LatLon(_latitude, _longitude)) / map.transform.lossyScale.x;
+            _worldSpacePin = mapRenderer.TransformLatLonAltToWorldPoint(new LatLonAlt(_latitude, _longitude, 0.0));
+
+            while (sr.Peek() >= 0)
+            {
+                string line = sr.ReadLine();
+            
+                string[] data = line.Split(',');
+
+                ParseBuilding(data, currentLine);
+
+                if (counter >= ProgressUpdateRate)
+                {
+                    string progressStr = $"Parsing building data ({currentLine}/{numLines})";
+                    float progress = (float)currentLine / numLines * 10f;
+                    EditorUtility.DisplayCancelableProgressBar(EditorName, progressStr, progress);
+                    counter = 0;
+                }
+                currentLine++;
+                counter++;
+            }
+
+            Debug.Log("Finished reading file. Closing...");
+            sr.Close();
+            EditorUtility.ClearProgressBar();
+            Debug.Log("Stream successfully closed.");
+            Debug.Log($"Spawned {_buildingsHolder.transform.childCount} buildings.");
+
+            MapPin mapPin = _buildingsHolder.AddComponent<MapPin>();
+            mapPin.Location = new LatLon(_latitude, _longitude);
+            mapPin.UseRealWorldScale = true;
+            mapPin.enabled = true;
+
+            mapPin.AltitudeReference = AltitudeReference.Ellipsoid;
         }
-        else
+
+    
+        private void ParseBuilding(string[] data, long currentLine)
         {
-            Vector3 origin = worldSpacePin + map.transform.right * (x / (float)metersPerUnit) + map.transform.forward * (z / (float)metersPerUnit);
+            if (data.Length < 2)
+            {
+                Debug.LogError($"Insufficient data at line {currentLine}. Make sure the input data is formatted correctly. Current data: {string.Join(", ", data)}");
+                return;
+            }
+
+            try
+            {
+                SpawnBuilding(
+                    float.Parse(data[1], CultureInfo.InvariantCulture.NumberFormat),
+                    float.Parse(data[0], CultureInfo.InvariantCulture.NumberFormat),
+                    $"Small Building {_buildingsHolder.transform.childCount + 1}"
+                );
+            }
+            catch (FormatException e)
+            {
+                Debug.LogError($"Invalid data format at line {currentLine}: {e.Message}. Make sure the input data contains valid float values. Current data: {string.Join(", ", data)}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Unexpected error in ParseBuilding at line {currentLine}: {e.Message}. Current data: {string.Join(", ", data)}");
+            }
+        }
+
+
+        private void SpawnBuilding(float x, float z, string objectName)
+        {
+            Vector3 origin = _worldSpacePin + map.transform.right * (x / (float)_metersPerUnit) + map.transform.forward * (z / (float)_metersPerUnit);
             Vector3 originOffset = origin + map.transform.up * (10.0f * map.transform.lossyScale.y);
             Ray ray = new Ray(originOffset, map.transform.up * -1);
 
-            MapRendererRaycastHit hitInfo;
-            map.GetComponent<MapRenderer>().Raycast(ray, out hitInfo);
+            map.GetComponent<MapRenderer>().Raycast(ray, out var hitInfo);
 
-            pos = map.transform.InverseTransformVector((hitInfo.Point - worldSpacePin)) * (float)metersPerUnit * map.transform.lossyScale.x;
+            var pos = map.transform.InverseTransformVector(hitInfo.Point - _worldSpacePin) * (float)_metersPerUnit * map.transform.lossyScale.x;
+
+            GameObject building = Instantiate(smallBuilding, _buildingsHolder.transform, false);
+            building.name = objectName;
+            building.transform.localPosition += pos;
         }
-
-        GameObject building = Instantiate(smallBuilding, buildings.transform, false);
-        building.name = name;
-        building.transform.localPosition += pos;
     }
 }
-
-       
