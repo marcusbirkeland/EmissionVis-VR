@@ -7,13 +7,23 @@ using Microsoft.Maps.Unity;
 using Microsoft.Geospatial;
 using System;
 
+// ArcGIS
+using Esri.GameEngine.Map;
+using Esri.Unity;
+using Esri.ArcGISMapsSDK.Components;
+using Esri.GameEngine.Geometry;
+using Esri.ArcGISMapsSDK.Utils.GeoCoord;
+using Esri.GameEngine.Extent;
+using Esri.HPFramework;
+using Unity.Mathematics;
+
 public class BuildingSpawner : EditorWindow
 {
     private const string EDITOR_NAME = "Building Spawner";
     private const int PROGRESS_UPDATE_RATE = 1;
 
-    public string dataPath ="Assets/Resources/Bergen/Building/buildings.csv";
-    public string elevationDataPath="Assets/Resources/Bergen/Elevation/elevation.csv";  
+    public string dataPath = "Assets/Resources/Bergen/Building/buildings.csv";
+    public string elevationDataPath = "Assets/Resources/Bergen/Elevation/elevation.csv";
     //public Vector3 positionOffset;
 
     public float altitudeOffset = 0;
@@ -35,6 +45,7 @@ public class BuildingSpawner : EditorWindow
     private GameObject buildings;
 
     public bool raycasting = true;
+    private bool isArcGis = false;
 
     private string[] elevationData;
 
@@ -79,7 +90,8 @@ public class BuildingSpawner : EditorWindow
 
 
 
-    public void SpawnBuildings(){
+    public void SpawnBuildings()
+    {
         Debug.Log("Spawning buildings...");
 
         // Instantiate new GameObject as child of map.
@@ -89,7 +101,8 @@ public class BuildingSpawner : EditorWindow
         buildings.transform.SetParent(map.transform, false);
 
         System.IO.StreamReader sr = new System.IO.StreamReader(dataPath);
-        if(sr.Peek() < 0){
+        if (sr.Peek() < 0)
+        {
             throw new System.ArgumentException("The file at " + dataPath + " is empty!");
         }
 
@@ -111,31 +124,68 @@ public class BuildingSpawner : EditorWindow
         long currentLine = 1;
         long counter = 0; // Counter variable to prevent writing to progress bar too often.
 
-        // Needed for raycasting:
-        metersPerUnit = MapScaleRatioExtensions.ComputeUnityToMapScaleRatio(map.GetComponent<MapRenderer>(), new LatLon(latitude, longitude)) / map.transform.lossyScale.x;
-        worldSpacePin = MapRendererTransformExtensions.TransformLatLonAltToWorldPoint(map.GetComponent<MapRenderer>(), new LatLonAlt(latitude, longitude, 0.0));
+        MapRenderer mapRenderer = map.GetComponent<MapRenderer>();
+        ArcGISMapComponent arcGisMap = map.GetComponent<ArcGISMapComponent>();
+        if (mapRenderer != null)
+        {
+            isArcGis = false;
+            // Needed for raycasting:
+            metersPerUnit = MapScaleRatioExtensions.ComputeUnityToMapScaleRatio(mapRenderer, new LatLon(latitude, longitude)) / map.transform.lossyScale.x;
+            worldSpacePin = MapRendererTransformExtensions.TransformLatLonAltToWorldPoint(mapRenderer, new LatLonAlt(latitude, longitude, 0.0));
+
+            //Setup map pin component
+            MapPin mapPin = buildings.AddComponent<MapPin>();
+            mapPin.Location = new Microsoft.Geospatial.LatLon(latitude, longitude);
+            mapPin.UseRealWorldScale = true;
+            if (!raycasting) mapPin.Altitude = altitudeOffset;
+            mapPin.enabled = true;
+            // Ellipsoid: "The altitude reference is based on an ellipsoid which is a mathematical approximation of the shape of the Earth."
+            // Meaning the map pin is located at "sea level" rather than at the terrain height of the LatLon location of the pin
+            mapPin.AltitudeReference = Microsoft.Geospatial.AltitudeReference.Ellipsoid;
+        }
+        else if (arcGisMap != null)
+        {
+            isArcGis = true;
+            ArcGISLocationComponent arcGisLocation = buildings.AddComponent<ArcGISLocationComponent>();
+            arcGisLocation.Position = new ArcGISPoint(longitude, latitude, 0, ArcGISSpatialReference.WGS84());
+            arcGisLocation.Rotation = new ArcGISRotation(0, 90, 0);
+            if (raycasting)
+            {
+                Debug.LogError("Raycasting with ArcGIS is currently not implemented.");
+                sr.Close();
+                EditorUtility.ClearProgressBar();
+                return;
+            }
+
+        } else
+        {
+            Debug.LogError("The selected map object does not have a compatible map component. Make sure it has a \"Map Renderer\" or \"ArcGIS Map\" component.");
+            sr.Close();
+            EditorUtility.ClearProgressBar();
+            return;
+        }
 
         // Read file line by line
-        while (sr.Peek() >= 0){
+        while (sr.Peek() >= 0)
+        {
             string line = sr.ReadLine();
             //Debug.Log("line: " + line);
 
-            string [] data = line.Split(',');
+            string[] data = line.Split(',');
             ParseBuilding(data, currentLine);
 
             // Update progress-bar
-            if(counter >= PROGRESS_UPDATE_RATE){
-                string progressStr = "Parsing building data (" + currentLine + "/" + numLines +")";
-                float progress = ((float) currentLine/ (float)numLines)*10f;
+            if (counter >= PROGRESS_UPDATE_RATE)
+            {
+                string progressStr = "Parsing building data (" + currentLine + "/" + numLines + ")";
+                float progress = ((float)currentLine / (float)numLines) * 10f;
                 //Debug.Log("progress: " + progress);
-                EditorUtility.DisplayCancelableProgressBar(EDITOR_NAME, progressStr , progress);
+                EditorUtility.DisplayCancelableProgressBar(EDITOR_NAME, progressStr, progress);
                 counter = 0;
             }
             currentLine++;
             counter++;
         }
-
-
 
         Debug.Log("Finished reading file. Closing..");
         sr.Close();
@@ -143,40 +193,34 @@ public class BuildingSpawner : EditorWindow
         Debug.Log("Stream successfully closed.");
         Debug.Log("Spawned " + buildings.transform.childCount + " buildings.");
 
-        //Setup map pin component
-        MapPin mapPin = buildings.AddComponent<MapPin>();
-        mapPin.Location = new Microsoft.Geospatial.LatLon(latitude, longitude);
-        mapPin.UseRealWorldScale = true;
-        if (!raycasting) mapPin.Altitude = altitudeOffset;
-        mapPin.enabled = true;
 
-        // Ellipsoid: "The altitude reference is based on an ellipsoid which is a mathematical approximation of the shape of the Earth."
-        // Meaning the map pin is located at "sea level" rather than at the terrain height of the LatLon location of the pin
-        mapPin.AltitudeReference = Microsoft.Geospatial.AltitudeReference.Ellipsoid;
     }
 
     /* Parse building data from a data-line, and handle input.*/
-    private void ParseBuilding(string [] data, long currentLine){
+    private void ParseBuilding(string[] data, long currentLine)
+    {
         string y = data[data_y_index];
         string x = data[data_x_index];
         string height = data[data_height_index];
 
         //Debug.Log("x: " + x + " y: " + y + " height: " + height);
         // Spawn building if the current line has a height-property.
-        if(height != null && height != "" && height != " "){
+        if (height != null && height != "" && height != " ")
+        {
             SpawnBuilding(
-            float.Parse(x, CultureInfo.InvariantCulture.NumberFormat), 
-            float.Parse(y,CultureInfo.InvariantCulture.NumberFormat), 
-            float.Parse(height,CultureInfo.InvariantCulture.NumberFormat),
-            "Small Building " + (buildings.transform.childCount +1),
+            float.Parse(x, CultureInfo.InvariantCulture.NumberFormat),
+            float.Parse(y, CultureInfo.InvariantCulture.NumberFormat),
+            float.Parse(height, CultureInfo.InvariantCulture.NumberFormat),
+            "Small Building " + (buildings.transform.childCount + 1),
             currentLine
             );
         }
 
     }
 
-    private void SpawnBuilding(float x, float z, float height, string name, long buildingIndex){
-        string [] elevationString = elevationData[buildingIndex].Split(',');
+    private void SpawnBuilding(float x, float z, float height, string name, long buildingIndex)
+    {
+        string[] elevationString = elevationData[buildingIndex].Split(',');
 
         //TODO: Throw error if x and y values mismatch between building-data and elevation-data.
 
@@ -192,30 +236,46 @@ public class BuildingSpawner : EditorWindow
         }
         else
         {
-            // Elevation data from ray casting:
+            if (isArcGis)
+            {
+                // TODO: implement
+                return;
+            } else
+            {
 
-            // Note: Ray casting can only be done in world space, meaning all coordinates have to be converted from local to world space 
-            // before ray casting, and back again afterwards.
-            // x and z coordinates are provided in meters, which must be converted to Unity coordinate units through division by metersPerUnit.
-            Vector3 origin = worldSpacePin + map.transform.right * (x / (float)metersPerUnit) + map.transform.forward * (z / (float)metersPerUnit);
+                // Elevation data from ray casting:
 
-            // Place all points in world space some (10 for example) units away from the top of the map when ray casting towards the map.
-            Vector3 originOffset = origin + map.transform.up * (10.0f * map.transform.lossyScale.y);
+                // Note: Ray casting can only be done in world space, meaning all coordinates have to be converted from local to world space 
+                // before ray casting, and back again afterwards.
+                // x and z coordinates are provided in meters, which must be converted to Unity coordinate units through division by metersPerUnit.
+                Vector3 origin = worldSpacePin + map.transform.right * (x / (float)metersPerUnit) + map.transform.forward * (z / (float)metersPerUnit);
 
-            // (map.transform.up * -1) will point towards the "top" (side with the texture) of the map from a point "origin",
-            // if "origin" is placed at a positive multiple of map.transform.up away from the map. 
-            Ray ray = new Ray(originOffset, map.transform.up * -1);
+                // Place all points in world space some (10 for example) units away from the top of the map when ray casting towards the map.
+                Vector3 originOffset = origin + map.transform.up * (10.0f * map.transform.lossyScale.y);
 
-            MapRendererRaycastHit hitInfo;
-            map.GetComponent<MapRenderer>().Raycast(ray, out hitInfo);
+                // (map.transform.up * -1) will point towards the "top" (side with the texture) of the map from a point "origin",
+                // if "origin" is placed at a positive multiple of map.transform.up away from the map. 
+                Ray ray = new Ray(originOffset, map.transform.up * -1);
 
-            // Transform from world space to local space
-            pos = map.transform.InverseTransformVector((hitInfo.Point - worldSpacePin)) * (float)metersPerUnit * map.transform.lossyScale.x;
+                MapRendererRaycastHit hitInfo;
+                map.GetComponent<MapRenderer>().Raycast(ray, out hitInfo);
+
+                // Transform from world space to local space
+                pos = map.transform.InverseTransformVector((hitInfo.Point - worldSpacePin)) * (float)metersPerUnit * map.transform.lossyScale.x;
+            }
         }
 
 
         GameObject building = Instantiate(smallBuilding, buildings.transform, false);
         building.name = name;
+        // ArcGIS requires manual latitude adjustment
+        if (isArcGis) 
+        {
+            float latAdjust = (float)Math.Cos(Math.PI * latitude / 180.0);
+            pos.x = pos.x / latAdjust;
+            pos.z = pos.z / latAdjust;
+            building.transform.localScale /= latAdjust;
+        }
         building.transform.localPosition += pos;
     }
 
@@ -223,7 +283,7 @@ public class BuildingSpawner : EditorWindow
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
