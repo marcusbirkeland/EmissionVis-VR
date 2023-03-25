@@ -12,32 +12,39 @@ namespace Editor
     public class BuildingSpawner : EditorWindow
     {
         [Serializable]
-        public class Position
+        private struct Position
         {
             public double lat;
             public double lon;
+
+            public static implicit operator LatLon(Position position)
+            {
+                return new LatLon(position.lat, position.lon);
+            }
+            
+            public static implicit operator LatLonAlt(Position position)
+            {
+                return new LatLonAlt(position.lat, position.lon, 0.0);
+            }
         }
 
         [Serializable]
-        public class MapData
+        private struct CdfData
         {
             public string filePath;
             public Position position;
         }
 
         [Serializable]
-        public class MapDataList
+        private struct CdfDataListWrapper
         {
-            public List<MapData> mapData;
+            public List<CdfData> data;
         }
 
+
         private const string EditorName = "Building Spawner";
-        private const int ProgressUpdateRate = 1;
         
         public string dataPath = "Assets/Resources/MapData/Trondheim/BuildingData/buildingData.csv";
-
-        private double _latitude;
-        private double _longitude;
 
         private double _metersPerUnit;
         private Vector3 _worldSpacePin;
@@ -47,15 +54,17 @@ namespace Editor
         
         private GameObject _buildingsHolder;
         
-        private MapData _selectedMapData;
+        private CdfData _selectedCdfData;
     
     
+        //Runs LoadMapData when window is opened.
         private void OnEnable()
         {
             LoadMapData();
         }
 
     
+        // Sets the _selectedCdfData variable to the first element in the JSON file.
         private void LoadMapData()
         {
             const string jsonFilePath = "Assets/Resources/MapData/attributes.json";
@@ -67,11 +76,11 @@ namespace Editor
 
             try
             {
-                var jsonContent = File.ReadAllText(jsonFilePath);
-                var mapDataList = JsonUtility.FromJson<MapDataList>("{\"mapData\":" + jsonContent + "}");
-                if (mapDataList.mapData.Count > 0)
+                string jsonContent = File.ReadAllText(jsonFilePath);
+                CdfDataListWrapper cdfDataList = JsonUtility.FromJson<CdfDataListWrapper>("{\"data\":" + jsonContent + "}");
+                if (cdfDataList.data.Count > 0)
                 {
-                    _selectedMapData = mapDataList.mapData[0]; // Select the first MapData object by default
+                    _selectedCdfData = cdfDataList.data[0]; // Select the first MapData object by default
                 }
                 else
                 {
@@ -92,6 +101,7 @@ namespace Editor
         }
 
     
+        //GUI for the EditorWindow. Runs the SpawnBuildings method on click using the selected map and building model. 
         private void OnGUI()
         {
             GUILayout.Label("Building generator!");
@@ -99,35 +109,21 @@ namespace Editor
             map = EditorGUILayout.ObjectField("Map", map, typeof(GameObject), true) as GameObject;
             smallBuilding = EditorGUILayout.ObjectField("Building model", smallBuilding, typeof(GameObject), true) as GameObject;
 
+            bool canGenerateBuildings = smallBuilding != null && map != null;
+            
+            
+            EditorGUI.BeginDisabledGroup(!canGenerateBuildings);
             if (GUILayout.Button("Generate Buildings"))
             {
-                if (map == null)
-                {
-                    EditorUtility.DisplayDialog("Error", "Map GameObject is not assigned. Please assign a Map GameObject.", "Ok");
-                }
-                else if (smallBuilding == null)
-                {
-                    EditorUtility.DisplayDialog("Error", "Building model is not assigned. Please assign a Building GameObject.", "Ok");
-                }
-                else if (_selectedMapData == null)
-                {
-                    EditorUtility.DisplayDialog("Error", "No valid MapData loaded. Please check the JSON file.", "Ok");
-                }
-                else
-                {
-                    _latitude = _selectedMapData.position.lat;
-                    _longitude = _selectedMapData.position.lon;
-
-                    SpawnBuildings();
-                }
+                SpawnBuildings();
             }
+            EditorGUI.EndDisabledGroup();
         }
 
-    
+
+        //Main method for spawning the buildings
         private void SpawnBuildings()
         {
-            Debug.Log("Spawning buildings...");
-        
             // Check if the MapRenderer component is missing
             MapRenderer mapRenderer = map.GetComponent<MapRenderer>();
             if (mapRenderer == null)
@@ -135,105 +131,101 @@ namespace Editor
                 EditorUtility.DisplayDialog("Error", "The selected Map GameObject does not have a MapRenderer component. Please select a GameObject with the MapRenderer component.", "Ok");
                 return;
             }
+            
+            
+            _metersPerUnit = mapRenderer.ComputeUnityToMapScaleRatio(_selectedCdfData.position) / map.transform.lossyScale.x;
+            _worldSpacePin = mapRenderer.TransformLatLonAltToWorldPoint(_selectedCdfData.position);
 
+            
+            //Sets up the building holder
             _buildingsHolder = new GameObject("Map Buildings");
             _buildingsHolder.transform.SetParent(map.transform, false);
-
-            StreamReader sr = new StreamReader(dataPath);
-
-            if (sr.Peek() < 0)
-            {
-                throw new ArgumentException("The file at " + dataPath + " is empty!");
-            }
-
-            float progressBar = 0.0f;
-            EditorUtility.DisplayCancelableProgressBar(
-                EditorName,
-                "Parsing building data...",
-                progressBar
-            );
-
-            long numLines = sr.BaseStream.Length;
-            long currentLine = 0;
-            long counter = 0;
-
-            _metersPerUnit = mapRenderer.ComputeUnityToMapScaleRatio(new LatLon(_latitude, _longitude)) / map.transform.lossyScale.x;
-            _worldSpacePin = mapRenderer.TransformLatLonAltToWorldPoint(new LatLonAlt(_latitude, _longitude, 0.0));
-
-            while (sr.Peek() >= 0)
-            {
-                string line = sr.ReadLine();
-            
-                string[] data = line.Split(',');
-
-                ParseBuilding(data, currentLine);
-
-                if (counter >= ProgressUpdateRate)
-                {
-                    string progressStr = $"Parsing building data ({currentLine}/{numLines})";
-                    float progress = (float)currentLine / numLines * 10f;
-                    EditorUtility.DisplayCancelableProgressBar(EditorName, progressStr, progress);
-                    counter = 0;
-                }
-                currentLine++;
-                counter++;
-            }
-
-            Debug.Log("Finished reading file. Closing...");
-            sr.Close();
-            EditorUtility.ClearProgressBar();
-            Debug.Log("Stream successfully closed.");
-            Debug.Log($"Spawned {_buildingsHolder.transform.childCount} buildings.");
-
             MapPin mapPin = _buildingsHolder.AddComponent<MapPin>();
-            mapPin.Location = new LatLon(_latitude, _longitude);
+            mapPin.Location = _selectedCdfData.position;
             mapPin.UseRealWorldScale = true;
-            mapPin.enabled = true;
-
             mapPin.AltitudeReference = AltitudeReference.Ellipsoid;
+
+            
+            //Reads the csv file, and loads the building positions.
+            StreamReader streamReader = new(dataPath);
+            if (streamReader.Peek() < 0) throw new ArgumentException("The file at " + dataPath + " is empty!");
+            
+            
+            long numLines = streamReader.BaseStream.Length;
+            long currentLine = 0;
+
+            while (streamReader.Peek() >= 0)
+            {
+                float[] data = AssertDataFormat(streamReader.ReadLine(), currentLine);
+
+                SpawnBuilding(data);
+
+                string progressStr = $"Parsing building data ({currentLine}/{numLines})";
+                float progress = (float)currentLine / numLines * 10f;
+
+                if (EditorUtility.DisplayCancelableProgressBar(EditorName, progressStr, progress))
+                {
+                    Debug.Log("Cancelled building spawning");
+                    break;
+                }
+                
+                currentLine++;
+
+                //System.Threading.Thread.Sleep(10);
+                
+            }
+            EditorUtility.ClearProgressBar();
+
+            
+            streamReader.Close();
+            
+            Debug.Log($"Spawned {_buildingsHolder.transform.childCount} buildings.");
         }
 
     
-        private void ParseBuilding(string[] data, long currentLine)
+        private void SpawnBuilding(float[] data)
         {
-            if (data.Length < 2)
-            {
-                Debug.LogError($"Insufficient data at line {currentLine}. Make sure the input data is formatted correctly. Current data: {string.Join(", ", data)}");
-                return;
-            }
+            float x = data[1];
+            float z = data[0];
+            string objectName = $"Small Building {_buildingsHolder.transform.childCount + 1}";
 
-            try
-            {
-                SpawnBuilding(
-                    float.Parse(data[1], CultureInfo.InvariantCulture.NumberFormat),
-                    float.Parse(data[0], CultureInfo.InvariantCulture.NumberFormat),
-                    $"Small Building {_buildingsHolder.transform.childCount + 1}"
-                );
-            }
-            catch (FormatException e)
-            {
-                Debug.LogError($"Invalid data format at line {currentLine}: {e.Message}. Make sure the input data contains valid float values. Current data: {string.Join(", ", data)}");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Unexpected error in ParseBuilding at line {currentLine}: {e.Message}. Current data: {string.Join(", ", data)}");
-            }
-        }
-
-
-        private void SpawnBuilding(float x, float z, string objectName)
-        {
             Vector3 origin = _worldSpacePin + map.transform.right * (x / (float)_metersPerUnit) + map.transform.forward * (z / (float)_metersPerUnit);
             Vector3 originOffset = origin + map.transform.up * (10.0f * map.transform.lossyScale.y);
-            Ray ray = new Ray(originOffset, map.transform.up * -1);
+            Ray ray = new(originOffset, map.transform.up * -1);
 
             map.GetComponent<MapRenderer>().Raycast(ray, out var hitInfo);
 
-            var pos = map.transform.InverseTransformVector(hitInfo.Point - _worldSpacePin) * (float)_metersPerUnit * map.transform.lossyScale.x;
+            Vector3 pos = map.transform.InverseTransformVector(hitInfo.Point - _worldSpacePin) * (float)_metersPerUnit * map.transform.lossyScale.x;
 
             GameObject building = Instantiate(smallBuilding, _buildingsHolder.transform, false);
             building.name = objectName;
             building.transform.localPosition += pos;
+        }
+
+        
+        // Gets the 
+        private static float[] AssertDataFormat(string data, long line)
+        {
+            string[] stringValues = data.Split(',');
+
+            if (stringValues.Length != 2)
+            {
+                throw new ArgumentException(
+                    $"Invalid data format at line: {line}. There should only be two columns of data values, but there are: {stringValues.Length}");
+            }
+            
+            float[] floatArray = new float[2];
+
+            for (int i = 0; i < stringValues.Length; i++)
+            {
+                if (!float.TryParse(stringValues[i], out floatArray[i]))
+                {
+                    throw new ArgumentException(
+                        $"Invalid data format at line: {line}, and column: {i + 1}. Make sure the input data contains valid float values. Current value: {stringValues[i]}");
+                }
+            }
+            
+            return floatArray;
         }
     }
 }

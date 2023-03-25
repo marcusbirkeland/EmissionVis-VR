@@ -1,13 +1,26 @@
-import pyproj
+from pyproj import Proj, Transformer
 
-def convert_lat_lon_to_3857(latitude, longitude, source_epsg):
-    source_proj = pyproj.Proj(f'epsg:{source_epsg}')
-    target_proj = pyproj.Proj('epsg:3857')
+def convert_utm_to_latlon(x, y, epsg_code):
+    # Create UTM and WGS84 coordinate system objects
+    utm_proj = Proj(f"epsg:{epsg_code}")
+    wgs84_proj = Proj("epsg:4326")
 
-    x, y = pyproj.transform(source_proj, target_proj, longitude, latitude)
-    return x, y
+    # Create the transformer
+    transformer = Transformer.from_proj(utm_proj, wgs84_proj)
+
+    # Perform the transformation
+    lon, lat = transformer.transform(x, y)
+
+    return lat, lon
+
+# Example usage
+x = 296720.102
+y = 6697140.253
+epsg_code = 32632
+
+lat, lon = convert_utm_to_latlon(x, y, epsg_code)
+print(f"Latitude: {lat}, Longitude: {lon}")
 
 
-la, lo = convert_lat_lon_to_3857(60.35954907032411, 5.314180944287559, 32632)
-
-print(la, lo)
+print(float(lat)== 60.35954907032411)
+print(float(lon) == 5.314180944287559)
