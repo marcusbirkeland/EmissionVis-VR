@@ -153,9 +153,8 @@ namespace Editor
                     DestroyImmediate(child.gameObject);
                 }
             }
-            
-            
-            
+
+
             //Sets up the building holder
             _buildingsHolder = new GameObject("Map Buildings");
             _buildingsHolder.transform.SetParent(map.transform, false);
@@ -216,7 +215,7 @@ namespace Editor
 
             map.GetComponent<MapRenderer>().Raycast(ray, out MapRendererRaycastHit hitInfo);
 
-            Vector3 pos = map.transform.InverseTransformVector(hitInfo.Point - _worldSpacePin) * ((float)_metersPerUnit * map.transform.lossyScale.x);
+            Vector3 pos = _buildingsHolder.transform.InverseTransformVector(hitInfo.Point - _worldSpacePin) * ((float)_metersPerUnit * map.transform.lossyScale.x);
 
             GameObject building = Instantiate(smallBuilding, _buildingsHolder.transform, false);
             building.name = objectName;
