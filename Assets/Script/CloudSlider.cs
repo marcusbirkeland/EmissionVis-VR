@@ -12,9 +12,10 @@ public class CloudSlider : MonoBehaviour
     [Range(0.0f, 2.99f)]
     public float floatSlider = 0;
     public Text text;
+    public float playbackRate = 0.5f;
 
+    public bool isPlaying = false;
     private float time =  0;
-
     private float prevTime = 0;
     private List<Renderer> cloudRenderers = new List<Renderer>();
     private CloudMapManager mapManager;
@@ -54,17 +55,41 @@ public class CloudSlider : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //slider.value = floatSlider;
+
         if(slider.maxValue < 1){
             slider.maxValue = mapManager.GetMapCount() - 1.01f;
             //ChangeTime(slider.value);
         }
-        //ChangeTime(floatSlider);
+
+        if(isPlaying){
+            slider.value += playbackRate * Time.deltaTime;
+            if(slider.value >= slider.maxValue){
+                Pause();
+            }
+        }
+    }
+
+    public void Play(){
+        // Reset slider when replaying
+        if(slider.value >= slider.maxValue - 0.2f){
+            slider.value = 0.0f;
+        }
+        isPlaying = true;
+    }
+
+    public void Pause() {
+        isPlaying = false;
     }
 
     public void OnSliderChange(){
         Debug.Log("Slider value: " + slider.value);
         ChangeTime(slider.value);
         text.text = slider.value.ToString("F2");
+    }
+
+    public bool IsPlaying(){
+        return isPlaying;
     }
 
     private void ChangeTime(float value)
