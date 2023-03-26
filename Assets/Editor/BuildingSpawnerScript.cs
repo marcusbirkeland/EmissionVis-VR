@@ -40,21 +40,24 @@ namespace Editor
         {
             public List<CdfData> data;
         }
-
-
-        private const string EditorName = "Building Spawner";
         
         public string dataPath = "Assets/Resources/MapData/Trondheim/BuildingData/buildingData.csv";
+        
+        
+        public GameObject map;
+        public GameObject smallBuilding;
+        public float xOffSet = -60.0f;
+        public float zOffSet = 130f;
 
+        public float rotationAngle = 0.0f;
+        
         private double _metersPerUnit;
         private Vector3 _worldSpacePin;
 
-        public GameObject map;
-        public GameObject smallBuilding;
-        
         private GameObject _buildingsHolder;
         
         private CdfData _selectedCdfData;
+        
     
     
         //Runs LoadMapData when window is opened.
@@ -63,7 +66,36 @@ namespace Editor
             LoadMapData();
         }
 
+
+        [MenuItem("SINTEF/Building Generator")]
+        public static void ShowWindow()
+        {
+            GetWindow<BuildingSpawner>("Building Generator!");
+        }
+
     
+        //GUI for the EditorWindow. Runs the SpawnBuildings method on click using the selected map and building model. 
+        private void OnGUI()
+        {
+            map = EditorGUILayout.ObjectField("Map", map, typeof(GameObject), true) as GameObject;
+            smallBuilding = EditorGUILayout.ObjectField("Building model", smallBuilding, typeof(GameObject), false) as GameObject;
+
+            xOffSet = EditorGUILayout.FloatField("X Offset", xOffSet);
+            zOffSet = EditorGUILayout.FloatField("Z Offset", zOffSet);
+            
+            rotationAngle = EditorGUILayout.FloatField("Rotation Angle", rotationAngle);
+            
+            bool canGenerateBuildings = smallBuilding != null && map != null;
+            
+            EditorGUI.BeginDisabledGroup(!canGenerateBuildings);
+            if (GUILayout.Button("Generate Buildings"))
+            {
+                SpawnAllBuildings();
+            }
+            EditorGUI.EndDisabledGroup();
+        }
+        
+        
         // Sets the _selectedCdfData variable to the first element in the JSON file.
         private void LoadMapData()
         {
@@ -93,37 +125,13 @@ namespace Editor
             }
         }
 
-    
-        [MenuItem("SINTEF/Building Generator")]
-        public static void ShowWindow()
-        {
-            GetWindow(typeof(BuildingSpawner));
-        }
-
-    
-        //GUI for the EditorWindow. Runs the SpawnBuildings method on click using the selected map and building model. 
-        private void OnGUI()
-        {
-            GUILayout.Label("Building generator!");
-
-            map = EditorGUILayout.ObjectField("Map", map, typeof(GameObject), true) as GameObject;
-            smallBuilding = EditorGUILayout.ObjectField("Building model", smallBuilding, typeof(GameObject), true) as GameObject;
-
-            bool canGenerateBuildings = smallBuilding != null && map != null;
-            
-            
-            EditorGUI.BeginDisabledGroup(!canGenerateBuildings);
-            if (GUILayout.Button("Generate Buildings"))
-            {
-                SpawnBuildings();
-            }
-            EditorGUI.EndDisabledGroup();
-        }
-
 
         //Main method for spawning the buildings
-        private void SpawnBuildings()
+        private void SpawnAllBuildings()
         {
+            // Check if the data file exists
+            if (!File.Exists(dataPath)) throw new ArgumentException("The file at " + dataPath + " does not exist!");
+            
             // Check if the MapRenderer component is missing
             MapRenderer mapRenderer = map.GetComponent<MapRenderer>();
             if (mapRenderer == null)
@@ -135,22 +143,32 @@ namespace Editor
             
             _metersPerUnit = mapRenderer.ComputeUnityToMapScaleRatio(_selectedCdfData.position) / map.transform.lossyScale.x;
             _worldSpacePin = mapRenderer.TransformLatLonAltToWorldPoint(_selectedCdfData.position);
-
+            
+            //Deletes previous buildings
+            for (int i = map.transform.childCount - 1; i >= 0; i--)
+            {
+                Transform child = map.transform.GetChild(i);
+                if (child.name == "Map Buildings")
+                {
+                    DestroyImmediate(child.gameObject);
+                }
+            }
+            
+            
             
             //Sets up the building holder
             _buildingsHolder = new GameObject("Map Buildings");
             _buildingsHolder.transform.SetParent(map.transform, false);
+            _buildingsHolder.transform.localRotation = Quaternion.Euler(0, rotationAngle, 0);
+
             MapPin mapPin = _buildingsHolder.AddComponent<MapPin>();
             mapPin.Location = _selectedCdfData.position;
             mapPin.UseRealWorldScale = true;
             mapPin.AltitudeReference = AltitudeReference.Ellipsoid;
 
             
-            //Reads the csv file, and loads the building positions.
-            StreamReader streamReader = new(dataPath);
-            if (streamReader.Peek() < 0) throw new ArgumentException("The file at " + dataPath + " is empty!");
-            
-            
+            using StreamReader streamReader = new(dataPath);
+
             long numLines = streamReader.BaseStream.Length;
             long currentLine = 0;
 
@@ -163,21 +181,16 @@ namespace Editor
                 string progressStr = $"Parsing building data ({currentLine}/{numLines})";
                 float progress = (float)currentLine / numLines * 10f;
 
-                if (EditorUtility.DisplayCancelableProgressBar(EditorName, progressStr, progress))
+                if (EditorUtility.DisplayCancelableProgressBar("Creating buildings from data", progressStr, progress))
                 {
                     Debug.Log("Cancelled building spawning");
                     break;
                 }
-                
+
                 currentLine++;
-
-                //System.Threading.Thread.Sleep(10);
-                
             }
-            EditorUtility.ClearProgressBar();
 
-            
-            streamReader.Close();
+            EditorUtility.ClearProgressBar();
             
             Debug.Log($"Spawned {_buildingsHolder.transform.childCount} buildings.");
         }
@@ -185,25 +198,34 @@ namespace Editor
     
         private void SpawnBuilding(float[] data)
         {
-            float x = data[1];
-            float z = data[0];
+            float distanceX = (float)((data[1] + xOffSet) / _metersPerUnit);
+            float distanceZ = (float)((data[0] + zOffSet) / _metersPerUnit);
             string objectName = $"Small Building {_buildingsHolder.transform.childCount + 1}";
 
-            Vector3 origin = _worldSpacePin + map.transform.right * (x / (float)_metersPerUnit) + map.transform.forward * (z / (float)_metersPerUnit);
-            Vector3 originOffset = origin + map.transform.up * (10.0f * map.transform.lossyScale.y);
-            Ray ray = new(originOffset, map.transform.up * -1);
+            Vector3 mapUp = map.transform.up;
+    
+            Vector3 rotatedOffset = Quaternion.Euler(0, rotationAngle, 0) * new Vector3(distanceX, 0, distanceZ);
 
-            map.GetComponent<MapRenderer>().Raycast(ray, out var hitInfo);
+            Vector3 origin =
+                _worldSpacePin +
+                map.transform.right * rotatedOffset.x +
+                map.transform.forward * rotatedOffset.z +
+                mapUp * (10.0f * map.transform.lossyScale.y);
 
-            Vector3 pos = map.transform.InverseTransformVector(hitInfo.Point - _worldSpacePin) * (float)_metersPerUnit * map.transform.lossyScale.x;
+            Ray ray = new(origin, mapUp * -1);
+
+            map.GetComponent<MapRenderer>().Raycast(ray, out MapRendererRaycastHit hitInfo);
+
+            Vector3 pos = map.transform.InverseTransformVector(hitInfo.Point - _worldSpacePin) * ((float)_metersPerUnit * map.transform.lossyScale.x);
 
             GameObject building = Instantiate(smallBuilding, _buildingsHolder.transform, false);
             building.name = objectName;
+
             building.transform.localPosition += pos;
         }
-
         
-        // Gets the 
+
+        // Converts a line of filedata to a float array containing an x and y value in meters. Throws exceptions if the data format is invalid.
         private static float[] AssertDataFormat(string data, long line)
         {
             string[] stringValues = data.Split(',');
