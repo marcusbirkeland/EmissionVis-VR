@@ -32,7 +32,7 @@ namespace Editor
         }
 
         
-        [MenuItem("SINTEF/Building Generator232")]
+        [MenuItem("SINTEF/Building Generator")]
         public static void ShowWindow()
         {
             GetWindow<BuildingSpawner>("Building Generator!");
@@ -72,6 +72,8 @@ namespace Editor
             {
                 string progressStr = $"Parsing building data ({i}/{_buildingDataList.Count})";
                 float progress = (float) i / _buildingDataList.Count;
+                
+                Debug.Log("X: " + _buildingDataList[i].x + ", Y: " +_buildingDataList[i].y);
 
                 if (EditorUtility.DisplayCancelableProgressBar("Creating buildings from data", progressStr, progress))
                 {
@@ -116,7 +118,7 @@ namespace Editor
                 }
             }
         }
-
+        
         
         private void SetupBuildingHolder(MapRenderer mapRenderer)
         {
