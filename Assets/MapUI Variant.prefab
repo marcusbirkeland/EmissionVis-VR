@@ -160,7 +160,7 @@ PrefabInstance:
     - target: {fileID: 2156875571236448109, guid: 9267ef59bdf0848999108be5398490ed,
         type: 3}
       propertyPath: m_Name
-      value: MapUI
+      value: MapUI Variant
       objectReference: {fileID: 0}
     - target: {fileID: 2156875571236448109, guid: 9267ef59bdf0848999108be5398490ed,
         type: 3}
