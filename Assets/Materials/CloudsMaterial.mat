@@ -83,7 +83,7 @@ Material:
     - _ColorLowTreshold: 0.377
     - _ColorMapAlpha: 0
     - _ColorMapOpacity: 1.49
-    - _ColorMapTransparency: 0
+    - _ColorMapTransparency: 0.065
     - _ColorMaxTreshold: 0.75
     - _ColorMidTreshold: 0.573
     - _ColorMinOpacity: 1

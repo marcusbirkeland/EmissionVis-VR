@@ -60,7 +60,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Vector1_2B98EB7D: 0.1
+    - Vector1_2B98EB7D: 0.03
     - Vector1_338070E0: 10
     - Vector1_3BED982A: 0.5
     - Vector1_48A8130: 1111
@@ -81,7 +81,7 @@ Material:
     - _ColorBlendFac: 0.271
     - _ColorLowTreshold: 0.295
     - _ColorMapAlpha: 0
-    - _ColorMapTransparency: 0
+    - _ColorMapTransparency: 0.034
     - _ColorMaxTreshold: 0.476
     - _ColorMinOpacity: 1
     - _ColorMinTreshold: 0.223
