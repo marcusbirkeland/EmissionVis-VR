@@ -12,11 +12,13 @@ using Esri.GameEngine;
 
 public class ArcGISLoadStatus : MonoBehaviour
 {
-    ArcGISMapComponent arcGisMap;
+    private ArcGISMapComponent arcGisMap;
+    public GameObject loadingScreen;
 
     // Start is called before the first frame update
     void Start()
     {
+        loadingScreen.SetActive(true);
         arcGisMap = gameObject.GetComponent<ArcGISMapComponent>();
     }
 
@@ -24,6 +26,10 @@ public class ArcGISLoadStatus : MonoBehaviour
     void Update()
     {
         Debug.Log(arcGisMap.View.Map.Basemap.LoadStatus);
-        if (arcGisMap.View.Map.Basemap.LoadStatus == Esri.GameEngine.ArcGISLoadStatus.Loaded) enabled = false;
+        if (arcGisMap.View.Map.Basemap.LoadStatus == Esri.GameEngine.ArcGISLoadStatus.Loaded)
+        {
+            loadingScreen.SetActive(false);
+            enabled = false;
+        }
     }
 }

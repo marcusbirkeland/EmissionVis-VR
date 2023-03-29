@@ -2,44 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
 
 public class ChangeScene : MonoBehaviour
 {
     public string sceneName;
     private AsyncOperation loadingOperation;
-    public UniversalRenderPipelineAsset pipeline;
+    public GameObject loadingScrene;
+    public Camera mainCamera;
 
     public void ChangeToScene()
     {
-
+        // remove layer mask containing all objects
+        mainCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("Default"));
+        loadingScrene.SetActive(true);
         loadingOperation = SceneManager.LoadSceneAsync(sceneName);
-        enabled = true;
-        loadingOperation.completed += Test;
-        // pipeline.mainLightRenderingMode = LightRenderingMode.PerPixel; <- IS READ ONLY
+        loadingOperation.completed += LoadingFinished;
     }
 
-    void Test(AsyncOperation obj)
+    void LoadingFinished(AsyncOperation obj)
     {
-        Debug.Log("FINISHED!");
+        loadingScrene.SetActive(false);
+        // add mask back to scene
+        mainCamera.cullingMask |= (1 << LayerMask.NameToLayer("Default"));
     }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        enabled = false;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        /*
-        Debug.Log(loadingOperation.progress);
-        if (loadingOperation.isDone)
-        {
-            Debug.Log("FINISHED");
-            // TODO: change lighting here?
-        }*/
-    }
-
 }
