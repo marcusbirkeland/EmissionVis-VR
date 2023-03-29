@@ -8,22 +8,14 @@ public class ChangeScene : MonoBehaviour
 {
     public string sceneName;
     private AsyncOperation loadingOperation;
-    public GameObject loadingScrene;
+    public GameObject loadingScreen;
     public Camera mainCamera;
 
     public void ChangeToScene()
     {
-        // remove layer mask containing all objects
+        // remove layer mask containing all objects. This change is not permanent, and is reset upon a scene change
         mainCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("Default"));
-        loadingScrene.SetActive(true);
+        loadingScreen.SetActive(true);
         loadingOperation = SceneManager.LoadSceneAsync(sceneName);
-        loadingOperation.completed += LoadingFinished;
-    }
-
-    void LoadingFinished(AsyncOperation obj)
-    {
-        loadingScrene.SetActive(false);
-        // add mask back to scene
-        mainCamera.cullingMask |= (1 << LayerMask.NameToLayer("Default"));
     }
 }

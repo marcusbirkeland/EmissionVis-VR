@@ -704,6 +704,11 @@ PrefabInstance:
       objectReference: {fileID: 7573900262392789327}
     - target: {fileID: 5206897887653389653, guid: 9267ef59bdf0848999108be5398490ed,
         type: 3}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 7573900262392789327}
+    - target: {fileID: 5206897887653389653, guid: 9267ef59bdf0848999108be5398490ed,
+        type: 3}
       propertyPath: loadingScrene
       value: 
       objectReference: {fileID: 8674549553303882977}
