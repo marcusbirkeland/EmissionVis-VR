@@ -7,6 +7,7 @@ using Microsoft.Geospatial;
 using System;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class MapDragging : MonoBehaviour
 {
@@ -73,13 +74,22 @@ public class MapDragging : MonoBehaviour
 
     private Vector3 GetRayHit(XRRayInteractor rayInteractor)
     {
-        RaycastHit hit;
-        if (!rayInteractor.TryGetCurrent3DRaycastHit(out hit)) return Vector3.zero;
+        RaycastHit? raycastHit;
+        Int32 raycastHitIndex;
+        RaycastResult? uiRaycastHit;
+        Int32 uiRaycastHitIndex;
+        bool isUIHitClosest;
+        if (!rayInteractor.TryGetCurrentRaycast(out raycastHit, out raycastHitIndex, out uiRaycastHit, out uiRaycastHitIndex, out isUIHitClosest)) return Vector3.zero;
+        if (uiRaycastHit is RaycastResult Uihit) return Vector3.zero;
+        if (raycastHit is RaycastHit hit)
+        {
+            if (hit.collider != targetCollider) return Vector3.zero;
 
-        if (hit.collider != targetCollider) return Vector3.zero;
+            // transform the raycast hit in world space to the map's local space
+            return map.transform.InverseTransformPoint(hit.point);
+        }
+        else return Vector3.zero;
 
-        // transform the raycast hit in world space to the map's local space
-        return map.transform.InverseTransformPoint(hit.point);
     }
 
     private Vector3 Delta(Vector3 hit, ref Vector3 previousHit)
