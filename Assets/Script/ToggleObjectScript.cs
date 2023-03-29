@@ -6,28 +6,15 @@ using Microsoft.Maps.Unity;
 
 public class ToggleObjectScript : MonoBehaviour
 {
-    public MapPin pinToToggle; // Reference to the cube object
-    public Toggle toggleUI; // Reference to the UI toggle object
+    [Tooltip("*ONLY for Bing map* (can't toggle active state of game objects containing a map pin component).")]
+    public MapPin pinToToggle;
 
-    private bool showObject;
+    [Tooltip("*ONLY for ArcGIS map*")]
+    public GameObject objectToToggle; 
 
-    // Start is called before the first frame update
-    void Start()
+    public void ToggleObjectActiveState()
     {
-        // Enable the MapPin script (disabling it hides all game objects associated with it)
-        pinToToggle.enabled = showObject;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        showObject = toggleUI.isOn;
-
-        // Check if the toggle value has changed
-        if (showObject != pinToToggle.enabled)
-        {
-            // Toggle the visibility of the cube object
-            pinToToggle.enabled = showObject;
-        }
+        if (pinToToggle) pinToToggle.enabled = gameObject.GetComponent<Toggle>().isOn;
+        if (objectToToggle) objectToToggle.SetActive(gameObject.GetComponent<Toggle>().isOn);
     }
 }

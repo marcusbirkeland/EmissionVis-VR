@@ -83,7 +83,7 @@ public class CloudSlider : MonoBehaviour
     }
 
     public void OnSliderChange(){
-        Debug.Log("Slider value: " + slider.value);
+        //Debug.Log("Slider value: " + slider.value);
         ChangeTime(slider.value);
         text.text = slider.value.ToString("F2");
     }
