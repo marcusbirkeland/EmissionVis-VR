@@ -105,6 +105,8 @@ public class CloudMapManager : MonoBehaviour
             foreach (Renderer ren in lod.renderers)
             {
                 cloudsRenderers.Add(ren);
+                ren.material.SetTexture("_ColorMapMin", null);
+                ren.material.SetTexture("_ColorMapMax", null);
             }
 
         }
