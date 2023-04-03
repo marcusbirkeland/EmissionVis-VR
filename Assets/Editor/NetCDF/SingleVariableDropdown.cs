@@ -20,7 +20,7 @@ namespace Editor.NetCDF
          */
         public NcVariable? SelectedVariable => _selectedIndex > 0 ? NcVariables[_selectedIndex - 1] : null;
 
-        
+
         /**
          * <summary>
          *  Constructor. Inherited from BaseVariableDropdown.

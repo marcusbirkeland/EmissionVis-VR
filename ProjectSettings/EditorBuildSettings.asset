@@ -89,7 +89,7 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
+  - enabled: 0
     path: Assets/SintefDEMO.unity
     guid: 9d5bb2a723800234bada4f4e227e7b0b
   - enabled: 0
@@ -101,6 +101,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/DemoLITE.unity
     guid: 66a059c5c2396814aa1f9a22a6c0ba48
+  - enabled: 1
+    path: Assets/testScene.unity
+    guid: f2ac5718ae3caa247bb0341b0e4c57b3
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260,
       type: 2}

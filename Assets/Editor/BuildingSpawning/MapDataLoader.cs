@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Geospatial;
 using UnityEngine;
 
@@ -62,21 +63,7 @@ namespace Editor.BuildingSpawning
                 string jsonContent = File.ReadAllText(jsonFilePath);
                 CdfDataListWrapper cdfDataList = JsonUtility.FromJson<CdfDataListWrapper>("{\"data\":" + jsonContent + "}");
 
-                foreach (CdfData data in cdfDataList)
-                {
-                    if (data.filePath == cdfFilePath)
-                    {
-                        return data;
-                    }
-                    
-                    //TODO: remove this after adding cdfFilePath input
-                    if (cdfFilePath == "")
-                    {
-                        return cdfDataList.data[0];
-                    }
-                }
-
-                Debug.LogError("Invalid JSON format.");
+                return cdfDataList.FirstOrDefault(data => data.filePath == cdfFilePath);
             }
             catch (Exception e) when (e is ArgumentException or InvalidOperationException)
             {

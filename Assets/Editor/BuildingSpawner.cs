@@ -1,53 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Editor.BuildingSpawning;
 using UnityEditor;
 using UnityEngine;
 using Microsoft.Geospatial;
 using Microsoft.Maps.Unity;
+using Object = UnityEngine.Object;
 
 namespace Editor
 {
-    public class BuildingSpawner : EditorWindow
+    public class BuildingSpawner
     {
-        public string dataPath = "Assets/Resources/MapData/Trondheim/BuildingData/buildingData.csv";
-        public string jsonFilePath = "Assets/Resources/MapData/attributes.json";
-        public string cdfFilePath = "";
-        public GameObject map;
-        public GameObject smallBuilding;
-        public float rotationAngle;
+        private readonly string _dataPath;
+        private GameObject _map;
+        private GameObject _smallBuilding;
+        private float _rotationAngle;
 
+        private readonly MapDataLoader.CdfData _selectedCdfData;
+        private readonly List<BuildingData> _buildingDataList;
+        
         private double _metersPerUnit;
         private Vector3 _worldSpacePin;
         private GameObject _buildingsHolder;
-        private MapDataLoader.CdfData _selectedCdfData;
-        private List<BuildingData> _buildingDataList;
-
         
-        private void OnEnable()
-        {
-            _selectedCdfData = MapDataLoader.LoadMapData(jsonFilePath, cdfFilePath);
-            _buildingDataList = BuildingSpawnerController.LoadBuildingData(dataPath);
-        }
-
-        
-        [MenuItem("SINTEF/Building Generator")]
-        public static void ShowWindow()
-        {
-            GetWindow<BuildingSpawner>("Building Generator!");
-        }
-
         
         //GUI for the EditorWindow. Runs the SpawnBuildings method on click using the selected map and building model. 
-        private void OnGUI()
+        private void Draw()
         {
-            map = EditorGUILayout.ObjectField("Map", map, typeof(GameObject), true) as GameObject;
-            smallBuilding = EditorGUILayout.ObjectField("Building model", smallBuilding, typeof(GameObject), false) as GameObject;
+            _map = EditorGUILayout.ObjectField("Map", _map, typeof(GameObject), true) as GameObject;
+            _smallBuilding = EditorGUILayout.ObjectField("Building model", _smallBuilding, typeof(GameObject), false) as GameObject;
+            _rotationAngle = EditorGUILayout.FloatField("Rotation Angle", _rotationAngle);
             
-            rotationAngle = EditorGUILayout.FloatField("Rotation Angle", rotationAngle);
-            
-            bool canGenerateBuildings = smallBuilding != null && map != null;
+            bool canGenerateBuildings = _smallBuilding != null && _map != null;
             
             EditorGUI.BeginDisabledGroup(!canGenerateBuildings);
             if (GUILayout.Button("Generate Buildings"))
@@ -56,25 +42,55 @@ namespace Editor
             }
             EditorGUI.EndDisabledGroup();
         }
-
         
-        private void SpawnAllBuildings()
+        
+        /**
+         * dataPath = "Assets/Resources/MapData/{mapName}/"
+         * attributesFilePath = "Assets/Resources/MapData/attributes.json"
+         * cdfFilePath  = Full path to cdfFile containing building data
+         */
+        public BuildingSpawner(string jsonDataPath, string attributesFilePath, string cdfFilePath, GameObject map, GameObject buildingModel, float rotationAngle)
+        {
+            _selectedCdfData = MapDataLoader.LoadMapData(attributesFilePath, cdfFilePath);
+
+            string newDataPath = jsonDataPath + "BuildingData/buildingData.csv";
+            _buildingDataList = BuildingSpawnerController.LoadBuildingData(newDataPath);
+            _dataPath = newDataPath;
+            
+            _map = map;
+            _smallBuilding = buildingModel;
+            _rotationAngle = rotationAngle;
+        }
+
+
+        public void SpawnAllBuildings()
         {
             CheckDataFileExists();
 
             MapRenderer mapRenderer = GetMapRenderer();
             if (mapRenderer == null) return;
+            
+            // Wait for the map to load or the user to cancel
+            while (!mapRenderer.IsLoaded)
+            {
+                if (EditorUtility.DisplayCancelableProgressBar("Waiting for map to load", "Loading map, please wait...", -1))
+                {
+                    Debug.Log("Cancelled building spawning");
+                    EditorUtility.ClearProgressBar();
+                    return;
+                }
+            }
+            
+            EditorUtility.ClearProgressBar();
 
             DeletePreviousBuildings();
             SetupBuildingHolder(mapRenderer);
-
+            
             for (int i = 0; i < _buildingDataList.Count; i++)
             {
                 string progressStr = $"Parsing building data ({i}/{_buildingDataList.Count})";
                 float progress = (float) i / _buildingDataList.Count;
                 
-                Debug.Log("X: " + _buildingDataList[i].x + ", Y: " +_buildingDataList[i].y);
-
                 if (EditorUtility.DisplayCancelableProgressBar("Creating buildings from data", progressStr, progress))
                 {
                     Debug.Log("Cancelled building spawning");
@@ -92,13 +108,13 @@ namespace Editor
         
         private void CheckDataFileExists()
         {
-            if (!File.Exists(dataPath)) throw new ArgumentException("The file at " + dataPath + " does not exist!");
+            if (!File.Exists(_dataPath)) throw new ArgumentException("The file at " + _dataPath + " does not exist!");
         }
 
-        
+        //TODO: Fix error display. It currently doesnt stop the function call.
         private MapRenderer GetMapRenderer()
         {
-            MapRenderer mapRenderer = map.GetComponent<MapRenderer>();
+            MapRenderer mapRenderer = _map.GetComponent<MapRenderer>();
             if (mapRenderer == null)
             {
                 EditorUtility.DisplayDialog("Error", "The selected Map GameObject does not have a MapRenderer component. Please select a GameObject with the MapRenderer component.", "Ok");
@@ -109,12 +125,12 @@ namespace Editor
         
         private void DeletePreviousBuildings()
         {
-            for (int i = map.transform.childCount - 1; i >= 0; i--)
+            for (int i = _map.transform.childCount - 1; i >= 0; i--)
             {
-                Transform child = map.transform.GetChild(i);
+                Transform child = _map.transform.GetChild(i);
                 if (child.name == "Map Buildings")
                 {
-                    DestroyImmediate(child.gameObject);
+                    Object.DestroyImmediate(child.gameObject);
                 }
             }
         }
@@ -122,12 +138,12 @@ namespace Editor
         
         private void SetupBuildingHolder(MapRenderer mapRenderer)
         {
-            _metersPerUnit = mapRenderer.ComputeUnityToMapScaleRatio(_selectedCdfData.position) / map.transform.lossyScale.x;
+            _metersPerUnit = mapRenderer.ComputeUnityToMapScaleRatio(_selectedCdfData.position) / _map.transform.lossyScale.x;
             _worldSpacePin = mapRenderer.TransformLatLonAltToWorldPoint(_selectedCdfData.position);
             
             _buildingsHolder = new GameObject("Map Buildings");
-            _buildingsHolder.transform.SetParent(map.transform, false);
-            _buildingsHolder.transform.localRotation = Quaternion.Euler(0, rotationAngle, 0);
+            _buildingsHolder.transform.SetParent(_map.transform, false);
+            _buildingsHolder.transform.localRotation = Quaternion.Euler(0, _rotationAngle, 0);
 
             MapPin mapPin = _buildingsHolder.AddComponent<MapPin>();
             mapPin.Location = _selectedCdfData.position;
@@ -142,25 +158,24 @@ namespace Editor
             float distanceZ = (float)(buildingData.y/ _metersPerUnit);
             string objectName = $"Small Building {_buildingsHolder.transform.childCount + 1}";
 
-            Vector3 mapUp = map.transform.up;
+            Vector3 mapUp = _map.transform.up;
     
-            Vector3 rotatedOffset = Quaternion.Euler(0, rotationAngle, 0) * new Vector3(distanceX, 0, distanceZ);
+            Vector3 rotatedOffset = Quaternion.Euler(0, _rotationAngle, 0) * new Vector3(distanceX, 0, distanceZ);
 
             Vector3 origin =
                 _worldSpacePin +
-                map.transform.right * rotatedOffset.x +
-                map.transform.forward * rotatedOffset.z +
-                mapUp * (10.0f * map.transform.lossyScale.y);
-
+                _map.transform.right * rotatedOffset.x +
+                _map.transform.forward * rotatedOffset.z +
+                mapUp * (10.0f * _map.transform.lossyScale.y);
+            
             Ray ray = new(origin, mapUp * -1);
-
-            map.GetComponent<MapRenderer>().Raycast(ray, out MapRendererRaycastHit hitInfo);
-
-            Vector3 pos = _buildingsHolder.transform.InverseTransformVector(hitInfo.Point - _worldSpacePin) * ((float)_metersPerUnit * map.transform.lossyScale.x);
-
-            GameObject building = Instantiate(smallBuilding, _buildingsHolder.transform, false);
+            
+            _map.GetComponent<MapRenderer>().Raycast(ray, out MapRendererRaycastHit hitInfo);
+            
+            Vector3 pos = _buildingsHolder.transform.InverseTransformVector(hitInfo.Point - _worldSpacePin) * ((float)_metersPerUnit * _map.transform.lossyScale.x);
+            GameObject building = Object.Instantiate(_smallBuilding, _buildingsHolder.transform, false);
+            
             building.name = objectName;
-
             building.transform.localPosition += pos;
         }
     }
