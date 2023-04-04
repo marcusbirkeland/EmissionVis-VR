@@ -46,6 +46,14 @@ Material:
         m_Texture: {fileID: 2800000, guid: ece65225c5cfed747bf00b8a8aca9cb2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ColorMapMax:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorMapMin:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -96,30 +104,38 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Vector1_2B98EB7D: 0.1
-    - Vector1_338070E0: 10
+    - Vector1_2B98EB7D: 1
+    - Vector1_338070E0: 100
     - Vector1_3BED982A: 1
-    - Vector1_48A8130: 5
-    - Vector1_58F7CCC1: 1.16
-    - Vector1_7E1AD4D6: 100
+    - Vector1_48A8130: 1
+    - Vector1_58F7CCC1: 1.23
+    - Vector1_7E1AD4D6: 10
     - Vector1_8038C85: 1
     - Vector1_8AB010D0: 1
     - Vector1_908E92C3: 2
-    - Vector1_9A6C69D3: 0.2
+    - Vector1_9A6C69D3: 1
     - Vector1_A409D8BE: 200
     - Vector1_A6F9214A: 1
-    - Vector1_D2AA808A: 2
-    - Vector1_EF0B7AAC: 1
+    - Vector1_D2AA808A: 1
+    - Vector1_EF0B7AAC: 100
     - Vector1_F5A27251: 0.5
-    - Vector1_FEB1FFD5: 0
+    - Vector1_FEB1FFD5: 11
     - _AlphaClampMax: 0.8
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
+    - _ColorBlendFac: 0.1
+    - _ColorLowTreshold: 0.4
+    - _ColorMapAlpha: 0.26
+    - _ColorMapTransparency: 0
+    - _ColorMaxTreshold: 0.75
+    - _ColorMinOpacity: 0
+    - _ColorMinTreshold: 0.25
     - _Cull: 2
     - _Cutoff: 0.5
+    - _DarkSpotBrightness: 0.2
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0

@@ -7,89 +7,152 @@ using Microsoft.Geospatial;
 using System;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class MapDragging : MonoBehaviour
 {
-    public MapRenderer target;
-    public Collider targetCollider;
-    public XRRayInteractor rayInteractor;
-    public ActionBasedController controller;
-    public InputActionReference selectReference;
-    public double dragSpeed; 
+    public GameObject map;
+    public ActionBasedController rightController;
+    public ActionBasedController leftController;
+    public float dragSpeed = 70.0f;
 
-    private Vector3 previousPos;
-    private float correctedDragSpeed;
-    private RaycastHit hit;
-    private float deltaX;
-    private float deltaY;
-    private float deltaZ;
-    private Vector3 latVector;
-    private Vector3 lonVector;
-    private float latVectorLength;
-    private float lonVectorLength;
-    private double currentLat;
-    private double currentLon;
+    private MapRenderer target;
+    private Collider targetCollider;
+    private MapInteractionController interactionController; 
+    private XRRayInteractor rightRayInteractor;
+    private XRRayInteractor leftRayInteractor;
+
+    private Vector3 rightPreviousPos;
+    private Vector3 leftPreviousPos;
+
+    private bool rightEnabled = false;
+    private bool leftEnabled = false;
+
     // Start is called before the first frame update
     void Start()
     {
-        selectReference.action.started += Pressed;
-        selectReference.action.canceled += Released;
-        enabled = false;
+        target = map.GetComponent<MapRenderer>();
+        targetCollider = map.GetComponent<Collider>();
+        interactionController = map.GetComponent<MapInteractionController>();
+        rightRayInteractor = InitController(rightController, RightPressed, RightReleased);
+        leftRayInteractor = InitController(leftController, LeftPressed, LeftReleased);
     }
 
-    private void Pressed(InputAction.CallbackContext context)
+    private XRRayInteractor InitController(ActionBasedController controller, Action<InputAction.CallbackContext> pressed, Action<InputAction.CallbackContext> released)
     {
-        // "enabled" variable refers to whether this script is enabled or disabled
-        enabled = true;
-        previousPos = new Vector3(0.0f, 0.0f, 0.0f);
+        InputActionReference selectReference = controller.GetComponent<ActionBasedController>().activateAction.reference;
+        XRRayInteractor rayInteractor = controller.transform.GetChild(2).gameObject.GetComponent<XRRayInteractor>();
+
+        selectReference.action.started += pressed;
+        selectReference.action.canceled += released;
+
+        return rayInteractor;
     }
-    
-    private void Released(InputAction.CallbackContext context)
+
+    private void RightPressed(InputAction.CallbackContext context)
     {
-        enabled = false;
+        rightEnabled = true;
+        // Reset the previous position to some "null" value which can be used in comparisons
+        rightPreviousPos = Vector3.zero;
+    }
+
+    private void LeftPressed(InputAction.CallbackContext context)
+    {
+        leftEnabled = true;
+        leftPreviousPos = Vector3.zero;
+    }
+
+    private void RightReleased(InputAction.CallbackContext context)
+    {
+        rightEnabled = false;
+    }
+
+    private void LeftReleased(InputAction.CallbackContext context)
+    {
+        leftEnabled = false;
+    }
+
+    private Vector3 GetRayHit(XRRayInteractor rayInteractor)
+    {
+        RaycastHit? raycastHit;
+        Int32 raycastHitIndex;
+        RaycastResult? uiRaycastHit;
+        Int32 uiRaycastHitIndex;
+        bool isUIHitClosest;
+        if (!rayInteractor.TryGetCurrentRaycast(out raycastHit, out raycastHitIndex, out uiRaycastHit, out uiRaycastHitIndex, out isUIHitClosest)) return Vector3.zero;
+        if (uiRaycastHit is RaycastResult Uihit) return Vector3.zero;
+        if (raycastHit is RaycastHit hit)
+        {
+            if (hit.collider != targetCollider) return Vector3.zero;
+
+            // transform the raycast hit in world space to the map's local space
+            return map.transform.InverseTransformPoint(hit.point);
+        }
+        else return Vector3.zero;
+
+    }
+
+    private Vector3 Delta(Vector3 hit, ref Vector3 previousHit)
+    {
+        // If "previousHit" is not set to a valid hit we want the panning in the first frame to be stationary.
+        // This to avoid large jumps going from either Vector3.zero to "hit", or from "previousHit" from the last 
+        // button press to "hit" (which could be in two entirely different locations).
+        if (previousHit == Vector3.zero) previousHit = hit;
+        Vector3 deltaHit = previousHit - hit;
+        previousHit = hit;
+        return deltaHit;
+    }
+
+    private void TranslateMap(Vector3 delta)
+    {
+        // Interpreted as a change in Vector2(latitude, longitude)
+        interactionController.Pan(new Vector2(delta.z, -delta.x) * dragSpeed, true);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!rayInteractor.TryGetCurrent3DRaycastHit(out hit))
+        // hit points:
+        Vector3 rightHit = Vector3.zero;
+        Vector3 leftHit = Vector3.zero;
+        Vector3 pan = Vector3.zero;
+        Vector3 deltaRight = Vector3.zero;
+        Vector3 deltaLeft = Vector3.zero;
+        if (rightEnabled)
         {
-            return;
+            rightHit = GetRayHit(rightRayInteractor);
+            if (rightHit == Vector3.zero) { rightPreviousPos = Vector3.zero; return; }
+            deltaRight = Delta(rightHit, ref rightPreviousPos);
+            if (rightEnabled) pan += deltaRight;
+        }
+        if (leftEnabled)
+        {
+            leftHit = GetRayHit(leftRayInteractor);
+            if (leftHit == Vector3.zero) { leftPreviousPos = Vector3.zero; return; }
+            deltaLeft = Delta(leftHit, ref leftPreviousPos);
+            if (leftEnabled) pan += deltaLeft;
         }
 
-        if (hit.collider != targetCollider)
-        {
-            return;
-        }
+        // If panning is done by both controllers, pan by the average of their delta movement
+        TranslateMap(pan * (rightEnabled && leftEnabled ? 0.5f : 1.0f));
 
-        if (previousPos == new Vector3(0.0f, 0.0f, 0.0f))
-        {
-            previousPos = hit.point; 
-        }
+        if (!rightEnabled || !leftEnabled) return;
+        
+        float deltaZoom = 0;
+        deltaZoom += (float)((deltaRight.x - deltaLeft.x) * (leftHit.x > rightHit.x ? 1 : -1));
+        deltaZoom += (float)((deltaRight.y - deltaLeft.y) * (leftHit.y > rightHit.y ? 1 : -1));
+        deltaZoom += (float)((deltaRight.z - deltaLeft.z) * (leftHit.z > rightHit.z ? 1 : -1));
 
-        deltaX = (previousPos.x - hit.point.x);
-        deltaY = (previousPos.y - hit.point.y);
-        deltaZ = (previousPos.z - hit.point.z);
-        // initially (if not rotated) target.transform.right = Vector3(1.0, 0.0, 0.0)
-        latVector = target.transform.right;
-        latVectorLength = latVector.x * deltaX + latVector.y * deltaY + latVector.z * deltaZ;
+        Vector3 midpoint = (rightHit + leftHit) / 2;
 
-        // initially (if not rotated) target.transform.forward = Vector3(0.0, 0.0, 1.0)
-        lonVector = target.transform.forward;
-        lonVectorLength = lonVector.x * deltaX + lonVector.y * deltaY + lonVector.z * deltaZ;
+        if ((target.ZoomLevel + deltaZoom) < 3.0f) return; 
+        target.ZoomLevel += deltaZoom;
 
-        currentLat = target.Center.LatitudeInDegrees;
-        currentLon = target.Center.LongitudeInDegrees;
-
-        // Increasing ZoomLevel by 1 means doubling the map zoom. To retain proper movement on
-        // different ZoomLevels, divide by 2^ZoomLevel
-        // https://learn.microsoft.com/en-us/bingmaps/articles/understanding-scale-and-resolution
-        correctedDragSpeed = (float)(dragSpeed / Math.Pow(2.0, target.ZoomLevel));
-
-        // divide by cos(lat) as to adjust for the change in circumference (lon) at different latitutes
-        target.Center = new LatLon(currentLat + lonVectorLength * correctedDragSpeed, currentLon + 
-            (latVectorLength / Math.Cos((Math.PI / 180) * currentLat)) * correctedDragSpeed);
-
-        previousPos = hit.point;
+        // panning to the midpoint of the two controller rays that hit the map
+        // This equation assumes a 1 to 1 mapping between the ray and map pan (i.e. ray hitpoint
+        // stays in the same geographical location when panning) to work correctly.
+        // Increasing ZoomLevel by 1 means doubling the zoom, i.e. we need to move in the direction 
+        // "midpoint" by an amount "deltaZoom" * half the size of the map. 
+        TranslateMap(midpoint * deltaZoom * (target.MapDimension.x / 2));
     }
 }

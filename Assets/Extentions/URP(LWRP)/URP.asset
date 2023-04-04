@@ -30,7 +30,7 @@ MonoBehaviour:
   m_UpscalingFilter: 0
   m_FsrOverrideSharpness: 0
   m_FsrSharpness: 0.71
-  m_MainLightRenderingMode: 0
+  m_MainLightRenderingMode: 1
   m_MainLightShadowsSupported: 0
   m_MainLightShadowmapResolution: 256
   m_AdditionalLightsRenderingMode: 2
@@ -56,7 +56,7 @@ MonoBehaviour:
   m_NumIterationsEnclosingSphere: 64
   m_AdditionalLightsCookieResolution: 256
   m_AdditionalLightsCookieFormat: 2
-  m_UseSRPBatcher: 1
+  m_UseSRPBatcher: 0
   m_SupportsDynamicBatching: 1
   m_MixedLightingSupported: 1
   m_SupportsLightLayers: 0
