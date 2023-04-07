@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Microsoft.Maps.Unity;
 
+//NOTE: Never used. Consider deleting.
 public class MapSliderScale : MonoBehaviour
 {
     public MapRenderer target;

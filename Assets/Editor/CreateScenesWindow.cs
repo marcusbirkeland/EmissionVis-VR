@@ -1,4 +1,7 @@
 ﻿using System;
+using Editor.EditorWindowComponents;
+using Editor.NetCDF;
+using Editor.SceneManagement;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,7 +10,7 @@ namespace Editor
     //Main editor window application
     public class CreateScenesWindow : EditorWindow
     {
-        private NetCdfDataMaker _netCdfDataMaker;
+        private VariablesSelector _variablesSelector;
 
         private SceneAsset _selectedMiniatureScene;
         private SceneAsset _selectedFullScaleScene;
@@ -28,21 +31,21 @@ namespace Editor
         {
             _jsonFolderPath = $"{Application.dataPath}/Resources/MapData";
             
-            _netCdfDataMaker = new NetCdfDataMaker(_jsonFolderPath);
-            _netCdfDataMaker.OnDataComplete += CreateBothScenes;
+            _variablesSelector = new VariablesSelector(_jsonFolderPath);
+            _variablesSelector.OnDataComplete += CreateBothScenes;
         }
 
         
         private void OnGUI()
         {
-            _netCdfDataMaker.Draw();
+            _variablesSelector.Draw();
 
-            if (!_netCdfDataMaker.DataRetrieved) return;
+            if (!_variablesSelector.DataRetrieved) return;
             
             _selectedMiniatureScene = (SceneAsset)EditorGUILayout.ObjectField("Select miniature scene", _selectedMiniatureScene, typeof(SceneAsset), false);
             _selectedFullScaleScene = (SceneAsset)EditorGUILayout.ObjectField("Select full scale scene", _selectedFullScaleScene, typeof(SceneAsset), false);
 
-            _netCdfDataMaker.LoadVariablesButton();
+            _variablesSelector.LoadVariablesButton();
         }
 
         
@@ -51,14 +54,13 @@ namespace Editor
             Debug.Log("Creating both scenes");
 
             CreateMiniatureScene(CreateFullScaleScene);
-            
         }
 
         
         private void CreateMiniatureScene(Action onSceneCreated)
         {
             Debug.Log("Creating miniature scene");
-            _miniBuilder = new MiniatureSceneBuilder(_selectedMiniatureScene, _netCdfDataMaker.MapName, _jsonFolderPath, _netCdfDataMaker.BuildingCdfPath);
+            _miniBuilder = new MiniatureSceneBuilder(_selectedMiniatureScene, _variablesSelector.MapName, _jsonFolderPath, _variablesSelector.BuildingCdfPath);
             _miniBuilder.CreateMiniatureScene();
             
             _miniBuilder.CreateData(onSceneCreated);
@@ -68,8 +70,6 @@ namespace Editor
         private void CreateFullScaleScene()
         {
             Debug.Log("Creating full scale scene");
-            _miniBuilder = new MiniatureSceneBuilder(_selectedMiniatureScene, _netCdfDataMaker.MapName + "2", _jsonFolderPath, _netCdfDataMaker.BuildingCdfPath);
-            _miniBuilder.CreateMiniatureScene();
         }
     }
 }

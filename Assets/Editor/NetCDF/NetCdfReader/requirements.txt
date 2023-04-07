@@ -1,0 +1,5 @@
+﻿numpy
+matplotlib
+netCDF4
+scipy
+opencv-python
