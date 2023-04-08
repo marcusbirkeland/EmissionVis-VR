@@ -122,7 +122,7 @@ namespace Editor.CloudSpawner
             cloudManager.clouds = _cloud;
             cloudManager.imageDirectory = _imgDataPath;
             
-            CloudSlider slider = _cloud.GetComponent<CloudSlider>();
+            OldCloudSlider slider = _cloud.GetComponent<OldCloudSlider>();
             slider.cloudManager = cloudManager.gameObject;
         }
 

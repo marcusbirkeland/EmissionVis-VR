@@ -15,7 +15,7 @@ namespace MapUI
         [SerializeField]
         private Image buttonIcon;
         
-        public CloudSlider cloudSlider;
+        public OldCloudSlider cloudSlider;
 
         
         public void TogglePlaying()
