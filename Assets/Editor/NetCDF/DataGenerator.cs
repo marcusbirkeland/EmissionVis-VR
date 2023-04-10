@@ -13,7 +13,7 @@ namespace Editor.NetCDF
     {
         /**
          * <summary>
-         *  Creates all the necessary data files and folder structures based on the variables selected by the user.
+         *  Generates and saves the necessary data files and folder structures based on the variables selected by the user.
          * </summary>
          */
         public static void CreateDataFiles(string mapName, SingleVariableDropdown buildingData, SingleVariableDropdown heightMap, SingleVariableDropdown windSpeed, MultiVariableDropdown radiationData)
@@ -35,7 +35,7 @@ namespace Editor.NetCDF
         
         /**
          * <summary>
-         * Generates building data in CSV format for the given NetCDF variable and map name.
+         * Generates building data in CSV format for the given NetCDF variable and map name using a Python script.
          * </summary>
          * 
          * <param name="mapName">The name of the map for which the building data is generated.</param>
@@ -102,43 +102,18 @@ namespace Editor.NetCDF
                 GeneratePng(variable, outputPath, 30);
             }
         }
-        
-        
-        /**
-         * <summary>
-         *  Removes every character from a string that cannot be used as a fileName on the current os.
-         * </summary>
-         *
-         * <param name="input">The string to modify</param>
-         *
-         * <returns> A modified string without invalid characters.</returns>
-         */
-        private static string RemoveInvalidFilenameChars(string input)
-        {
-            List<char> invalidChars = new(Path.GetInvalidFileNameChars());
-            StringBuilder result = new();
 
-            foreach (char c in input)
-            {
-                if (invalidChars.Contains(c)) continue;
-                
-                result.Append(c);
-            }
 
-            return result.ToString();
-        }
-        
-        
         /**
          * <summary>
          * Generates a JSON file containing variable information for the given NetCDF files and saves it to the specified folder.
+         * Runs Python scripts (variable_getter.py and attribute_getter.py) to process the NetCDF files and generate the JSON output.
          * </summary>
          * 
          * <param name="ncFiles">A list of file paths for the NetCDF files to process.</param>
          * <param name="jsonFolderPath">The folder path where the generated JSON file will be saved.</param>
          * 
          * <remarks>
-         * This method runs a Python script (variable_getter.py) to process the NetCDF files and generate the JSON output.
          * The input format for the Python script is a string consisting of any number of NetCDF file locations followed by an output path for the JSON data.
          * Each value must be separated by a "$" character. The method checks for valid file paths and only processes files with the ".nc" extension.
          * </remarks>
@@ -187,7 +162,7 @@ namespace Editor.NetCDF
         
         /**
          * <summary>
-         * Generates one or several CSV files for the given NetCDF variable.
+         * Generates one or several CSV files for the given NetCDF variable using a Python script.
          * </summary>
          * 
          * <param name="variable">The NetCDF variable used to generate the CSV file(s).</param>
@@ -198,6 +173,22 @@ namespace Editor.NetCDF
             string inputString = variable + dataPath;
             
             PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_csv.py", inputString);
+        }
+        
+        
+        /**
+         * <summary>
+         * Generates a building CSV file using a Python script to process the NetCDF data.
+         * </summary>
+         * 
+         * <param name="variable">The NetCDF variable containing the building data.</param>
+         * <param name="dataPath">The folder path where the generated PNG file will be saved. Should not end in a "/"</param>
+         */
+        private static void GenerateBuildingCsv(NcVariable variable, string dataPath)
+        {
+            string inputString = variable + dataPath;
+            
+            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_building_csv.py", inputString);
         }
 
         
@@ -217,21 +208,30 @@ namespace Editor.NetCDF
 
             PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_png.py", inputString);
         }
-        
-        
+
+
         /**
          * <summary>
-         * Generates a building CSV file using a Python script to process the NetCDF data.
+         * Removes every character from a string that cannot be used as a fileName on the current operating system.
          * </summary>
-         * 
-         * <param name="variable">The NetCDF variable containing the building data.</param>
-         * <param name="dataPath">The folder path where the generated PNG file will be saved. Should not end in a "/"</param>
+         *
+         * <param name="input">The string to modify</param>
+         *
+         * <returns> A modified string without invalid characters.</returns>
          */
-        private static void GenerateBuildingCsv(NcVariable variable, string dataPath)
+        private static string RemoveInvalidFilenameChars(string input)
         {
-            string inputString = variable + dataPath;
-            
-            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_building_csv.py", inputString);
+            List<char> invalidChars = new(Path.GetInvalidFileNameChars());
+            StringBuilder result = new();
+
+            foreach (char c in input)
+            {
+                if (invalidChars.Contains(c)) continue;
+                
+                result.Append(c);
+            }
+
+            return result.ToString();
         }
     }
 }

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections;
-using Cloud;
+﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace NewMapUI
 {
     public class TimelineUI : MonoBehaviour
     {
-        [SerializeField]
-        private Slider slider;
+        [FormerlySerializedAs("slider")] [SerializeField]
+        private Slider timelineSlider;
         
         [SerializeField]
         private Button toggleButton;
@@ -24,12 +23,12 @@ namespace NewMapUI
         private Image buttonIcon;
 
         [SerializeField] 
-        private Text text;
+        private Text timeValueText;
         
         [SerializeField]        
         private float playbackRate = 0.5f;
         
-        public CloudManager cloudManager;
+        private static CloudManager CloudManager => MapUI.Instance.cloudManager;
 
         //NOTE: Represents a number of seconds since the playback started, not the database timestamps. 
         private float _currentTime;
@@ -39,7 +38,7 @@ namespace NewMapUI
 
         private void Start()
         {
-            slider.onValueChanged.AddListener(OnSliderChange);
+            timelineSlider.onValueChanged.AddListener(OnSliderChange);
             
             toggleButton.onClick.AddListener(TogglePlaying);
             UpdateButtonIcon();
@@ -51,8 +50,8 @@ namespace NewMapUI
         {
             if (!_isPlaying) return;
 
-            float maxValue = cloudManager.MapCount - 1.01f;
-            slider.maxValue = maxValue;
+            float maxValue = CloudManager.MapCount - 1.01f;
+            timelineSlider.maxValue = maxValue;
             _currentTime += playbackRate * Time.deltaTime;
 
             if (_currentTime >= maxValue)
@@ -60,24 +59,24 @@ namespace NewMapUI
                 _currentTime = 0.0f;
             }
 
-            slider.value = _currentTime;
+            timelineSlider.value = _currentTime;
         }
         
         
         private IEnumerator SetSliderValuesWhenReady()
         {
-            yield return new WaitUntil(() => cloudManager.MapCount > 0);
+            yield return new WaitUntil(() => CloudManager.MapCount > 0);
     
-            slider.minValue = 0;
-            text.text = "0.0";
-            slider.maxValue = cloudManager.MapCount - 1.1f;
+            timelineSlider.minValue = 0;
+            timeValueText.text = "0.0";
+            timelineSlider.maxValue = CloudManager.MapCount - 1.1f;
         }
         
         
         //Runs every time the slider value changes.
         private void OnSliderChange(float value)
         {
-            text.text = value.ToString("F2");
+            timeValueText.text = value.ToString("F2");
             
             ChangeTime(value);
         }
@@ -90,11 +89,11 @@ namespace NewMapUI
             
             if (nSteps != 0)
             {
-                cloudManager.UpdateTime(nSteps);
+                CloudManager.UpdateTime(nSteps);
             }
             _prevTime = _currentTime;
 
-            cloudManager.UpdateAlphaForRenderers(_currentTime);
+            CloudManager.UpdateAlphaForRenderers(_currentTime);
         }
         
         private static int NumSteps(float prev, float current)

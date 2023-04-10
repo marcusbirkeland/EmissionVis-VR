@@ -10,8 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 392283630433916741}
   - component: {fileID: 4840160460650602548}
-  - component: {fileID: 4840160460650602549}
-  - component: {fileID: 4840160460650602546}
   m_Layer: 0
   m_Name: 1KM_CLOUD
   m_TagString: Untagged
@@ -69,37 +67,6 @@ LODGroup:
     renderers:
     - renderer: {fileID: 6115224286224575870}
   m_Enabled: 1
---- !u!114 &4840160460650602549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1025267443096260095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 204afe094aa2c430bac658337b3e2eeb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alpha: 1
---- !u!114 &4840160460650602546
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1025267443096260095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1ed8b16f8bad9d46b602b4943177a57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cloudManager: {fileID: 0}
-  slider: {fileID: 0}
-  floatSlider: 0
-  text: {fileID: 0}
-  playbackRate: 0.5
-  isPlaying: 0
 --- !u!1 &2325006794940807928
 GameObject:
   m_ObjectHideFlags: 0

@@ -36,6 +36,5 @@ namespace MapUI
         {
             ChangeAlpha(slider.value);
         }
-    
     }
 }

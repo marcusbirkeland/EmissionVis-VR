@@ -15,7 +15,6 @@ namespace NewMapUI
         
         private readonly List<Renderer> _cloudRenderers = new();
         
-
         // All textures are loaded into this list, and used at runtime.
         private readonly List<CloudMap> _cloudMaps = new();
 
@@ -26,6 +25,8 @@ namespace NewMapUI
         private static readonly int ColorMapMin = Shader.PropertyToID("_ColorMapMin");
         private static readonly int ColorMapMax = Shader.PropertyToID("_ColorMapMax");
         private static readonly int ColorMapAlpha = Shader.PropertyToID("_ColorMapAlpha");
+        private static readonly int Opacity = Shader.PropertyToID("_Opacity");
+
 
         void Start()
         {
@@ -58,18 +59,17 @@ namespace NewMapUI
                 // Load all pngs from folder into the CloudMaps list.
                 foreach (FileInfo file in fileInfo)
                 {
-                    if (file.Extension.ToLower().Equals(".png"))
-                    {
-                        Texture2D texture = new(1, 1);
-                        Debug.Log("FOUND TEXTURE: " + file.FullName);
-                        byte[] bytes = File.ReadAllBytes(file.FullName);
+                    if (!file.Extension.ToLower().Equals(".png")) continue;
+                    
+                    Texture2D texture = new(1, 1);
+                    Debug.Log("FOUND TEXTURE: " + file.FullName);
+                    byte[] bytes = File.ReadAllBytes(file.FullName);
 
-                        texture.LoadImage(bytes);
-                        Debug.Log("Filename: " + file.Name);
-                        int seconds = int.Parse(file.Name.Split('.')[0]);
-                        CloudMap cm = new(texture, seconds);
-                        _cloudMaps.Add(cm);
-                    }
+                    texture.LoadImage(bytes);
+                    Debug.Log("Filename: " + file.Name);
+                    int seconds = int.Parse(file.Name.Split('.')[0]);
+                    CloudMap cm = new(texture, seconds);
+                    _cloudMaps.Add(cm);
                 }
             }
 
@@ -82,36 +82,26 @@ namespace NewMapUI
         }
         
         
-        //TODO: this should probably get changed to not require exactly four timestamps.
-        //I also dont think the texture check is necessary.
-        private IEnumerator SetMapsWhenReady()
+
+
+        public void ChangeAlpha(float value)
         {
-            yield return new WaitUntil(() =>
-                _cloudMaps.Count == 4 && _cloudRenderers[0].material.GetTexture(ColorMapMin) == null);
-            
-            _cloudMaps.Sort((c1,c2) => c1.Time - c2.Time);
-            SetMaps();
+            foreach (Renderer ren in _cloudRenderers)
+            {
+                ren.material.SetFloat(Opacity, value);
+            }
         }
         
         
         public void UpdateAlphaForRenderers(float time)
         {
+            // NOTE: Ideally, only the current loaded LOD would have to be altered. 
+            // There is no clear way to extract this information.
             foreach (Renderer ren in _cloudRenderers)
             {
                 ren.material.SetFloat(ColorMapAlpha, time % 1);
             }
         }
-        
-        
-        private void SetMaps()
-        {
-            foreach (Renderer ren in _cloudRenderers)
-            {
-                ren.material.SetTexture(ColorMapMin, _cloudMaps[_index].Texture);
-                ren.material.SetTexture(ColorMapMax, _cloudMaps[_index + 1].Texture);
-            }
-        }
-        
 
         public void UpdateTime(int steps)
         {
@@ -136,6 +126,27 @@ namespace NewMapUI
             SetMaps();
         }
         
+        
+        //TODO: this should probably get changed to not require exactly four timestamps.
+        //I also dont think the texture check is necessary.
+        private IEnumerator SetMapsWhenReady()
+        {
+            yield return new WaitUntil(() =>
+                _cloudMaps.Count == 4 && _cloudRenderers[0].material.GetTexture(ColorMapMin) == null);
+            
+            _cloudMaps.Sort((c1,c2) => c1.Time - c2.Time);
+            SetMaps();
+        }
+        
+        private void SetMaps()
+        {
+            foreach (Renderer ren in _cloudRenderers)
+            {
+                ren.material.SetTexture(ColorMapMin, _cloudMaps[_index].Texture);
+                ren.material.SetTexture(ColorMapMax, _cloudMaps[_index + 1].Texture);
+            }
+        }
+
         private void IncrementTime(int steps)
         {
             if (_index + steps + 1 > _cloudMaps.Count)
@@ -155,7 +166,7 @@ namespace NewMapUI
         }
         
 
-        IEnumerator GetAndroidImageFromPath(string fileName)
+        private IEnumerator GetAndroidImageFromPath(string fileName)
         {
             // Unity copies any files placed in the folder called StreamingAssets in a Unity Project verbatim to a particular folder on the target machine.
             // To retrieve the folder, use the Application.streamingAssetsPath property.
