@@ -1,6 +1,5 @@
 ﻿using System.Collections;
-using Editor.BuildingsSpawner;
-using Editor.CloudsSpawner;
+using Editor.VisualizationSpawner;
 using Microsoft.Maps.Unity;
 using UnityEditor;
 using UnityEditor.SceneManagement;

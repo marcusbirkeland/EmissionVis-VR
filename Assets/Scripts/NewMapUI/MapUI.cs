@@ -36,7 +36,7 @@ namespace NewMapUI
                 iar.action.started += Toggle;
             }
 
-            gameObject.SetActive(true);
+            gameObject.SetActive(false);
         }
         
         private void OnDestroy() {

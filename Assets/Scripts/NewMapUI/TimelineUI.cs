@@ -34,7 +34,7 @@ namespace NewMapUI
         private float _currentTime;
         private float _prevTime;
 
-        private bool _isPlaying = true;
+        private bool _isPlaying;
 
         private void Start()
         {
