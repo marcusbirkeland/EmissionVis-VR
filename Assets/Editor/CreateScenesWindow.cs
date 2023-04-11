@@ -1,6 +1,5 @@
 ﻿using System;
 using Editor.EditorWindowComponents;
-using Editor.NetCDF;
 using Editor.SceneManagement;
 using UnityEditor;
 using UnityEngine;
@@ -61,8 +60,8 @@ namespace Editor
         {
             Debug.Log("Creating miniature scene");
             _miniBuilder = new MiniatureSceneBuilder(_selectedMiniatureScene, _variablesSelector.MapName, _jsonFolderPath, _variablesSelector.BuildingCdfPath);
-            _miniBuilder.CreateMiniatureScene();
             
+            _miniBuilder.CreateMiniatureScene();
             _miniBuilder.CreateData(onSceneCreated);
         }
 

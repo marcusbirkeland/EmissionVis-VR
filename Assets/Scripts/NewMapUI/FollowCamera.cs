@@ -4,7 +4,7 @@ namespace NewMapUI
 {
     public class FollowCamera : MonoBehaviour
     {
-        [SerializeField] private Transform xrCamera;
+        private Transform _xrCamera;
         [SerializeField] private float followDistance = 2.0f;
         [SerializeField] private float rotationSpeed = 3.0f;
         [SerializeField] private float maxRotationAngle = 60.0f;
@@ -16,26 +16,26 @@ namespace NewMapUI
         private void Awake()
         {
             // If the xrCamera is not assigned, use the main camera
-            if (xrCamera == null)
+            if (_xrCamera == null)
             {
-                xrCamera = Camera.main.transform;
+                _xrCamera = Camera.main.transform;
             }
 
             UpdateTargetPosition();
             transform.position = _targetPosition;
-            _previousCameraRotation = xrCamera.rotation;
+            _previousCameraRotation = _xrCamera.rotation;
         }
 
         private void Update()
         {
             // Calculate the angle difference between the current and previous camera rotations
-            float angleDifference = Quaternion.Angle(_previousCameraRotation, xrCamera.rotation);
+            float angleDifference = Quaternion.Angle(_previousCameraRotation, _xrCamera.rotation);
 
             // Update the target position if the angle difference exceeds the maximum allowed rotation angle
             if (angleDifference >= maxRotationAngle)
             {
                 UpdateTargetPosition();
-                _previousCameraRotation = xrCamera.rotation;
+                _previousCameraRotation = _xrCamera.rotation;
             }
 
             // Move the UI smoothly towards the target position
@@ -48,10 +48,10 @@ namespace NewMapUI
         private void UpdateTargetPosition()
         {
             // Project the camera's forward vector onto the horizontal plane
-            Vector3 cameraForwardHorizontal = Vector3.ProjectOnPlane(xrCamera.forward, Vector3.up).normalized;
+            Vector3 cameraForwardHorizontal = Vector3.ProjectOnPlane(_xrCamera.forward, Vector3.up).normalized;
 
             // Update the target position based on the camera's horizontal forward vector
-            _targetPosition = xrCamera.position + cameraForwardHorizontal * followDistance;
+            _targetPosition = _xrCamera.position + cameraForwardHorizontal * followDistance;
 
             // Maintain the current vertical position
             _targetPosition.y = transform.position.y;
@@ -60,7 +60,7 @@ namespace NewMapUI
 
         private void RotateUIFacingCamera()
         {
-            Vector3 directionToCamera = xrCamera.position - transform.position;
+            Vector3 directionToCamera = _xrCamera.position - transform.position;
             Vector3 directionToCameraHorizontal = Vector3.ProjectOnPlane(directionToCamera, Vector3.up);
             Quaternion targetRotation = Quaternion.LookRotation(-directionToCameraHorizontal);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Maps.Unity;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,8 +13,8 @@ namespace MapUI
         public MapPin pinToToggle;
 
         [Tooltip("*ONLY for ArcGIS map*")]
-        public GameObject objectToToggle; 
-
+        public GameObject objectToToggle;
+        
         public void ToggleObjectActiveState()
         {
             if (pinToToggle) pinToToggle.enabled = gameObject.GetComponent<Toggle>().isOn;

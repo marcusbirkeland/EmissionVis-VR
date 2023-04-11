@@ -1,3 +1,4 @@
+using Microsoft.Maps.Unity;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,13 +9,15 @@ namespace NewMapUI
     public class MapUI : MonoBehaviour
     {
         public static MapUI Instance { get; private set; }
-
-        public CloudManager cloudManager;
         
         [SerializeField]
         private InputActionReference [] inputActions;
 
-
+        //Must be static to be accessible with editor script
+        public static CloudManager CloudManager;
+        public static GameObject BuildingHolder;
+        public static GameObject RadiationHolder;
+        
         private void Awake()
         {
             if (Instance == null)
@@ -31,7 +34,8 @@ namespace NewMapUI
             foreach(InputActionReference iar in inputActions){
                 iar.action.started += Toggle;
             }
-            Toggle();
+
+            gameObject.SetActive(false);
         }
         
         private void OnDestroy() {

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using Editor.BuildingsSpawner;
+using Editor.CloudsSpawner;
 using Microsoft.Maps.Unity;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -105,13 +106,36 @@ namespace Editor.SceneManagement
          
          private void CreateRadiation()
          {
-             Debug.Log("Creating radiation data");
+             Debug.Log("Creating radiation");
          }
 
          
          private void CreateClouds()
          {
              Debug.Log("Creating clouds");
+             MapRenderer mapRenderer = Object.FindObjectOfType<MapRenderer>();
+
+             if (mapRenderer == null)
+             {
+                 Debug.LogError("The scene is missing a mapRenderer component.");
+                 return;
+             }
+
+             const string cloudPrefab = "1KM_CLOUD";
+             const string cloudManagerPrefab = "CloudManager";
+
+             CloudSpawner spawner = new(
+                 $"{_jsonFolderPath}/{_mapName}/", 
+                 $"{_jsonFolderPath}/attributes.json", 
+                 _cdfPath, 
+                 mapRenderer.gameObject, 
+                 cloudPrefab,
+                 cloudManagerPrefab,
+                 -3.1f);
+
+             spawner.SpawnAndSetupCloud();
+
+             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
          }
          
          

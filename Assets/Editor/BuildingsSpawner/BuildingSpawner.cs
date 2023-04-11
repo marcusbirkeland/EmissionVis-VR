@@ -114,7 +114,7 @@ namespace Editor.BuildingsSpawner
             for (int i = _map.transform.childCount - 1; i >= 0; i--)
             {
                 Transform child = _map.transform.GetChild(i);
-                if (child.name == "Map Buildings")
+                if (child.name == "Buildings Holder")
                 {
                     Object.DestroyImmediate(child.gameObject);
                 }
@@ -127,9 +127,11 @@ namespace Editor.BuildingsSpawner
             _metersPerUnit = mapRenderer.ComputeUnityToMapScaleRatio(_selectedCdfData.position) / _map.transform.lossyScale.x;
             _worldSpacePin = mapRenderer.TransformLatLonAltToWorldPoint(_selectedCdfData.position);
             
-            _buildingsHolder = new GameObject("Map Buildings");
+            _buildingsHolder = new GameObject("Buildings Holder");
             _buildingsHolder.transform.SetParent(_map.transform, false);
             _buildingsHolder.transform.localRotation = Quaternion.Euler(0, _rotationAngle, 0);
+
+            NewMapUI.MapUI.BuildingHolder = _buildingsHolder;
 
             MapPin mapPin = _buildingsHolder.AddComponent<MapPin>();
             mapPin.Location = _selectedCdfData.position;
