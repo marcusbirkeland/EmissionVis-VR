@@ -53,6 +53,29 @@ namespace NewMapUI
             } 
             else
             {
+                //TODO: implement this alternative approach with better practices.
+                //Requires a path relative to the resources folder, and not a complete filepath.
+                
+                /* 
+                Texture2D[] textures = Resources.LoadAll<Texture2D>(imageDirectory);
+
+                foreach (Texture2D texture in textures)
+                {
+                    string fileName = texture.name;
+                    Debug.Log("FOUND TEXTURE: " + fileName);
+
+                    if (int.TryParse(fileName, out int seconds))
+                    {
+                        CloudMap cm = new(texture, seconds);
+                        _cloudMaps.Add(cm);
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to parse texture name as integer: " + fileName);
+                    }
+                }
+                */
+                
                 DirectoryInfo info = new (imageDirectory);
                 FileInfo[] fileInfo = info.GetFiles();
 
@@ -69,7 +92,7 @@ namespace NewMapUI
                     Debug.Log("Filename: " + file.Name);
                     int seconds = int.Parse(file.Name.Split('.')[0]);
                     CloudMap cm = new(texture, seconds);
-                    _cloudMaps.Add(cm);
+                    _cloudMaps.Add(cm);  
                 }
             }
 
@@ -80,8 +103,7 @@ namespace NewMapUI
 
             StartCoroutine(SetMapsWhenReady());
         }
-        
-        
+
 
 
         public void ChangeAlpha(float value)

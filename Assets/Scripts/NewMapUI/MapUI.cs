@@ -1,6 +1,7 @@
 using Microsoft.Maps.Unity;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace NewMapUI
 {
@@ -14,9 +15,9 @@ namespace NewMapUI
         private InputActionReference [] inputActions;
 
         //Must be static to be accessible with editor script
-        public static CloudManager CloudManager;
-        public static GameObject BuildingHolder;
-        public static GameObject RadiationHolder;
+        public CloudManager cloudManager;
+        public GameObject buildingHolder;
+        public GameObject radiationHolder;
         
         private void Awake()
         {
@@ -35,7 +36,7 @@ namespace NewMapUI
                 iar.action.started += Toggle;
             }
 
-            gameObject.SetActive(false);
+            gameObject.SetActive(true);
         }
         
         private void OnDestroy() {

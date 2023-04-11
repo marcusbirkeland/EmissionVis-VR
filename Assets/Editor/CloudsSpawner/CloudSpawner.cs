@@ -151,7 +151,7 @@ namespace Editor.CloudsSpawner
             cloudManager.clouds = _cloud;
             cloudManager.imageDirectory = _imgDataPath;
 
-            NewMapUI.MapUI.CloudManager = cloudManager;
+            MapUISetup.SetCloudManager(cloudManager);
         }
 
         

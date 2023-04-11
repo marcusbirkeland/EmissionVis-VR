@@ -131,15 +131,15 @@ namespace Editor.BuildingsSpawner
             _buildingsHolder.transform.SetParent(_map.transform, false);
             _buildingsHolder.transform.localRotation = Quaternion.Euler(0, _rotationAngle, 0);
 
-            NewMapUI.MapUI.BuildingHolder = _buildingsHolder;
+            MapUISetup.SetBuildingHolder(_buildingsHolder);
 
             MapPin mapPin = _buildingsHolder.AddComponent<MapPin>();
             mapPin.Location = _selectedCdfData.position;
             mapPin.UseRealWorldScale = true;
             mapPin.AltitudeReference = AltitudeReference.Ellipsoid;
         }
-        
-        
+
+
         private void SpawnBuilding(BuildingData buildingData)
         {
             float distanceX = (float)(buildingData.X / _metersPerUnit);

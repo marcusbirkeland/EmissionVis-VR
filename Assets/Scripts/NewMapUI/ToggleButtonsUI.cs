@@ -24,12 +24,12 @@ namespace NewMapUI
 
         private void ToggleBuildings(bool value)
         {
-            NewToggleObjectScript.ToggleActiveState(MapUI.BuildingHolder, value);
+            NewToggleObjectScript.ToggleActiveState(MapUI.Instance.buildingHolder, value);
         }
 
         private void ToggleRadiation(bool value)
         {
-            NewToggleObjectScript.ToggleActiveState(MapUI.RadiationHolder, value);
+            NewToggleObjectScript.ToggleActiveState(MapUI.Instance.radiationHolder, value);
         }
     }
 }
