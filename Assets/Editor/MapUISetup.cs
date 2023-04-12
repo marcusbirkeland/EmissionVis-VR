@@ -1,6 +1,7 @@
 ﻿using System;
+using MapUI;
 using UnityEngine;
-using NewMapUI;
+using Visualization;
 using Object = UnityEngine.Object;
 
 namespace Editor
@@ -10,28 +11,28 @@ namespace Editor
         
         public static void SetBuildingHolder(GameObject holder)
         {
-            NewMapUI.MapUI ui = FindMapUIInScene();
+            MapUI.MapUI ui = FindMapUIInScene();
 
             ui.buildingHolder = holder;
         }
 
         public static void SetRadiationHolder(GameObject holder)
         {
-            NewMapUI.MapUI ui = FindMapUIInScene();
+            MapUI.MapUI ui = FindMapUIInScene();
 
             ui.radiationHolder = holder;
         }
 
         public static void SetCloudManager(CloudManager manager)
         {
-            NewMapUI.MapUI ui = FindMapUIInScene();
+            MapUI.MapUI ui = FindMapUIInScene();
 
             ui.cloudManager = manager;
         }
         
-        private static NewMapUI.MapUI FindMapUIInScene()
+        private static MapUI.MapUI FindMapUIInScene()
         {
-            NewMapUI.MapUI mapUI = Object.FindObjectOfType<NewMapUI.MapUI>();
+            MapUI.MapUI mapUI = Object.FindObjectOfType<MapUI.MapUI>();
             if (mapUI == null)
             {
                 throw new Exception("There is no MapUI in the scene!");

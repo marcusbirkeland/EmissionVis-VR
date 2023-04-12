@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Esri.ArcGISMapsSDK.Components;
 using Microsoft.Maps.Unity;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -9,13 +10,13 @@ namespace Editor.SceneManagement
 {
     public static class SceneDuplicator
     {
-        public static bool CreateAndLoadDuplicateScene(SceneAsset templateSceneAsset, string mapName)
+        public static void CreateAndLoadDuplicateScene(SceneAsset templateSceneAsset, string mapName)
         {
             //No assets selected
             if (templateSceneAsset == null)
             {
                 Debug.LogError("Invalid SceneAsset provided.");
-                return false;
+                return;
             }
             
             string templateScenePath = AssetDatabase.GetAssetPath(templateSceneAsset);
@@ -25,13 +26,13 @@ namespace Editor.SceneManagement
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
             {
                 Debug.Log("Scene creation cancelled by user.");
-                return false;
+                return;
             }
             
-            if (!HasMapRenderer(templateScenePath))
+            if (!HasMapComponent(templateScenePath))
             {
-                Debug.LogError("The selected scene does not contain a GameObject with a MapRenderer component. Please select a different scene.");
-                return false;
+                Debug.LogError("The selected scene does not contain a GameObject with a MapRenderer or an ArcGis Map component. Please verify the template scenes.");
+                return;
             }
 
             string newScenePath = Path.Combine("Assets", mapName + ".unity");
@@ -48,7 +49,7 @@ namespace Editor.SceneManagement
                 if (!replace)
                 {
                     Debug.Log("Scene creation cancelled by user.");
-                    return false;
+                    return;
                 }
 
                 // Delete the existing scene file
@@ -71,24 +72,24 @@ namespace Editor.SceneManagement
             if (!saveSuccess)
             {
                 Debug.LogError("Failed to save the new scene.");
-                return false;
+                return;
             }
             
             Debug.Log($"Scene '{mapName}' created and saved at '{newScenePath}'.");
-            return true;
         }
 
 
         // Check if the templateScene has a mapRenderer component, returns false, and loads the original scene if it doesnt.
-        private static bool HasMapRenderer(string scenePath)
+        private static bool HasMapComponent(string scenePath)
         {
             Scene originalScene = SceneManager.GetActiveScene();
             string originalScenePath = originalScene.path;
 
             EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
             MapRenderer mapRenderer = Object.FindObjectOfType<MapRenderer>();
+            ArcGISMapComponent gisMapComponent = Object.FindObjectOfType<ArcGISMapComponent>();
 
-            if (mapRenderer != null) return true;
+            if (mapRenderer != null || gisMapComponent != null) return true;
             
             EditorSceneManager.OpenScene(originalScenePath, OpenSceneMode.Single);
             return false;

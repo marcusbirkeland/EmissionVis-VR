@@ -1,24 +1,25 @@
-using System;
+﻿using System;
+using JetBrains.Annotations;
 using Microsoft.Maps.Unity;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace MapUI
 {
-    //Toggles the visibility of a data gameObject.
-    //Works with both Bing maps MapPins, and regular gameObjects.
-    public class ToggleObjectScript : MonoBehaviour
+    public static class ToggleObjectScript
     {
-        [Tooltip("*ONLY for Bing map* (can't toggle active state of game objects containing a map pin component).")]
-        public MapPin pinToToggle;
-
-        [Tooltip("*ONLY for ArcGIS map*")]
-        public GameObject objectToToggle;
-        
-        public void ToggleObjectActiveState()
+        public static void ToggleActiveState([NotNull] GameObject map, bool isOn)
         {
-            if (pinToToggle) pinToToggle.enabled = gameObject.GetComponent<Toggle>().isOn;
-            if (objectToToggle) objectToToggle.SetActive(gameObject.GetComponent<Toggle>().isOn);
+            if (map == null) throw new ArgumentNullException(nameof(map));
+            
+            MapPin mapPin = map.GetComponent<MapPin>();
+            
+            if (mapPin)
+            {
+                mapPin.enabled = isOn;
+                return;
+            }
+            
+            map.SetActive(!map.activeSelf);
         }
     }
 }

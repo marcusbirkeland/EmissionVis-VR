@@ -36,9 +36,9 @@ public class MapDraggingHandler : MonoBehaviour
         _rightRayInteractor = InitController(rightController, RightPressed, RightReleased);
         _leftRayInteractor = InitController(leftController, LeftPressed, LeftReleased);
     }
-    
-    
-    void Update()
+
+
+    private void Update()
     {
         if (!_rightEnabled && !_leftEnabled) return;
 
@@ -66,7 +66,7 @@ public class MapDraggingHandler : MonoBehaviour
     }
 
 
-    private static XRRayInteractor InitController(ActionBasedController controller, Action<InputAction.CallbackContext> pressed, Action<InputAction.CallbackContext> released)
+    private static XRRayInteractor InitController(Component controller, Action<InputAction.CallbackContext> pressed, Action<InputAction.CallbackContext> released)
     {
         InputActionReference selectReference = controller.GetComponent<ActionBasedController>().activateAction.reference;
         XRRayInteractor rayInteractor = controller.transform.GetChild(2).gameObject.GetComponent<XRRayInteractor>();

@@ -1,29 +1,24 @@
 ﻿using System;
 using System.IO;
-using Editor.NetCDF;
 using Microsoft.Geospatial;
 using Microsoft.Maps.Unity;
-using NewMapUI;
-using UnityEditor;
 using UnityEngine;
+using Visualization;
 using Object = UnityEngine.Object;
 
 namespace Editor.VisualizationSpawner
 {
-    public class CloudSpawner
+    public class CloudSpawner : MapVisualizerSpawner
     {
-        private readonly AttributeDataGetter.FileAttributes _selectedCdfAttributes;
         private readonly string _imgDataPath;
         private readonly string _cloudPrefabName;
         private readonly string _cloudManagerPrefabName;
-        private readonly GameObject _map;
-        private readonly float _rotationAngle;
 
         private GameObject _cloud;
-        private GameObject _cloudHolder;
 
 
-        public CloudSpawner(string imageFolderPath, string attributesFilePath, string cdfFilePath, GameObject map, string cloudPrefabName, string cloudManagerPrefabName, float rotationAngle)
+        public CloudSpawner(string imageFolderPath, string attributesFilePath, string cdfFilePath, GameObject map, string cloudPrefabName, string cloudManagerPrefabName, float rotationAngle) 
+            : base(attributesFilePath, cdfFilePath, map, rotationAngle)
         {
             _imgDataPath = imageFolderPath + "WindSpeed/";
 
@@ -32,44 +27,21 @@ namespace Editor.VisualizationSpawner
                 throw new Exception($"The directory {_imgDataPath} does not contain any image files on the .png format, or does not exist.");
             }
             
-            _selectedCdfAttributes = AttributeDataGetter.GetFileAttributes(attributesFilePath, cdfFilePath);
-            
-            MapRenderer mapRenderer = map.GetComponent<MapRenderer>();
-            if (mapRenderer == null)
-            {
-                throw new Exception("The selected Map GameObject does not have a MapRenderer component. Please select a GameObject with the MapRenderer component.");
-            }
-            _map = map;
-            
             _cloudPrefabName = cloudPrefabName;
             _cloudManagerPrefabName = cloudManagerPrefabName;
-
-            _rotationAngle = rotationAngle;
         }
 
         
         public void SpawnAndSetupCloud()
         {
-            if (!DataFilesExist(_imgDataPath))
-            {
-                Debug.LogError($"The directory '{_imgDataPath}' does not exist.");
-                return;
-            }
-
-            MapRenderer mapRenderer = _map.GetComponent<MapRenderer>();
-            if (mapRenderer == null) return;
-
-            EditorUtility.DisplayProgressBar("Creating clouds", "Deleting previous clouds", -1);
-            DeletePreviousCloud();
+            DeletePreviousObject("Cloud Holder");
+            DeletePreviousObject("Cloud Manager");
             
-            EditorUtility.DisplayProgressBar("Creating clouds", "Creating clouds...", -1);
             CreateCloudHolder();
+            
             SpawnCloud();
             
-            EditorUtility.DisplayProgressBar("Creating clouds", "Setting up cloud manager...", -1);
             SetupCloudManager();
-            
-            EditorUtility.ClearProgressBar();
             
             Debug.Log("Finished creating the cloud");
         }
@@ -77,13 +49,13 @@ namespace Editor.VisualizationSpawner
         
         private void CreateCloudHolder()
         {
-            _cloudHolder = new GameObject("Cloud Holder");
-            _cloudHolder.transform.SetParent(_map.transform, false);
-            _cloudHolder.transform.localRotation = Quaternion.Euler(0, 90 + _rotationAngle, 0);
+            VisualizerHolder = new GameObject("Cloud Holder");
+            VisualizerHolder.transform.SetParent(Map.transform, false);
+            VisualizerHolder.transform.localRotation = Quaternion.Euler(0, 90 + RotationAngle, 0);
 
-            MapPin mapPin = _cloudHolder.AddComponent<MapPin>();
+            MapPin mapPin = VisualizerHolder.AddComponent<MapPin>();
 
-            mapPin.Location = _selectedCdfAttributes.position;
+            mapPin.Location = SelectedCdfAttributes.position;
             mapPin.IsLayerSynchronized = true;
             mapPin.UseRealWorldScale = true;
             mapPin.ShowOutsideMapBounds = true;
@@ -102,30 +74,17 @@ namespace Editor.VisualizationSpawner
                 return;
             }
 
-            _cloud = Object.Instantiate(cloudPrefab, _cloudHolder.transform, false);
+            _cloud = Object.Instantiate(cloudPrefab, VisualizerHolder.transform, false);
 
             _cloud.name = "Cloud";
 
             LODGroup lodGroup = _cloud.GetComponent<LODGroup>();
-            lodGroup.size = _selectedCdfAttributes.size.x;
+            lodGroup.size = SelectedCdfAttributes.size.x;
 
-            float scale = _selectedCdfAttributes.size.x / 1000.0f;
+            float scale = SelectedCdfAttributes.size.x / 1000.0f;
             _cloud.transform.localScale = new Vector3(scale, scale, scale);
         }
 
-        
-        private void DeletePreviousCloud()
-        {
-            for (int i = _map.transform.childCount - 1; i >= 0; i--)
-            {
-                Transform child = _map.transform.GetChild(i);
-                if (child.name == "Cloud Holder" || child.name == "Cloud Manager")
-                {
-                    Object.DestroyImmediate(child.gameObject);
-                }
-            }
-        }
-        
 
         private void SetupCloudManager()
         {

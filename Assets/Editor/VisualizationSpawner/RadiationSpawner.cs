@@ -1,59 +1,46 @@
-﻿using System;
-using System.IO;
-using Editor.NetCDF;
-using Microsoft.Geospatial;
+﻿using Microsoft.Geospatial;
 using Microsoft.Maps.Unity;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Editor.VisualizationSpawner
 {
-    public class RadiationSpawner
+    public class RadiationSpawner : MapVisualizerSpawner
     {
-        private readonly AttributeDataGetter.FileAttributes _selectedCdfAttributes;
         private readonly Texture2D _shaderImage;
         private readonly string _radiationPrefabName;
-        private readonly GameObject _map;
-        private readonly float _rotationAngle;
-
-        private GameObject _radiationHolder;
         
         
-        public RadiationSpawner(Texture2D shaderImage, string attributesFilePath, string cdfFilePath, GameObject map, string radiationPrefabName, float rotationAngle)
+        public RadiationSpawner(Texture2D shaderImage, string attributesFilePath, string cdfFilePath, GameObject map, string radiationPrefabName, float rotationAngle) 
+            : base(attributesFilePath, cdfFilePath, map, rotationAngle)
         {
             _shaderImage = shaderImage;
-            _selectedCdfAttributes = AttributeDataGetter.GetFileAttributes(attributesFilePath, cdfFilePath);
-            
-            MapRenderer mapRenderer = map.GetComponent<MapRenderer>();
-            if (mapRenderer == null)
-            {
-                throw new Exception("The selected Map GameObject does not have a MapRenderer component. Please select a GameObject with the MapRenderer component.");
-            }
-            _map = map;
             _radiationPrefabName = radiationPrefabName;
-            _rotationAngle = rotationAngle;
         }
 
+        
         public void SpawnAndSetupRadiation()
         {
-            DeletePreviousRadiation();
-            
+            DeletePreviousObject("Radiation Holder");
             CreateRadiationHolder();
             
             SpawnRadiation();
+            
+            Debug.Log("Finished creating radiation");
         }
 
+        
         private void CreateRadiationHolder()
         {
-            _radiationHolder = new GameObject("Radiation Holder");
-            _radiationHolder.transform.SetParent(_map.transform, false);
-            _radiationHolder.transform.localRotation = Quaternion.Euler(0, 90 + _rotationAngle, 0);
+            VisualizerHolder = new GameObject("Radiation Holder");
+            VisualizerHolder.transform.SetParent(Map.transform, false);
+            VisualizerHolder.transform.localRotation = Quaternion.Euler(0, 90 + RotationAngle, 0);
             
-            MapUISetup.SetRadiationHolder(_radiationHolder);
+            MapUISetup.SetRadiationHolder(VisualizerHolder);
 
-            MapPin mapPin = _radiationHolder.AddComponent<MapPin>();
+            MapPin mapPin = VisualizerHolder.AddComponent<MapPin>();
 
-            mapPin.Location = _selectedCdfAttributes.position;
+            mapPin.Location = SelectedCdfAttributes.position;
             mapPin.IsLayerSynchronized = true;
             mapPin.UseRealWorldScale = true;
             mapPin.ShowOutsideMapBounds = true;
@@ -61,6 +48,8 @@ namespace Editor.VisualizationSpawner
             mapPin.AltitudeReference = AltitudeReference.Surface;
         }
 
+        
+        //TODO: Implement setting the image/images correctly
         private void SpawnRadiation()
         {
             GameObject cloudPrefab = Resources.Load<GameObject>($"Prefabs/{_radiationPrefabName}");
@@ -71,27 +60,15 @@ namespace Editor.VisualizationSpawner
                 return;
             }
 
-            GameObject rad = Object.Instantiate(cloudPrefab, _radiationHolder.transform, false);
+            GameObject rad = Object.Instantiate(cloudPrefab, VisualizerHolder.transform, false);
 
             rad.name = "Radiation";
 
             LODGroup lodGroup = rad.GetComponent<LODGroup>();
-            lodGroup.size = _selectedCdfAttributes.size.x;
+            lodGroup.size = SelectedCdfAttributes.size.x;
 
-            float scale = _selectedCdfAttributes.size.x / 1000.0f;
+            float scale = SelectedCdfAttributes.size.x / 1000.0f;
             rad.transform.localScale = new Vector3(scale, scale, scale);
-        }
-
-        private void DeletePreviousRadiation()
-        {
-            for (int i = _map.transform.childCount - 1; i >= 0; i--)
-            {
-                Transform child = _map.transform.GetChild(i);
-                if (child.name == "Radiation Holder")
-                {
-                    Object.DestroyImmediate(child.gameObject);
-                }
-            }
         }
     }
 }
