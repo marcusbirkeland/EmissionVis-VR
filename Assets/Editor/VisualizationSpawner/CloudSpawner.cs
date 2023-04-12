@@ -77,7 +77,7 @@ namespace Editor.VisualizationSpawner
         
         private void CreateCloudHolder()
         {
-            _cloudHolder = new GameObject("CloudHolder");
+            _cloudHolder = new GameObject("Cloud Holder");
             _cloudHolder.transform.SetParent(_map.transform, false);
             _cloudHolder.transform.localRotation = Quaternion.Euler(0, 90 + _rotationAngle, 0);
 

@@ -24,11 +24,14 @@ EditorBuildSettings:
     path: Assets/testScene.unity
     guid: f2ac5718ae3caa247bb0341b0e4c57b3
   - enabled: 0
-    path: Assets/Bergen Miniature.unity
-    guid: d51765011147efc47bfd74453e2dd789
-  - enabled: 1
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: Assets/Miniature Template.unity
     guid: 270ef4c4ac7de984c89bf755190576ee
+  - enabled: 1
+    path: Assets/Bergen Miniature.unity
+    guid: 9ea7614cb14b14641baab7469f200ea1
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260,
       type: 2}

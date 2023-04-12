@@ -104,8 +104,6 @@ namespace NewMapUI
             StartCoroutine(SetMapsWhenReady());
         }
 
-
-
         public void ChangeAlpha(float value)
         {
             foreach (Renderer ren in _cloudRenderers)

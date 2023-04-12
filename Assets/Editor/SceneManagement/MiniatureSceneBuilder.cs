@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.IO;
 using Editor.VisualizationSpawner;
 using Microsoft.Maps.Unity;
 using UnityEditor;
@@ -106,6 +107,55 @@ namespace Editor.SceneManagement
          private void CreateRadiation()
          {
              Debug.Log("Creating radiation");
+             MapRenderer mapRenderer = Object.FindObjectOfType<MapRenderer>();
+
+             if (mapRenderer == null)
+             {
+                 Debug.LogError("The scene is missing a mapRenderer component.");
+                 return;
+             }
+
+             Texture2D img = LoadFirstRadiationImage($"{_jsonFolderPath}/{_mapName}/Radiation/");
+             const string radiationPrefab = "Radiation";
+
+             RadiationSpawner spawner = new(
+                    img,
+                    $"{_jsonFolderPath}/attributes.json",
+                    _cdfPath,
+                    mapRenderer.gameObject,
+                    radiationPrefab,
+                    -3.1f
+             );
+             
+             spawner.SpawnAndSetupRadiation();
+
+             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+         }
+         
+         //TODO: replace radiation display with ability to show all images.
+         Texture2D LoadFirstRadiationImage(string folderPath)
+         {
+             string[] subfolders = Directory.GetDirectories(Path.Combine("Assets", "Resources", folderPath));
+             if (subfolders.Length == 0)
+             {
+                 Debug.LogError("No subfolders found.");
+                 return null;
+             }
+
+             string firstSubfolder = subfolders[0];
+             string[] pngFiles = Directory.GetFiles(firstSubfolder, "*.png");
+             if (pngFiles.Length == 0)
+             {
+                 Debug.LogError("No .png files found in the first subfolder.");
+                 return null;
+             }
+
+             string firstPngFile = pngFiles[0];
+             string resourcePath = firstPngFile.Replace(Path.Combine("Assets", "Resources") + Path.DirectorySeparatorChar, "").Replace(".png", "");
+             resourcePath = resourcePath.Replace(Path.DirectorySeparatorChar, '/');
+             Texture2D texture = Resources.Load<Texture2D>(resourcePath);
+
+             return texture;
          }
 
          

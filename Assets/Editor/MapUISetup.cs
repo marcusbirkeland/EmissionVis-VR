@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using NewMapUI;
+using Object = UnityEngine.Object;
 
 namespace Editor
 {
@@ -29,24 +31,12 @@ namespace Editor
         
         private static NewMapUI.MapUI FindMapUIInScene()
         {
-            GameObject mapUIGameObject = GameObject.Find("MapUI");
-            if (mapUIGameObject == null)
-            {
-                Debug.LogError("MapUI GameObject not found in the scene.");
-                return null;
-            }
-
-            // Get the MapUI component
-            NewMapUI.MapUI mapUI = mapUIGameObject.GetComponent<NewMapUI.MapUI>();
+            NewMapUI.MapUI mapUI = Object.FindObjectOfType<NewMapUI.MapUI>();
             if (mapUI == null)
             {
-                Debug.LogError("MapUI component not found on the MapUI GameObject.");
-                return null;
+                throw new Exception("There is no MapUI in the scene!");
             }
-
             return mapUI;
         }
     }
-    
-    
 }
