@@ -3506,7 +3506,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3050725953180288675}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3050725954037088180}
+        m_TargetAssemblyTypeName: MapUI.CloudPlaybackButton, Assembly-CSharp
+        m_MethodName: TogglePlaying
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &3050725954037088180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3519,6 +3531,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eaac666e194751498f271f65d001659, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  button: {fileID: 3050725954037088181}
   cloudSlider: {fileID: 0}
   playSprite: {fileID: 21300000, guid: ddac00ee9a04afe4fb9ef7bb2f3cb8c4, type: 3}
   pauseSprite: {fileID: 21300000, guid: a88d1f2379374da46be45165c25da11b, type: 3}
