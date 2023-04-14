@@ -15,7 +15,7 @@ namespace Visualization
 
         public float heightValueMultiplier = 1000;
 
-        public float baseElevation = -130;
+        private double baseElevation;
         
         private int _index;
         
@@ -37,6 +37,12 @@ namespace Visualization
 
         void Start()
         {
+
+            MapPin mapPin = clouds.GetComponentInParent<MapPin>();
+            
+            if(mapPin){
+               baseElevation = mapPin.Altitude;
+            }
             LOD[] lods = clouds.GetComponent<LODGroup>().GetLODs();
             foreach (LOD lod in lods)
             {
