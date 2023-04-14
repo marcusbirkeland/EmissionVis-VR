@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using MapUI;
+using Microsoft.Maps.Unity;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -11,6 +12,10 @@ namespace Visualization
     {
         public GameObject clouds;
         public string imageDirectory;
+
+        public float heightValueMultiplier = 1000;
+
+        public float baseElevation = -130;
         
         private int _index;
         
@@ -26,6 +31,7 @@ namespace Visualization
         private static readonly int ColorMapMin = Shader.PropertyToID("_ColorMapMin");
         private static readonly int ColorMapMax = Shader.PropertyToID("_ColorMapMax");
         private static readonly int ColorMapAlpha = Shader.PropertyToID("_ColorMapAlpha");
+        private static readonly int TerrainCurvature = Shader.PropertyToID("_Terrain_Curvature");
         private static readonly int Opacity = Shader.PropertyToID("_Opacity");
 
 
@@ -89,12 +95,25 @@ namespace Visualization
                 ren.material.SetFloat(Opacity, value);
             }
         }
+
+        public void ChangeHeight(float value){
+            float maxValue = 1;
+             // TODO: fix so this works in fullscale too
+            MapPin mapPin = clouds.GetComponentInParent<MapPin>();
+            
+            if(mapPin){
+                mapPin.Altitude = value*heightValueMultiplier + baseElevation;
+            }
+
+            foreach (Renderer ren in _cloudRenderers)
+            {
+                ren.material.SetFloat(TerrainCurvature, 1-(value / maxValue));
+            }
+        }
         
         
         public void UpdateAlphaForRenderers(float time)
         {
-            // NOTE: Ideally, only the current loaded LOD would have to be altered. 
-            // There is no clear way to extract this information.
             foreach (Renderer ren in _cloudRenderers)
             {
                 ren.material.SetFloat(ColorMapAlpha, time % 1);

@@ -66,7 +66,3 @@ ArcGISProjectSettingsAsset.asset
 ArcGISProjectSettings.asset
 
 .vscode
-
-# NetCDF data files
-Assets/Resources/Mapdata/*
-!Assets/Resources/Mapdata/DEMO/*
