@@ -69,3 +69,4 @@ ArcGISProjectSettings.asset
 
 # NetCDF data files
 Assets/Resources/Mapdata/*
+!Assets/Resources/Mapdata/DEMO/*
