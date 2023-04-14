@@ -47,7 +47,10 @@ namespace Editor
         {
             Debug.Log("Creating both scenes");
 
-            CreateMiniatureScene(() => CreateFullScaleScene(null));
+            CreateMiniatureScene( 
+                null
+                //() => CreateFullScaleScene(null)
+                );
         }
 
         

@@ -67,6 +67,8 @@ namespace MapUI
         private IEnumerator SetSliderValuesWhenReady()
         {
             yield return new WaitUntil(() => CloudManager.MapCount > 0);
+            
+            Debug.Log("Slider values set");
     
             timelineSlider.minValue = 0;
             timeValueText.text = "0.0";

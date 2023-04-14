@@ -18,6 +18,8 @@ namespace MapUI
         public GameObject buildingHolder;
         public GameObject radiationHolder;
         
+        
+        
         private void Awake()
         {
             if (Instance == null)
@@ -38,6 +40,7 @@ namespace MapUI
             gameObject.SetActive(false);
         }
         
+
         private void OnDestroy() {
             foreach(InputActionReference iar in inputActions){
                 iar.action.started -= Toggle;

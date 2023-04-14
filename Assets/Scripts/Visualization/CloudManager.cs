@@ -54,29 +54,6 @@ namespace Visualization
             } 
             else
             {
-                //TODO: implement this alternative approach with better practices.
-                //Requires a path relative to the resources folder, and not a complete filepath.
-                
-                /* 
-                Texture2D[] textures = Resources.LoadAll<Texture2D>(imageDirectory);
-
-                foreach (Texture2D texture in textures)
-                {
-                    string fileName = texture.name;
-                    Debug.Log("FOUND TEXTURE: " + fileName);
-
-                    if (int.TryParse(fileName, out int seconds))
-                    {
-                        CloudMap cm = new(texture, seconds);
-                        _cloudMaps.Add(cm);
-                    }
-                    else
-                    {
-                        Debug.LogError("Failed to parse texture name as integer: " + fileName);
-                    }
-                }
-                */
-                
                 DirectoryInfo info = new (imageDirectory);
                 FileInfo[] fileInfo = info.GetFiles();
 
@@ -102,7 +79,7 @@ namespace Visualization
                 throw new System.IndexOutOfRangeException("No textures found at: " + imageDirectory);
             }
 
-            StartCoroutine(SetMapsWhenReady());
+            //StartCoroutine(SetMapsWhenReady());
         }
 
         public void ChangeAlpha(float value)
@@ -155,8 +132,22 @@ namespace Visualization
             yield return new WaitUntil(() =>
                 _cloudMaps.Count == 4 && _cloudRenderers[0].material.GetTexture(ColorMapMin) == null);
             
+            Debug.Log("Maps have been set");
+            
             _cloudMaps.Sort((c1,c2) => c1.Time - c2.Time);
             SetMaps();
+        }
+        
+        //Replace with coroutine above when it is functional 
+        void Update()
+        {
+            if(_cloudMaps.Count == 4 && _cloudRenderers[0].material.GetTexture(ColorMapMin) == null){
+                // Sort by time
+                _cloudMaps.Sort((c1,c2) => {
+                    return c1.Time -c2.Time;
+                });
+                SetMaps();
+            }
         }
         
         private void SetMaps()
