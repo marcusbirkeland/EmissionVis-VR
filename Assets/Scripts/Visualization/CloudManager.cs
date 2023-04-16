@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using MapUI;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -9,8 +8,11 @@ namespace Visualization
 {
     public class CloudManager : MonoBehaviour
     {
-        public GameObject clouds;
+        [HideInInspector]
         public string imageDirectory;
+
+        [HideInInspector]
+        public Texture2D heightMapImg;
         
         private int _index;
         
@@ -26,12 +28,13 @@ namespace Visualization
         private static readonly int ColorMapMin = Shader.PropertyToID("_ColorMapMin");
         private static readonly int ColorMapMax = Shader.PropertyToID("_ColorMapMax");
         private static readonly int ColorMapAlpha = Shader.PropertyToID("_ColorMapAlpha");
-        private static readonly int Opacity = Shader.PropertyToID("_Opacity");
+        private static readonly int Opacity = Shader.PropertyToID("_Opacity");        
+        private static readonly int Heightmap = Shader.PropertyToID("_TerrainHeightmap");
 
-
-        void Start()
+        
+        private void Start()
         {
-            LOD[] lods = clouds.GetComponent<LODGroup>().GetLODs();
+            LOD[] lods = gameObject.GetComponent<LODGroup>().GetLODs();
             foreach (LOD lod in lods)
             {
                 foreach (Renderer ren in lod.renderers)
@@ -39,6 +42,7 @@ namespace Visualization
                     _cloudRenderers.Add(ren);
                     ren.material.SetTexture(ColorMapMin, null);
                     ren.material.SetTexture(ColorMapMax, null);
+                    ren.material.SetTexture(Heightmap, heightMapImg);
                 }
             }
 
@@ -63,11 +67,9 @@ namespace Visualization
                     if (!file.Extension.ToLower().Equals(".png")) continue;
                     
                     Texture2D texture = new(1, 1);
-                    Debug.Log("FOUND TEXTURE: " + file.FullName);
                     byte[] bytes = File.ReadAllBytes(file.FullName);
 
                     texture.LoadImage(bytes);
-                    Debug.Log("Filename: " + file.Name);
                     int seconds = int.Parse(file.Name.Split('.')[0]);
                     CloudMap cm = new(texture, seconds);
                     _cloudMaps.Add(cm);  
@@ -138,6 +140,7 @@ namespace Visualization
             SetMaps();
         }
         
+        
         //Replace with coroutine above when it is functional 
         void Update()
         {
@@ -149,6 +152,7 @@ namespace Visualization
                 SetMaps();
             }
         }
+        
         
         private void SetMaps()
         {

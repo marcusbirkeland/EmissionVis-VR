@@ -23,12 +23,20 @@ namespace Editor.NetCDF
                 Debug.Log("You need to select a map name");
                 return;
             }
-
+            
+            EditorUtility.DisplayProgressBar("Creating datafiles", "Creating buildings datafiles", -1);
             GenerateBuildingData(mapName, buildingData);
+            
+            EditorUtility.DisplayProgressBar("Creating datafiles", "Creating terrain datafiles", -1);
             GenerateHeightMap(mapName, heightMap);
+            
+            EditorUtility.DisplayProgressBar("Creating datafiles", "Creating cloud datafiles", -1);
             GenerateWindSpeedData(mapName, windSpeed);
+            
+            EditorUtility.DisplayProgressBar("Creating datafiles", "Creating radiation datafiles", -1);
             GenerateRadiationData(mapName, radiationData);
-
+            
+            EditorUtility.ClearProgressBar();
             AssetDatabase.Refresh();
         }
         
@@ -63,7 +71,7 @@ namespace Editor.NetCDF
             string outputPath = $"{Application.dataPath}/Resources/MapData/{mapName}/HeightMap/heightMap";
 
             if (heightMap.SelectedVariable != null)
-                GenerateAllData((NcVariable)heightMap.SelectedVariable, outputPath);
+                GeneratePng((NcVariable)heightMap.SelectedVariable, outputPath, 1);
         }
 
         
@@ -99,7 +107,7 @@ namespace Editor.NetCDF
                 string folderName = RemoveInvalidFilenameChars(variable.variableName);
                 string outputPath = $"{Application.dataPath}/Resources/MapData/{mapName}/Radiation/{folderName}";
 
-                GeneratePng(variable, outputPath, 30);
+                GeneratePng(variable, outputPath, 10);
             }
         }
 
@@ -141,38 +149,6 @@ namespace Editor.NetCDF
             
             PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/variable_getter.py", inputString);
             PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/attribute_getter.py", inputString);
-        }
-
-
-        /**
-         * <summary>
-         * Generates both CSV and PNG files for the given NetCDF variable.
-         * </summary>
-         * 
-         * <param name="variable">The NetCDF variable used to generate the data files.</param>
-         * <param name="dataPath">The folder path where the generated files will be saved. Should not end in a "/"</param>
-         * <param name="interpolationFactor">The interpolation factor used when generating PNG files (default is 1).</param>
-         */
-        private static void GenerateAllData(NcVariable variable, string dataPath, int interpolationFactor = 1)
-        {
-            GenerateCsv(variable, dataPath);
-            GeneratePng(variable, dataPath, interpolationFactor);
-        }
-
-        
-        /**
-         * <summary>
-         * Generates one or several CSV files for the given NetCDF variable using a Python script.
-         * </summary>
-         * 
-         * <param name="variable">The NetCDF variable used to generate the CSV file(s).</param>
-         * <param name="dataPath">The folder path where the generated CSV file will be saved. Should not end in a "/"</param>
-         */
-        private static void GenerateCsv(NcVariable variable, string dataPath)
-        {
-            string inputString = variable + dataPath;
-            
-            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_csv.py", inputString);
         }
         
         

@@ -1,32 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
 namespace Editor.NetCDF
 {
     public static class BuildingDataLoader
     {
-        [Serializable]
-        public readonly struct BuildingData
-        {
-            public readonly double X;
-            public readonly double Y;
-
-            public BuildingData(double x, double y)
-            {
-                X = x;
-                Y = y;
-            }
-        }
-        
-        
-        public static List<BuildingData> GetBuildingData(string dataPath)
+        public static List<BuildingData> GetBuildingData(string mapName)
         {
             List<BuildingData> buildingDataList = new();
-
+            
+            string dataPath = $"{Application.dataPath}/Resources/MapData/{mapName}/BuildingData/buildingData.csv";
+            if (!File.Exists(dataPath))
+            {
+                throw new ArgumentException("The file at " + dataPath + " does not exist!");
+            }
+            
             using StreamReader streamReader = new(dataPath);
 
-            long currentLine = 0;
+            int currentLine = 0;
 
             while (streamReader.Peek() >= 0)
             {
@@ -39,6 +32,7 @@ namespace Editor.NetCDF
             return buildingDataList;
         }
 
+        
         private static float[] AssertDataFormat(string data, long line)
         {
             string[] stringValues = data.Split(',');

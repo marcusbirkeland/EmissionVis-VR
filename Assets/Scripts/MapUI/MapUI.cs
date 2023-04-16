@@ -1,11 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using Visualization;
 
 namespace MapUI
 {
-    //Main class for mapUI, makes the UI unique and lets it persist across scenes.
-    //Mainly serves as a way to easily access its daughter components.
     public class MapUI : MonoBehaviour
     {
         public static MapUI Instance { get; private set; }
@@ -13,13 +12,16 @@ namespace MapUI
         [SerializeField]
         private InputActionReference [] inputActions;
 
-        //Must be static to be accessible with editor script
-        public CloudManager cloudManager;
-        public GameObject buildingHolder;
-        public GameObject radiationHolder;
+        private GameObject CloudHolder { get; set; }
+        public GameObject BuildingHolder { get; private set; }
+        public GameObject RadiationHolder { get; private set; }
         
+        public string miniatureSceneName;
+        public string fullScaleSceneName;
         
-        
+        public static CloudManager CloudManager => Instance.CloudHolder.GetComponentInChildren<CloudManager>();
+
+
         private void Awake()
         {
             if (Instance == null)
@@ -32,19 +34,32 @@ namespace MapUI
                 Destroy(gameObject);
                 return;
             }
+
+            SceneManager.sceneLoaded += OnSceneLoaded;
             
             foreach(InputActionReference iar in inputActions){
                 iar.action.started += Toggle;
             }
 
+            SetHolderValues();
             gameObject.SetActive(false);
         }
-        
 
         private void OnDestroy() {
             foreach(InputActionReference iar in inputActions){
                 iar.action.started -= Toggle;
             }
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+            SetHolderValues();
+        }
+
+        private void SetHolderValues() {
+            CloudHolder = GameObject.Find("Cloud Holder");
+            BuildingHolder = GameObject.Find("Buildings Holder");
+            RadiationHolder = GameObject.Find("Radiation Holder");
         }
         
         private void Toggle(InputAction.CallbackContext context = default){

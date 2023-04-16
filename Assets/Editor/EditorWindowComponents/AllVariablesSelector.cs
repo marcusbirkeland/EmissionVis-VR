@@ -33,9 +33,9 @@ namespace Editor.EditorWindowComponents
         public bool DataRetrieved { get; private set; }
 
 
-        public AllVariablesSelector(string jsonFolderPath)
+        public AllVariablesSelector()
         {
-            _jsonFolderPath = jsonFolderPath;
+            _jsonFolderPath = $"{Application.dataPath}/Resources/MapData";
         }
 
         public string BuildingCdfPath => _buildingData.SelectedVariable?.filePath;

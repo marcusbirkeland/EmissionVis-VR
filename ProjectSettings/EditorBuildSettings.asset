@@ -5,12 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/DEMO Miniature.unity
     guid: 1aa2a3ea40dd5b346ad9b0200b91768c
-  - enabled: 1
+  - enabled: 0
     path: Assets/DEMO_FS.unity
     guid: e6d4d466358c65c479148b7b91f23c32
+  - enabled: 1
+    path: Assets/Bergen Miniature.unity
+    guid: f14ac1b4f7e78c243bf7b6e7f1f27f3b
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260,
       type: 2}

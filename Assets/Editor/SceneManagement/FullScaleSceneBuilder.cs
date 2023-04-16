@@ -1,4 +1,6 @@
 ﻿using System;
+using Editor.NetCDF;
+using Editor.VisualizationSpawner.FullScaleSpawners;
 using Esri.ArcGISMapsSDK.Components;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -8,72 +10,59 @@ using Object = UnityEngine.Object;
 
 namespace Editor.SceneManagement
 {
-    public class FullScaleSceneBuilder
+    public class FullScaleSceneBuilder : SceneBuilder
     {
-        private readonly string _mapName;
-        private readonly string _jsonFolderPath;
-        
-        private readonly string _buildingCdfPath;
-        private readonly string _radiationCdfPath;
-        private readonly string _windSpeedCdfPath;
-
-        private readonly ArcGISMapComponent _arcGisMap;
-
-        public FullScaleSceneBuilder(string mapName, string jsonFolderPath, string buildingCdfPath, string radiationCdfPath, string windSpeedCdfPath)
+        public FullScaleSceneBuilder(string mapName, string buildingCdfPath, string radiationCdfPath, string windSpeedCdfPath) 
+            : base(mapName, buildingCdfPath, radiationCdfPath, windSpeedCdfPath)
         {
-            _mapName = mapName;
-            _jsonFolderPath = jsonFolderPath;
-            _buildingCdfPath = buildingCdfPath;
+        }
+
+        protected override void SetUpMap()
+        {
+            GameObject mapObject = FindMap();
+            ArcGISMapComponent map = mapObject.GetComponent<ArcGISMapComponent>();
             
-            _arcGisMap = Object.FindObjectOfType<ArcGISMapComponent>();
+            //NOTE: Using building cdf path as the position baseline, but any of the cdf files should work.
+            AttributeDataGetter.FileAttributes baseCdfAttributes = AttributeDataGetter.GetFileAttributes(BuildingCdfPath);
 
-            if (_arcGisMap == null)
-            {
-                throw new Exception("The scene is missing an arcgis map component");
-            }
+            map.OriginPosition = AttributeDataGetter.Position.GetOffsetPosition(
+                baseCdfAttributes.size.x/2, baseCdfAttributes.size.y/2, baseCdfAttributes.position);
         }
 
-        public void CreateDataVisualization(Action onDataCreated)
+        protected override void CreateBuildings()
         {
-            WaitForMapToLoad(_arcGisMap, () =>
-            {
-                CreateUnityObjects();
-                EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
-                onDataCreated?.Invoke();
-            });
+            BuildingSpawner spawner = new(
+                MapName,
+                BuildingCdfPath, 
+                FindMap(), 
+                -3.1f);
+             
+            spawner.SpawnAndSetupBuildings();
+
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
         }
 
-        private void CreateUnityObjects()
+         
+        protected override void CreateClouds()
         {
-            CreateBuildings();
-            CreateRadiation();
-            CreateClouds();
+            Debug.Log("Full Scale clouds not yet implemented");
         }
-
-        private void CreateBuildings()
+         
+         
+        protected override void CreateRadiation()
         {
-            Debug.Log("Creating buildings");
-
+            Debug.Log("Full Scale radiation not yet implemented");
         }
 
-        private void CreateRadiation()
-        {
-            Debug.Log("Creating radiation");
 
-        }
-
-        private void CreateClouds()
-        {
-            Debug.Log("Creating clouds");
-
-        }
-
-        private static void WaitForMapToLoad(ArcGISMapComponent map, Action onMapLoaded)
+        protected override void WaitForMapToLoad(Action onMapLoaded)
         {
             EditorApplication.update += CheckMapLoaded;
 
             void CheckMapLoaded()
             {
+                ArcGISMapComponent map = FindMap().GetComponent<ArcGISMapComponent>();
+
                 if (map.View.Map.Basemap.LoadStatus == Esri.GameEngine.ArcGISLoadStatus.Loaded)
                 {
                     EditorApplication.update -= CheckMapLoaded;
@@ -86,6 +75,18 @@ namespace Editor.SceneManagement
                 }
             }
         }
-    }
+        
+        
+        private static GameObject FindMap()
+        {
+            ArcGISMapComponent map = Object.FindObjectOfType<ArcGISMapComponent>();
+            
+            if (!map)
+            {
+                throw new Exception("The miniature scene is missing a mapRenderer component.");
+            }
 
+            return map.gameObject;
+        }
+    }
 }

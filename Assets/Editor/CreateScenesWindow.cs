@@ -13,8 +13,6 @@ namespace Editor
     {
         private AllVariablesSelector _allVariablesSelector;
         
-        private string _jsonFolderPath;
-
 
         [MenuItem("Sintef/Create Scenes")]
         private static void ShowWindow()
@@ -26,9 +24,7 @@ namespace Editor
 
         private void OnEnable()
         {
-            _jsonFolderPath = $"{Application.dataPath}/Resources/MapData";
-            
-            _allVariablesSelector = new AllVariablesSelector(_jsonFolderPath);
+            _allVariablesSelector = new AllVariablesSelector();
             _allVariablesSelector.OnDataComplete += CreateBothScenes;
         }
 
@@ -47,10 +43,8 @@ namespace Editor
         {
             Debug.Log("Creating both scenes");
 
-            CreateMiniatureScene( 
-                null
-                //() => CreateFullScaleScene(null)
-                );
+            //CreateMiniatureScene(null);
+            CreateFullScaleScene(null);
         }
 
         
@@ -63,7 +57,6 @@ namespace Editor
             
             MiniatureSceneBuilder miniBuilder = new(
                 _allVariablesSelector.MapName, 
-                _jsonFolderPath, 
                 _allVariablesSelector.BuildingCdfPath,
                 _allVariablesSelector.RadiationCdfPath,
                 _allVariablesSelector.WindSpeedCdfPath);
@@ -83,7 +76,6 @@ namespace Editor
 
             FullScaleSceneBuilder fullScaleBuilder = new(
                 _allVariablesSelector.MapName, 
-                _jsonFolderPath, 
                 _allVariablesSelector.BuildingCdfPath,
                 _allVariablesSelector.RadiationCdfPath,
                 _allVariablesSelector.WindSpeedCdfPath);
