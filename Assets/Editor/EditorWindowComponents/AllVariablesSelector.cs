@@ -20,7 +20,7 @@ namespace Editor.EditorWindowComponents
         private List<FileData> _ncFiles = new();
 
         private readonly string _jsonFolderPath;
-        public string MapName { get; private set; }
+        public string MapName { get; private set; } = "Bergen";
         
         private readonly List<NcVariable> _allVariables = new();
         

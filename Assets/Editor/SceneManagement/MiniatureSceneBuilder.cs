@@ -28,7 +28,7 @@ namespace Editor.SceneManagement
             AttributeDataGetter.FileAttributes baseCdfAttributes = AttributeDataGetter.GetFileAttributes(BuildingCdfPath);
 
 
-            map.Center = AttributeDataGetter.Position.GetOffsetPosition(
+            map.Center = Position.GetOffsetPosition(
                 baseCdfAttributes.size.x/2, baseCdfAttributes.size.y/2, baseCdfAttributes.position);
         }
 
@@ -97,12 +97,16 @@ namespace Editor.SceneManagement
                 if (renderer.IsLoaded)
                 {
                     EditorApplication.update -= CheckMapLoaded;
-                    onMapLoaded?.Invoke();
                     EditorUtility.ClearProgressBar();
+                    onMapLoaded?.Invoke();
                 }
                 else
                 {
-                    EditorUtility.DisplayProgressBar("Loading", "Waiting for map to load...", -1);
+                    if (EditorUtility.DisplayCancelableProgressBar("Loading", "Waiting for map to load...", -1))
+                    {
+                        EditorUtility.ClearProgressBar();
+                        EditorApplication.update -= CheckMapLoaded;
+                    }
                 }
             }
         }

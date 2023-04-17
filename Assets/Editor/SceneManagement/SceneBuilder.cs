@@ -1,5 +1,4 @@
 ﻿using System;
-using Editor.NetCDF;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
@@ -26,9 +25,10 @@ namespace Editor.SceneManagement
 
          public void CreateDataVisualization(Action onDataCreated)
          {
+             SetUpMap();
+
              WaitForMapToLoad(() =>
              {
-                 SetUpMap();
                  CreateBuildings();
                  CreateClouds();
                  CreateRadiation();

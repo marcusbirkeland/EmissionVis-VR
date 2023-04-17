@@ -24,9 +24,11 @@ namespace Editor.SceneManagement
             
             //NOTE: Using building cdf path as the position baseline, but any of the cdf files should work.
             AttributeDataGetter.FileAttributes baseCdfAttributes = AttributeDataGetter.GetFileAttributes(BuildingCdfPath);
-
-            map.OriginPosition = AttributeDataGetter.Position.GetOffsetPosition(
-                baseCdfAttributes.size.x/2, baseCdfAttributes.size.y/2, baseCdfAttributes.position);
+            
+            Position newPos = Position.GetOffsetPosition(baseCdfAttributes.size.x/2, baseCdfAttributes.size.y/2, baseCdfAttributes.position);
+            
+            map.OriginPosition = newPos;
+            map.MeshCollidersEnabled = true;
         }
 
         protected override void CreateBuildings()
@@ -66,15 +68,20 @@ namespace Editor.SceneManagement
                 if (map.View.Map.Basemap.LoadStatus == Esri.GameEngine.ArcGISLoadStatus.Loaded)
                 {
                     EditorApplication.update -= CheckMapLoaded;
-                    onMapLoaded?.Invoke();
                     EditorUtility.ClearProgressBar();
+                    onMapLoaded?.Invoke();
                 }
                 else
                 {
-                    EditorUtility.DisplayProgressBar("Loading", "Waiting for map to load...", -1);
+                    if (EditorUtility.DisplayCancelableProgressBar("Loading", "Waiting for map to load...", -1))
+                    {
+                        EditorUtility.ClearProgressBar();
+                        EditorApplication.update -= CheckMapLoaded;
+                    }
                 }
             }
         }
+
         
         
         private static GameObject FindMap()
