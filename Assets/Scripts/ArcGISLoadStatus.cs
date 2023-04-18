@@ -9,6 +9,7 @@ using Esri.GameEngine.Extent;
 using Esri.GameEngine.Geometry;
 using Esri.Unity;
 using Esri.GameEngine;
+using System;
 
 public class ArcGISLoadStatus : MonoBehaviour
 {
@@ -20,16 +21,25 @@ public class ArcGISLoadStatus : MonoBehaviour
     {
         loadingScreen.SetActive(true);
         arcGisMap = gameObject.GetComponent<ArcGISMapComponent>();
+        //arcGisMap.View.Map.DoneLoading += DoneLoading; // <- stops too soon
+        StartCoroutine(Wait(5));
     }
+
+    IEnumerator Wait(int seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        loadingScreen.SetActive(false);
+    }
+
+    /*private void DoneLoading(Exception e)
+    {
+        Debug.Log("FIRST LOAD DONE!");
+    }*/
+
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(arcGisMap.View.Map.Basemap.LoadStatus);
-        if (arcGisMap.View.Map.Basemap.LoadStatus == Esri.GameEngine.ArcGISLoadStatus.Loaded)
-        {
-            loadingScreen.SetActive(false);
-            enabled = false;
-        }
+
     }
 }
