@@ -49,7 +49,7 @@ namespace Editor.SceneManagement
         
         protected override void CreateClouds()
         {
-            const string cloudPrefab = "1KM_CLOUD";
+            const string cloudPrefab = "Cloud Miniature";
              
             CloudSpawner spawner = new(
                 MapName, 

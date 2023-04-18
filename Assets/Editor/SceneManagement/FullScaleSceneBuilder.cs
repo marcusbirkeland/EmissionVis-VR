@@ -47,13 +47,36 @@ namespace Editor.SceneManagement
          
         protected override void CreateClouds()
         {
-            Debug.Log("Full Scale clouds not yet implemented");
+            const string cloudPrefab = "Cloud Full Scale";
+             
+            CloudSpawner spawner = new(
+                MapName, 
+                WindSpeedCdfPath, 
+                FindMap(), 
+                cloudPrefab,
+                -3.1f);
+
+            spawner.SpawnAndSetupCloud();
+
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
         }
          
          
         protected override void CreateRadiation()
         {
-            Debug.Log("Full Scale radiation not yet implemented");
+            const string radiationPrefab = "Radiation";
+             
+            RadiationSpawner spawner = new(
+                MapName,
+                RadiationCdfPath,
+                FindMap(), 
+                radiationPrefab,
+                -3.1f
+            );
+             
+            spawner.SpawnAndSetupRadiation();
+
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
         }
 
 

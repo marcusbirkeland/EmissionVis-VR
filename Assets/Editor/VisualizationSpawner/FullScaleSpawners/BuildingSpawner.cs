@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Editor.NetCDF;
 using Esri.ArcGISMapsSDK.Components;
 using Esri.ArcGISMapsSDK.Utils.GeoCoord;
-using Esri.GameEngine.Geometry;
 using Esri.HPFramework;
 using UnityEditor;
 using UnityEngine;
+using Visualization;
 using Object = UnityEngine.Object;
 
 namespace Editor.VisualizationSpawner.FullScaleSpawners
@@ -47,7 +47,8 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
             VisualizationHolder = new GameObject("Buildings Holder");
             VisualizationHolder.transform.SetParent(Map.transform, false);
 
-            HPTransform hp = VisualizationHolder.AddComponent<HPTransform>();
+            VisualizationHolder.AddComponent<HPTransform>();
+            VisualizationHolder.AddComponent<BuildingsManager>();
             
             ArcGISLocationComponent location = VisualizationHolder.AddComponent<ArcGISLocationComponent>();
             location.runInEditMode = true;
@@ -78,16 +79,19 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
             Debug.Log($"Spawned {VisualizationHolder.transform.childCount} buildings.");
         }
 
+        
         private void SpawnBuilding(BuildingData buildingData)
         {
             GameObject building = Object.Instantiate(_buildingPrefab, VisualizationHolder.transform, false);
 
             building.name = $"Small Building {VisualizationHolder.transform.childCount}";
-
-            //TODO: replace with actual value.
-            const float UnityUnitsPerMeter = 2.0f;
             
-            building.transform.localPosition = new Vector3((float)buildingData.X * UnityUnitsPerMeter, 10000, (float)buildingData.Y * UnityUnitsPerMeter);
+            //TODO: replace with actual value.
+            const float unityUnitsPerMeter = 2.0f;
+            
+            building.transform.localScale = new Vector3(unityUnitsPerMeter, unityUnitsPerMeter, unityUnitsPerMeter);
+
+            building.transform.localPosition = new Vector3((float)buildingData.X * unityUnitsPerMeter, 10000, (float)buildingData.Y * unityUnitsPerMeter);
         }
     }
 }
