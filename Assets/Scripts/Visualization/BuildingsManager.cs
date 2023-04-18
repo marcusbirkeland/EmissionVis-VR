@@ -5,14 +5,14 @@ namespace Visualization
     public class BuildingsManager : MonoBehaviour
     {
         public float maxDistance = 10000f;
-        public float delay = 10f;
+        public float delay = 4.5f;
 
         private void Start()
         {
-            Invoke(nameof(AlignObjects), delay);
+            Invoke(nameof(AlignObjectsWithGround), delay);
         }
 
-        private void AlignObjects()
+        private void AlignObjectsWithGround()
         {
             for (int i = 0; i < transform.childCount; i++)
             {

@@ -9,8 +9,6 @@ namespace MapUI
     {
         [SerializeField]
         private Button toggleSceneButton;
-
-        public GameObject loadingScreen;
         
         private void Awake()
         {
@@ -22,7 +20,7 @@ namespace MapUI
             toggleSceneButton.onClick.RemoveListener(SwitchScene);
         }
 
-        private void SwitchScene()
+        private static void SwitchScene()
         {
             string currentScene = SceneManager.GetActiveScene().name;
             string mini = MapUI.Instance.miniatureSceneName;
@@ -45,7 +43,6 @@ namespace MapUI
 
             // Remove the layer mask containing all objects
             Camera.main.cullingMask &= ~(1 << LayerMask.NameToLayer("Default"));
-            loadingScreen.SetActive(true);
             SceneManager.LoadSceneAsync(targetSceneName);
         }
     }
