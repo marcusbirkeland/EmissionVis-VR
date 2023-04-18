@@ -1,4 +1,5 @@
-﻿using Editor.NetCDF;
+﻿using System;
+using Editor.NetCDF;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -9,6 +10,7 @@ namespace Editor.VisualizationSpawner
         protected readonly AttributeDataGetter.FileAttributes SelectedCdfAttributes;
         protected readonly GameObject Map;
         protected readonly float RotationAngle;
+        protected readonly float UnityUnitsPerMeter;
         
         protected GameObject VisualizationHolder;
 
@@ -16,7 +18,8 @@ namespace Editor.VisualizationSpawner
         protected MapVisualizerSpawner(string cdfFilePath, GameObject map, float rotationAngle)
         {
             SelectedCdfAttributes = AttributeDataGetter.GetFileAttributes(cdfFilePath);
-            
+            UnityUnitsPerMeter = (float) (1 / Math.Cos(Math.PI * SelectedCdfAttributes.position.lat / 180.0));
+
             Map = map;
             RotationAngle = rotationAngle;
         }

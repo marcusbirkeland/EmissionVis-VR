@@ -22,7 +22,9 @@ namespace Editor.VisualizationSpawner.MiniatureSpawners
         public BuildingSpawner(string mapName, string cdfFilePath, GameObject map, float rotationAngle) 
             : base(cdfFilePath, map, rotationAngle)
         {
+            Debug.Log("Started making instance");
             _buildingDataList = BuildingDataLoader.GetBuildingData(mapName);
+            Debug.Log("Finished");
             
             //Sets the building prefab.
             GameObject buildingPrefab = Resources.Load<GameObject>("Prefabs/House");
@@ -36,6 +38,8 @@ namespace Editor.VisualizationSpawner.MiniatureSpawners
         
         public void SpawnAndSetupBuildings()
         {
+            
+            
             DeletePreviousObject("Buildings Holder");
             CreateAndSetupBuildingHolder();
             SpawnAllBuildings();
@@ -44,6 +48,8 @@ namespace Editor.VisualizationSpawner.MiniatureSpawners
         
         private void CreateAndSetupBuildingHolder()
         {
+            Debug.Log("Creating building holder");
+            
             MapRenderer mapRenderer = Map.GetComponent<MapRenderer>();
             
             _metersPerUnit = mapRenderer.ComputeUnityToMapScaleRatio(SelectedCdfAttributes.position) / Map.transform.lossyScale.x;
@@ -62,6 +68,8 @@ namespace Editor.VisualizationSpawner.MiniatureSpawners
         
         private void SpawnAllBuildings()
         {
+            Debug.Log("Creating all buildings");
+
             for (int i = 0; i < _buildingDataList.Count; i++)
             {
                 string progressStr = $"Parsing building data ({i}/{_buildingDataList.Count})";

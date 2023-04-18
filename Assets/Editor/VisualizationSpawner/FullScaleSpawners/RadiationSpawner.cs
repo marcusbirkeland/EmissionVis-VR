@@ -74,9 +74,8 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
             LODGroup lodGroup = rad.GetComponent<LODGroup>();
             lodGroup.size = SelectedCdfAttributes.size.x;
 
-            const float unityUnitsPerMeters = 2.0f;
-            
-            float scale = SelectedCdfAttributes.size.x / 1000.0f * unityUnitsPerMeters;
+            //Prefab base size is 1km
+            float scale = SelectedCdfAttributes.size.x / 1000.0f * UnityUnitsPerMeter;
             rad.transform.localScale = new Vector3(scale, scale, scale);
         }
         

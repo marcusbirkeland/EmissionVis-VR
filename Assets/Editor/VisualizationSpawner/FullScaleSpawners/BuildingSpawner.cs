@@ -46,10 +46,10 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
         {
             VisualizationHolder = new GameObject("Buildings Holder");
             VisualizationHolder.transform.SetParent(Map.transform, false);
+            VisualizationHolder.AddComponent<BuildingsManager>();
 
             VisualizationHolder.AddComponent<HPTransform>();
-            VisualizationHolder.AddComponent<BuildingsManager>();
-            
+
             ArcGISLocationComponent location = VisualizationHolder.AddComponent<ArcGISLocationComponent>();
             location.runInEditMode = true;
             location.Position = SelectedCdfAttributes.position;
@@ -79,19 +79,18 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
             Debug.Log($"Spawned {VisualizationHolder.transform.childCount} buildings.");
         }
 
+
+        
         
         private void SpawnBuilding(BuildingData buildingData)
         {
             GameObject building = Object.Instantiate(_buildingPrefab, VisualizationHolder.transform, false);
 
             building.name = $"Small Building {VisualizationHolder.transform.childCount}";
-            
-            //TODO: replace with actual value.
-            const float unityUnitsPerMeter = 2.0f;
-            
-            building.transform.localScale = new Vector3(unityUnitsPerMeter, unityUnitsPerMeter, unityUnitsPerMeter);
 
-            building.transform.localPosition = new Vector3((float)buildingData.X * unityUnitsPerMeter, 10000, (float)buildingData.Y * unityUnitsPerMeter);
+            building.transform.localScale = new Vector3(UnityUnitsPerMeter, UnityUnitsPerMeter, UnityUnitsPerMeter);
+            
+            building.transform.localPosition = new Vector3((float)buildingData.X * UnityUnitsPerMeter, (float)buildingData.Altitude, (float)buildingData.Y * UnityUnitsPerMeter);
         }
     }
 }

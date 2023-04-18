@@ -25,7 +25,7 @@ namespace Editor.NetCDF
             }
             
             EditorUtility.DisplayProgressBar("Creating datafiles", "Creating buildings datafiles", -1);
-            GenerateBuildingData(mapName, buildingData);
+            GenerateBuildingData(mapName, buildingData, heightMap);
             
             EditorUtility.DisplayProgressBar("Creating datafiles", "Creating terrain datafiles", -1);
             GenerateHeightMap(mapName, heightMap);
@@ -39,8 +39,8 @@ namespace Editor.NetCDF
             EditorUtility.ClearProgressBar();
             AssetDatabase.Refresh();
         }
-        
-        
+
+
         /**
          * <summary>
          * Generates building data in CSV format for the given NetCDF variable and map name using a Python script.
@@ -48,13 +48,14 @@ namespace Editor.NetCDF
          * 
          * <param name="mapName">The name of the map for which the building data is generated.</param>
          * <param name="buildingData">The selected variable for building data generation.</param>
+         * <param name="heightMap"></param>
          */
-        private static void GenerateBuildingData(string mapName, SingleVariableDropdown buildingData)
+        private static void GenerateBuildingData(string mapName, SingleVariableDropdown buildingData, SingleVariableDropdown heightMap)
         {
             string outputPath = $"{Application.dataPath}/Resources/MapData/{mapName}/BuildingData/buildingData";
 
-            if (buildingData.SelectedVariable != null)
-                GenerateBuildingCsv((NcVariable)buildingData.SelectedVariable, outputPath);
+            if (buildingData.SelectedVariable != null && heightMap.SelectedVariable != null)
+                GenerateBuildingCsv((NcVariable)buildingData.SelectedVariable, (NcVariable)heightMap.SelectedVariable, outputPath);
         }
 
         
@@ -150,19 +151,20 @@ namespace Editor.NetCDF
             PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/variable_getter.py", inputString);
             PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/attribute_getter.py", inputString);
         }
-        
-        
+
+
         /**
          * <summary>
          * Generates a building CSV file using a Python script to process the NetCDF data.
          * </summary>
          * 
-         * <param name="variable">The NetCDF variable containing the building data.</param>
+         * <param name="buildingVariable">The NetCDF variable containing the building data.</param>
+         * <param name="heightVariable">The NetCDF variable containing the height data.</param>
          * <param name="dataPath">The folder path where the generated PNG file will be saved. Should not end in a "/"</param>
          */
-        private static void GenerateBuildingCsv(NcVariable variable, string dataPath)
+        private static void GenerateBuildingCsv(NcVariable buildingVariable, NcVariable heightVariable, string dataPath)
         {
-            string inputString = variable + dataPath;
+            string inputString = buildingVariable.ToString() + heightVariable + dataPath;
             
             PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_building_csv.py", inputString);
         }

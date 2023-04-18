@@ -20,13 +20,14 @@ namespace Editor.SceneManagement
         
         protected override void SetUpMap()
         {
+            Debug.Log("Setting up map");
+            
             GameObject mapObject = FindMap();
 
             MapRenderer map = mapObject.GetComponent<MapRenderer>();
             
             //NOTE: Using building cdf path as the position baseline, but any of the cdf files should work.
             AttributeDataGetter.FileAttributes baseCdfAttributes = AttributeDataGetter.GetFileAttributes(BuildingCdfPath);
-
 
             map.Center = Position.GetOffsetPosition(
                 baseCdfAttributes.size.x/2, baseCdfAttributes.size.y/2, baseCdfAttributes.position);
@@ -35,12 +36,16 @@ namespace Editor.SceneManagement
 
         protected override void CreateBuildings()
         {
+            Debug.Log("Creating buildingSpawner instance");
+            
             BuildingSpawner spawner = new(
                 MapName,
                 BuildingCdfPath, 
                 FindMap(), 
                 -3.1f);
              
+            Debug.Log("Creating buildings");
+
             spawner.SpawnAndSetupBuildings();
 
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
@@ -49,6 +54,8 @@ namespace Editor.SceneManagement
         
         protected override void CreateClouds()
         {
+            Debug.Log("Creating clouds");
+
             const string cloudPrefab = "Cloud Miniature";
              
             CloudSpawner spawner = new(
@@ -66,6 +73,8 @@ namespace Editor.SceneManagement
          
         protected override void CreateRadiation()
         {
+            Debug.Log("Creating radiation");
+
             const string radiationPrefab = "Radiation";
              
             RadiationSpawner spawner = new(
@@ -96,6 +105,8 @@ namespace Editor.SceneManagement
 
                 if (renderer.IsLoaded)
                 {
+                    Debug.Log("Finished loading");
+                    
                     EditorApplication.update -= CheckMapLoaded;
                     EditorUtility.ClearProgressBar();
                     onMapLoaded?.Invoke();
@@ -112,7 +123,7 @@ namespace Editor.SceneManagement
         }
         
         
-        private GameObject FindMap()
+        private static GameObject FindMap()
         {
             MapRenderer renderer = Object.FindObjectOfType<MapRenderer>();
             

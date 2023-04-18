@@ -24,7 +24,7 @@ namespace Editor.NetCDF
             while (streamReader.Peek() >= 0)
             {
                 float[] data = AssertDataFormat(streamReader.ReadLine(), currentLine);
-                buildingDataList.Add(new BuildingData(data[1], data[0]));
+                buildingDataList.Add(new BuildingData(data[1], data[0], data[2]));
 
                 currentLine++;
             }
@@ -37,18 +37,21 @@ namespace Editor.NetCDF
         {
             string[] stringValues = data.Split(',');
 
-            if (stringValues.Length != 2)
+            if (stringValues.Length != 3)
             {
+                Debug.Log("Invalid building data format");
                 throw new ArgumentException(
-                    $"Invalid data format at line: {line}. There should only be two columns of data values, but there are: {stringValues.Length}");
+                    $"Invalid data format at line: {line}. There should only be three columns of data values, but there are: {stringValues.Length}");
             }
 
-            float[] floatArray = new float[2];
+            float[] floatArray = new float[3];
 
             for (int i = 0; i < stringValues.Length; i++)
             {
                 if (!float.TryParse(stringValues[i], out floatArray[i]))
                 {
+                    Debug.Log("Invalid building data format");
+
                     throw new ArgumentException(
                         $"Invalid data format at line: {line}, and column: {i + 1}. Make sure the input data contains valid float values. Current value: {stringValues[i]}");
                 }
