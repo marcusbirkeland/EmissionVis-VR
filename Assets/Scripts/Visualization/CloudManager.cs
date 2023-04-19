@@ -5,6 +5,13 @@ using MapUI;
 using Microsoft.Maps.Unity;
 using UnityEngine;
 using UnityEngine.Networking;
+using Esri.ArcGISMapsSDK.Components;
+using Esri.ArcGISMapsSDK.Utils.GeoCoord;
+using Esri.ArcGISMapsSDK.Utils.Math;
+using Esri.HPFramework;
+using Esri.GameEngine.Extent;
+using Esri.GameEngine.Geometry;
+using Esri.GameEngine;
 
 namespace Visualization
 {
@@ -17,6 +24,7 @@ namespace Visualization
 
         private double baseElevation;
         
+
         private int _index;
         
         private readonly List<Renderer> _cloudRenderers = new();
@@ -39,10 +47,16 @@ namespace Visualization
         {
 
             MapPin mapPin = clouds.GetComponentInParent<MapPin>();
+            ArcGISLocationComponent arcGISLocationComponent = clouds.GetComponentInParent<ArcGISLocationComponent>();
             
             if(mapPin){
                baseElevation = mapPin.Altitude;
             }
+
+            if(arcGISLocationComponent){
+               baseElevation = arcGISLocationComponent.Position.Z;
+            }
+
             LOD[] lods = clouds.GetComponent<LODGroup>().GetLODs();
             foreach (LOD lod in lods)
             {
@@ -105,12 +119,17 @@ namespace Visualization
         public void ChangeHeight(float value){
             float maxValue = 1;
              // TODO: fix so this works in fullscale too
+            ArcGISLocationComponent arcGISLocation = clouds.GetComponentInParent<ArcGISLocationComponent>(); 
             MapPin mapPin = clouds.GetComponentInParent<MapPin>();
             
             if(mapPin){
                 mapPin.Altitude = value*heightValueMultiplier + baseElevation;
             }
 
+            if(arcGISLocation){
+                arcGISLocation.Position = new ArcGISPoint(arcGISLocation.Position.X, arcGISLocation.Position.Y, value*heightValueMultiplier + baseElevation);
+            }
+            
             foreach (Renderer ren in _cloudRenderers)
             {
                 ren.material.SetFloat(TerrainCurvature, 1-(value / maxValue));
