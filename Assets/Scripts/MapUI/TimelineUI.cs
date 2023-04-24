@@ -96,7 +96,7 @@ namespace MapUI
             }
             _prevTime = _currentTime;
 
-            CloudManager.UpdateAlphaForRenderers(_currentTime);
+            CloudManager.ChangeTimestep(_currentTime);
         }
         
         private static int NumSteps(float prev, float current)

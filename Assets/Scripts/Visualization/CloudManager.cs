@@ -20,6 +20,9 @@ namespace Visualization
 
         [Range(0.0f, 1.0f)]
         public float debugElevationSlider = 0.0f;
+
+        [Range(0.0f, 1.0f)]
+        public float debugAlphaSlider = 1.0f;
         
 
         private int _index;
@@ -83,9 +86,15 @@ namespace Visualization
                 });
                 SetMaps();
             }
-        }
+            // Very useful for debugging. Should probably stay for the folks at Sintef:)
+            if (Application.isEditor){
+                ChangeHeight(debugElevationSlider);
+                ChangeOpacity(debugAlphaSlider);
+            }
 
-        public void ChangeAlpha(float value)
+        }
+        /* Changes opacity for the clouds-shader */
+        public void ChangeOpacity(float value)
         {
             foreach (Renderer ren in _cloudRenderers)
             {
@@ -93,57 +102,73 @@ namespace Visualization
             }
         }
 
-        public void UpdateAlphaForRenderers(float time)
+        /* Updates the time-alpha in the clouds-material, interpolating between the two loaded textures*/
+        public void ChangeTimestep(float time)
         {
             foreach (Renderer ren in _cloudRenderers)
             {
                 ren.material.SetFloat(ColorMapAlpha, time % 1);
             }
         }
-
+        
+        /* Changes the physical height of the clouds in the scene, interpolating the heightmap more when reaching the baseElevation*/
         public void ChangeHeight(float value){
-            float maxValue = 1;
-            
             if(mapPin){
-                mapPin.Altitude = value*heightValueMultiplier + baseElevation;
+                mapPin.Altitude = baseElevation + value*heightValueMultiplier;
             }
             else if(arcGISLocation){
-                arcGISLocation.Position = new ArcGISPoint(arcGISLocation.Position.X, arcGISLocation.Position.Y, value*heightValueMultiplier + baseElevation);
+                arcGISLocation.Position = new ArcGISPoint(
+                    arcGISLocation.Position.X, 
+                    arcGISLocation.Position.Y, 
+                    baseElevation + value*heightValueMultiplier, 
+                    ArcGISSpatialReference.WGS84()
+                );
             }
             
             foreach (Renderer ren in _cloudRenderers)
             {
-                ren.material.SetFloat(TerrainCurvature, 1-(value / maxValue));
+                // To create a steeper curve.
+                if ( value >= 0.1f){
+                    value*= 1.2f;
+                }
+                ren.material.SetFloat(TerrainCurvature, Mathf.Clamp01(1-(value+0.25f / 1)));
             }
         }
         
-
         public void UpdateTime(int steps)
         {
             if(steps >= _cloudMaps.Count)
             {
                 throw new System.NullReferenceException("Index out of range. Too many time steps jumped");
             }
-
             Debug.Log("Update time steps: " + steps);
-
-            switch (steps)
+            if (steps < 0)
             {
-                case < 0:
-                    DecrementTime(steps);
-                    break;
-                case > 0:
-                    IncrementTime(steps);
-                    break;
+                DecrementTime(steps);
             }
+            else
+                IncrementTime(steps);
             
             Debug.Log($"INDEX MAX: {_index + 1} \nINDEX MIN: {_index}");
             SetMaps();
         }
+
+        private void IncrementTime(int steps)
+        {
+            if (_index + steps + 1 > _cloudMaps.Count)
+                throw new System.NullReferenceException("Index out of range");
+            _index += steps;
+        }
+
+        private void DecrementTime(int steps)
+        {
+            if(_index-steps < 0)
+                throw new System.IndexOutOfRangeException("Index out of range");
+            _index += steps;
+        }
         
         
         //TODO: this should probably get changed to not require exactly four timestamps.
-        //I also dont think the texture check is necessary.
         private IEnumerator SetMapsWhenReady()
         {
             yield return new WaitUntil(() =>
@@ -162,24 +187,6 @@ namespace Visualization
                 ren.material.SetTexture(ColorMapMin, _cloudMaps[_index].Texture);
                 ren.material.SetTexture(ColorMapMax, _cloudMaps[_index + 1].Texture);
             }
-        }
-
-        private void IncrementTime(int steps)
-        {
-            if (_index + steps + 1 > _cloudMaps.Count)
-            {
-                throw new System.NullReferenceException("Index out of range");
-            }
-            _index += steps;
-        }
-
-        private void DecrementTime(int steps)
-        {
-            if(_index-steps < 0)
-            {
-                throw new System.IndexOutOfRangeException("Index out of range");
-            }
-            _index += steps;
         }
 
         private void UnsetMaterials(){
