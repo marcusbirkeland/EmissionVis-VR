@@ -12,7 +12,6 @@ namespace Editor
     public class CreateScenesWindow : EditorWindow
     {
         private AllVariablesSelector _allVariablesSelector;
-        
 
         [MenuItem("Sintef/Create Scenes")]
         private static void ShowWindow()

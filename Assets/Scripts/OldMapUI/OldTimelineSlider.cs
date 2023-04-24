@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using MapUI;
+using MapUiComponents;
 using UnityEngine;
 using UnityEngine.UI;
 using Visualization;

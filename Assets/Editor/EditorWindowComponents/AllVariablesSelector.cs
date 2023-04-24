@@ -15,33 +15,36 @@ namespace Editor.EditorWindowComponents
 
         public event OnDataCompleteHandler OnDataComplete;
         
-        private readonly FileSelector _fileSelector = new();
+        public string MapName { get; private set; } = "Bergen";
+
+        public bool DataRetrieved { get; private set; }
+        
+        public string BuildingCdfPath => _buildingData.SelectedVariable?.filePath;
+        public string WindSpeedCdfPath => _windSpeed.SelectedVariable?.filePath;
+        public string RadiationCdfPath => _radiationData.SelectedVariables.Count > 0 ? _radiationData.SelectedVariables[0].filePath : null;
+
+        
 
         private List<FileData> _ncFiles = new();
 
         private readonly string _jsonFolderPath;
-        public string MapName { get; private set; } = "Bergen";
         
-        private readonly List<NcVariable> _allVariables = new();
+        private readonly FileSelector _fileSelector = new();
         
         private SingleVariableDropdown _buildingData;
         private SingleVariableDropdown _heightMap;
         private SingleVariableDropdown _windSpeed;
         private MultiVariableDropdown _radiationData;
-        
-        
-        public bool DataRetrieved { get; private set; }
 
+        private bool _showWarning;
+        
+        
 
         public AllVariablesSelector()
         {
             _jsonFolderPath = $"{Application.dataPath}/Resources/MapData";
         }
-
-        public string BuildingCdfPath => _buildingData.SelectedVariable?.filePath;
-        public string WindSpeedCdfPath => _windSpeed.SelectedVariable?.filePath;
-        public string RadiationCdfPath => _radiationData.SelectedVariables.Count > 0 ? _radiationData.SelectedVariables[0].filePath : null;
-
+        
 
         /**
          * Event function for drawing the GUI while the editor window is open.
@@ -67,14 +70,34 @@ namespace Editor.EditorWindowComponents
             _heightMap.Draw();
             _windSpeed.Draw();
             _radiationData.Draw();
+            
+            // Display warning message if a variable isn't set
+            if (_showWarning)
+            {
+                EditorGUILayout.HelpBox("Please select all variables before loading.", MessageType.Warning);
+            }
         }
 
         public void LoadVariablesButton()
         {
-            if (GUILayout.Button("Load variables", GUILayout.Width(400)))
+            if (GUILayout.Button("Generate scenes", GUILayout.Width(400)))
             {
-                DataGenerator.CreateDataFiles(MapName, _buildingData, _heightMap, _windSpeed, _radiationData);
+                if (_buildingData.SelectedVariable == null || _heightMap.SelectedVariable == null || _windSpeed.SelectedVariable == null || _radiationData.SelectedVariables.Count == 0)
+                {
+                    _showWarning = true;
+                    return;
+                }
+                _showWarning = false;
+                
+                DataGenerator.CreateDataFiles(
+                    MapName, 
+                    (NcVariable) _buildingData.SelectedVariable, 
+                    (NcVariable) _heightMap.SelectedVariable, 
+                    (NcVariable) _windSpeed.SelectedVariable, 
+                    _radiationData.SelectedVariables);
+                
                 Debug.Log("Finished making data files");
+                
                 OnDataComplete?.Invoke();
             }
         }
@@ -89,13 +112,13 @@ namespace Editor.EditorWindowComponents
         private void GetVariables()
         {
             DataGenerator.GenerateVariableAndAttributeJson(_fileSelector.NcFiles, _jsonFolderPath);
-            AssetDatabase.Refresh();
-            LoadVariables();
             
-            _buildingData = new SingleVariableDropdown(_allVariables, "Building data:");
-            _heightMap = new SingleVariableDropdown(_allVariables, "Heightmap:");
-            _windSpeed = new SingleVariableDropdown(_allVariables, "Wind speed:");
-            _radiationData = new MultiVariableDropdown(_allVariables, "Radiation Data:");
+            List<NcVariable> allVariables = LoadVariables();
+
+            _buildingData = new SingleVariableDropdown(allVariables, "Building data:");
+            _heightMap = new SingleVariableDropdown(allVariables, "Heightmap:");
+            _windSpeed = new SingleVariableDropdown(allVariables, "Wind speed:");
+            _radiationData = new MultiVariableDropdown(allVariables, "Radiation Data:");
 
             DataRetrieved = true;
         }
@@ -106,28 +129,28 @@ namespace Editor.EditorWindowComponents
          *  Populates the _allVariables field with JSON data created earlier.
          * </summary>
          */
-        private void LoadVariables()
+        private List<NcVariable> LoadVariables()
         {
+            List<NcVariable> variables = new();
+
             string path = _jsonFolderPath + "/variables.json";
 
             string jsonString = File.ReadAllText(path);
             
-            //A bit of a roundabout way of doing things but the deserializer can only create a single instance of an object.
-            //It doesn't work with several netCDF files without adding the fileDataList key and wrapper.
             jsonString = "{\"fileDataList\":" + jsonString + "}";
 
             FileDataListWrapper fileDataListWrapper = JsonUtility.FromJson<FileDataListWrapper>(jsonString);
             _ncFiles = fileDataListWrapper.fileDataList;
             
-            _allVariables.Clear();
-
             foreach (FileData fileData in _ncFiles)
             {
                 foreach (string variable in fileData.variables)
                 {
-                    _allVariables.Add(new NcVariable { filePath = fileData.filePath, variableName = variable });
+                    variables.Add(new NcVariable { filePath = fileData.filePath, variableName = variable });
                 }
             }
+
+            return variables;
         }
     }
 }

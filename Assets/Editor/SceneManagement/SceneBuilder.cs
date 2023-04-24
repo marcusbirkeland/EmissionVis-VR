@@ -16,6 +16,7 @@ namespace Editor.SceneManagement
          protected SceneBuilder(string mapName, string buildingCdfPath, string radiationCdfPath, string windSpeedCdfPath)
          {
              MapName = mapName;
+             MapUiManager.SetSceneNames(mapName);
              
              BuildingCdfPath = buildingCdfPath;
              RadiationCdfPath = radiationCdfPath;

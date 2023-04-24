@@ -18,5 +18,10 @@ namespace Editor.NetCDF
         {
             return $"{filePath}${variableName}$";
         }
+
+        public static implicit operator string(NcVariable ncVariable)
+        {
+            return ncVariable.ToString();
+        }
     }
 }

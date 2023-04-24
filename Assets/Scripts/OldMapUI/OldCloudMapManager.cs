@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using MapUI;
+using MapUiComponents;
 using UnityEngine;
 using UnityEngine.Networking;
 using Visualization;
