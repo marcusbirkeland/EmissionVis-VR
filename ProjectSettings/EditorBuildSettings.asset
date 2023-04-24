@@ -12,8 +12,8 @@ EditorBuildSettings:
     path: Assets/DEMO_FS.unity
     guid: e6d4d466358c65c479148b7b91f23c32
   - enabled: 1
-    path: Assets/TemplateScenes/Full Scale Template.unity
-    guid: dbffde4df51732943ab87eab31cfdbec
+    path: Assets/TemplateScenes/Miniature Template.unity
+    guid: 270ef4c4ac7de984c89bf755190576ee
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260,
       type: 2}
