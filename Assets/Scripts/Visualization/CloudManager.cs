@@ -1,17 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using MapUI;
 using Microsoft.Maps.Unity;
 using UnityEngine;
 using UnityEngine.Networking;
 using Esri.ArcGISMapsSDK.Components;
-using Esri.ArcGISMapsSDK.Utils.GeoCoord;
-using Esri.ArcGISMapsSDK.Utils.Math;
-using Esri.HPFramework;
-using Esri.GameEngine.Extent;
 using Esri.GameEngine.Geometry;
-using Esri.GameEngine;
 
 namespace Visualization
 {
@@ -23,6 +17,9 @@ namespace Visualization
         public float heightValueMultiplier = 1000;
 
         private double baseElevation;
+
+        [Range(0.0f, 1.0f)]
+        public float debugElevationSlider = 0.0f;
         
 
         private int _index;
@@ -31,9 +28,10 @@ namespace Visualization
         
         // All textures are loaded into this list, and used at runtime.
         private readonly List<CloudMap> _cloudMaps = new();
-
         public int MapCount => _cloudMaps.Count;
-
+        
+        private ArcGISLocationComponent arcGISLocation;
+        private MapPin mapPin;
 
         //More efficient to store these as static variables.
         private static readonly int ColorMapMin = Shader.PropertyToID("_ColorMapMin");
@@ -45,30 +43,18 @@ namespace Visualization
 
         void Start()
         {
-
-            MapPin mapPin = clouds.GetComponentInParent<MapPin>();
-            ArcGISLocationComponent arcGISLocationComponent = clouds.GetComponentInParent<ArcGISLocationComponent>();
-            
+            // Setup elevation variables.
+            mapPin = clouds.GetComponentInParent<MapPin>();
+            arcGISLocation = clouds.GetComponentInParent<ArcGISLocationComponent>();
             if(mapPin){
                baseElevation = mapPin.Altitude;
             }
-
-            if(arcGISLocationComponent){
-               baseElevation = arcGISLocationComponent.Position.Z;
+            else if(arcGISLocation){
+               baseElevation = arcGISLocation.Position.Z;
             }
 
-            LOD[] lods = clouds.GetComponent<LODGroup>().GetLODs();
-            foreach (LOD lod in lods)
-            {
-                foreach (Renderer ren in lod.renderers)
-                {
-                    _cloudRenderers.Add(ren);
-                    ren.material.SetTexture(ColorMapMin, null);
-                    ren.material.SetTexture(ColorMapMax, null);
-                }
-            }
-
-            // Android has a different file reading mechanism
+            // Set materials and textures
+            UnsetMaterials();
             if (Application.platform == RuntimePlatform.Android)
             {
                 // TODO: change to find all png files and their associated time/name
@@ -78,34 +64,25 @@ namespace Visualization
                     StartCoroutine(GetAndroidImageFromPath(fileName));
                 }
             } 
-            else
-            {
-                DirectoryInfo info = new (imageDirectory);
-                FileInfo[] fileInfo = info.GetFiles();
-
-                // Load all pngs from folder into the CloudMaps list.
-                foreach (FileInfo file in fileInfo)
-                {
-                    if (!file.Extension.ToLower().Equals(".png")) continue;
-                    
-                    Texture2D texture = new(1, 1);
-                    Debug.Log("FOUND TEXTURE: " + file.FullName);
-                    byte[] bytes = File.ReadAllBytes(file.FullName);
-
-                    texture.LoadImage(bytes);
-                    Debug.Log("Filename: " + file.Name);
-                    int seconds = int.Parse(file.Name.Split('.')[0]);
-                    CloudMap cm = new(texture, seconds);
-                    _cloudMaps.Add(cm);  
-                }
-            }
+            else 
+                LoadTexturesPC();
 
             if(MapCount <= 0)
-            {
                 throw new System.IndexOutOfRangeException("No textures found at: " + imageDirectory);
-            }
 
             //StartCoroutine(SetMapsWhenReady());
+        }
+
+        // Replace with coroutine when it works:)
+        void Update()
+        {
+            if(_cloudMaps.Count == 4 && _cloudRenderers[0].material.GetTexture(ColorMapMin) == null){
+                // Sort by time
+                _cloudMaps.Sort((c1,c2) => {
+                    return c1.Time -c2.Time;
+                });
+                SetMaps();
+            }
         }
 
         public void ChangeAlpha(float value)
@@ -116,17 +93,21 @@ namespace Visualization
             }
         }
 
+        public void UpdateAlphaForRenderers(float time)
+        {
+            foreach (Renderer ren in _cloudRenderers)
+            {
+                ren.material.SetFloat(ColorMapAlpha, time % 1);
+            }
+        }
+
         public void ChangeHeight(float value){
             float maxValue = 1;
-             // TODO: fix so this works in fullscale too
-            ArcGISLocationComponent arcGISLocation = clouds.GetComponentInParent<ArcGISLocationComponent>(); 
-            MapPin mapPin = clouds.GetComponentInParent<MapPin>();
             
             if(mapPin){
                 mapPin.Altitude = value*heightValueMultiplier + baseElevation;
             }
-
-            if(arcGISLocation){
+            else if(arcGISLocation){
                 arcGISLocation.Position = new ArcGISPoint(arcGISLocation.Position.X, arcGISLocation.Position.Y, value*heightValueMultiplier + baseElevation);
             }
             
@@ -136,14 +117,6 @@ namespace Visualization
             }
         }
         
-        
-        public void UpdateAlphaForRenderers(float time)
-        {
-            foreach (Renderer ren in _cloudRenderers)
-            {
-                ren.material.SetFloat(ColorMapAlpha, time % 1);
-            }
-        }
 
         public void UpdateTime(int steps)
         {
@@ -182,18 +155,6 @@ namespace Visualization
             SetMaps();
         }
         
-        //Replace with coroutine above when it is functional 
-        void Update()
-        {
-            if(_cloudMaps.Count == 4 && _cloudRenderers[0].material.GetTexture(ColorMapMin) == null){
-                // Sort by time
-                _cloudMaps.Sort((c1,c2) => {
-                    return c1.Time -c2.Time;
-                });
-                SetMaps();
-            }
-        }
-        
         private void SetMaps()
         {
             foreach (Renderer ren in _cloudRenderers)
@@ -220,7 +181,38 @@ namespace Visualization
             }
             _index += steps;
         }
+
+        private void UnsetMaterials(){
+            LOD[] lods = clouds.GetComponent<LODGroup>().GetLODs();
+            foreach (LOD lod in lods)
+            {
+                foreach (Renderer ren in lod.renderers)
+                {
+                    _cloudRenderers.Add(ren);
+                    ren.material.SetTexture(ColorMapMin, null);
+                    ren.material.SetTexture(ColorMapMax, null);
+                }
+            }
+        }
         
+        private void LoadTexturesPC(){
+            DirectoryInfo info = new (imageDirectory);
+            FileInfo[] fileInfo = info.GetFiles();
+            // Load all pngs from folder into the CloudMaps list.
+            foreach (FileInfo file in fileInfo)
+            {
+                if (!file.Extension.ToLower().Equals(".png")) continue;
+
+                Texture2D texture = new(1, 1);
+                Debug.Log("FOUND TEXTURE: " + file.FullName);
+                byte[] bytes = File.ReadAllBytes(file.FullName); 
+                texture.LoadImage(bytes);
+                Debug.Log("Filename: " + file.Name);
+                int seconds = int.Parse(file.Name.Split('.')[0]);
+                CloudMap cm = new(texture, seconds);
+                _cloudMaps.Add(cm);  
+            }
+        }
 
         private IEnumerator GetAndroidImageFromPath(string fileName)
         {
