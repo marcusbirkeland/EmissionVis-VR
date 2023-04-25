@@ -41,8 +41,11 @@ with netCDF4.Dataset(nc_path, "r") as nc_file:
         # Read the data from the NetCDF file
         data = nc_var[:, :]
 
+        # Flip the data vertically
+        flipped_data = np.flipud(data)
+
         # Save the plot as a PNG file
-        plt.imsave(output_path, data, cmap='gray')
+        plt.imsave(output_path, flipped_data, cmap='gray')
 
 
     elif len(variable_data.shape) == 4:

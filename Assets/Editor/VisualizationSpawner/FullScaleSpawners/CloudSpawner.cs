@@ -56,7 +56,7 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
             ArcGISLocationComponent location = VisualizationHolder.AddComponent<ArcGISLocationComponent>();
             location.runInEditMode = true;
 
-            ArcGISPoint pos = new(SelectedCdfAttributes.position.lon, SelectedCdfAttributes.position.lat, 800.0f,
+            ArcGISPoint pos = new(SelectedCdfAttributes.position.lon, SelectedCdfAttributes.position.lat, 130.0f,
                 ArcGISSpatialReference.WGS84());
             
             location.Position = pos;

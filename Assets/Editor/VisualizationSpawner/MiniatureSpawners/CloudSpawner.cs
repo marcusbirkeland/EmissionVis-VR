@@ -56,7 +56,7 @@ namespace Editor.VisualizationSpawner.MiniatureSpawners
             mapPin.IsLayerSynchronized = true;
             mapPin.UseRealWorldScale = true;
             mapPin.ShowOutsideMapBounds = true;
-            mapPin.Altitude = 500;
+            mapPin.Altitude = 130;
             mapPin.AltitudeReference = AltitudeReference.Surface;
         }
 

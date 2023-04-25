@@ -44,5 +44,5 @@ with open(csv_file, "w", newline='') as csvfile:
             if buildings[i, j] != 0:
                 x_value = x_values[i]
                 y_value = y_values[j]
-                z_value = height[i, j]
+                z_value = int(height[i, j])
                 csv_writer.writerow([x_value, y_value, z_value])
