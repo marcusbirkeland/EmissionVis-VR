@@ -1,19 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-using Esri.ArcGISMapsSDK.Components;
-using Esri.ArcGISMapsSDK.Samples.Components;
-using Esri.ArcGISMapsSDK.Utils.GeoCoord;
-using Esri.GameEngine.Extent;
-using Esri.GameEngine.Geometry;
-using Esri.Unity;
-using Esri.GameEngine;
-using System;
 
 public class ArcGisLoadStatus : MonoBehaviour
 {
-    private ArcGISMapComponent _arcGisMap;
     public GameObject loadingScreen;
 
     private void Start()
@@ -22,6 +11,8 @@ public class ArcGisLoadStatus : MonoBehaviour
         StartCoroutine(Wait(5));
     }
 
+    //TODO: Should be replaced with an check for when the Arcgis map has finished loading in.
+    //So far, we have been unable to find a way of doing this.
     private IEnumerator Wait(int seconds)
     {
         yield return new WaitForSeconds(seconds);

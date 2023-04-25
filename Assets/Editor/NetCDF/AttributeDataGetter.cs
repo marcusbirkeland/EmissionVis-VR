@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Esri.GameEngine.Geometry;
-using Microsoft.Geospatial;
 using UnityEngine;
 
 namespace Editor.NetCDF
