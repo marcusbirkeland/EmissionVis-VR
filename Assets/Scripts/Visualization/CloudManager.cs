@@ -11,10 +11,11 @@ namespace Visualization
 {
     public class CloudManager : MonoBehaviour
     {
-        public GameObject clouds;
         public string imageDirectory;
 
         public float heightValueMultiplier = 1000;
+
+        public Texture2D heightMapImg;
 
         private double baseElevation;
 
@@ -24,7 +25,6 @@ namespace Visualization
         [Range(0.0f, 1.0f)]
         public float debugAlphaSlider = 1.0f;
         
-
         private int _index;
         
         private readonly List<Renderer> _cloudRenderers = new();
@@ -42,13 +42,14 @@ namespace Visualization
         private static readonly int ColorMapAlpha = Shader.PropertyToID("_ColorMapAlpha");
         private static readonly int TerrainCurvature = Shader.PropertyToID("_Terrain_Curvature");
         private static readonly int Opacity = Shader.PropertyToID("_Opacity");
+        private static readonly int Heightmap = Shader.PropertyToID("_TerrainHeightmap");
 
 
         void Start()
         {
             // Setup elevation variables.
-            mapPin = clouds.GetComponentInParent<MapPin>();
-            arcGISLocation = clouds.GetComponentInParent<ArcGISLocationComponent>();
+            mapPin = gameObject.GetComponentInParent<MapPin>();
+            arcGISLocation = gameObject.GetComponentInParent<ArcGISLocationComponent>();
             if(mapPin){
                baseElevation = mapPin.Altitude;
             }
@@ -57,7 +58,7 @@ namespace Visualization
             }
 
             // Set materials and textures
-            UnsetMaterials();
+            ResetMaterials();
             if (Application.platform == RuntimePlatform.Android)
             {
                 // TODO: change to find all png files and their associated time/name
@@ -189,8 +190,8 @@ namespace Visualization
             }
         }
 
-        private void UnsetMaterials(){
-            LOD[] lods = clouds.GetComponent<LODGroup>().GetLODs();
+        private void ResetMaterials(){
+            LOD[] lods = gameObject.GetComponent<LODGroup>().GetLODs();
             foreach (LOD lod in lods)
             {
                 foreach (Renderer ren in lod.renderers)
@@ -198,9 +199,11 @@ namespace Visualization
                     _cloudRenderers.Add(ren);
                     ren.material.SetTexture(ColorMapMin, null);
                     ren.material.SetTexture(ColorMapMax, null);
+                    ren.material.SetTexture(Heightmap, heightMapImg);
                 }
             }
         }
+        
         
         private void LoadTexturesPC(){
             DirectoryInfo info = new (imageDirectory);
@@ -211,10 +214,8 @@ namespace Visualization
                 if (!file.Extension.ToLower().Equals(".png")) continue;
 
                 Texture2D texture = new(1, 1);
-                Debug.Log("FOUND TEXTURE: " + file.FullName);
                 byte[] bytes = File.ReadAllBytes(file.FullName); 
                 texture.LoadImage(bytes);
-                Debug.Log("Filename: " + file.Name);
                 int seconds = int.Parse(file.Name.Split('.')[0]);
                 CloudMap cm = new(texture, seconds);
                 _cloudMaps.Add(cm);  

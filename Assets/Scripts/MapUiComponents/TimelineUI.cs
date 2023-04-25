@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Visualization;
 
-namespace MapUI
+namespace MapUiComponents
 {
     public class TimelineUI : MonoBehaviour
     {
@@ -29,7 +29,7 @@ namespace MapUI
         [SerializeField]        
         private float playbackRate = 0.5f;
         
-        private static CloudManager CloudManager => MapUI.Instance.cloudManager;
+        private static CloudManager CloudManager => MapUI.CloudManager;
 
         //NOTE: Represents a number of seconds since the playback started, not the database timestamps. 
         private float _currentTime;

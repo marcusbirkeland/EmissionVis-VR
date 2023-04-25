@@ -76,7 +76,6 @@ namespace Editor.VisualizationSpawner.MiniatureSpawners
 
             CloudManager cloudManager = _cloud.GetComponent<CloudManager>();
             cloudManager.imageDirectory = _cloudImagesPath;
-
             cloudManager.heightMapImg = _heightImg;
             
             LODGroup lodGroup = _cloud.GetComponent<LODGroup>();
