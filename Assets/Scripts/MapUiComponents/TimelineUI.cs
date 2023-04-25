@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Visualization;
 
-namespace MapUiComponents
+namespace MapUI
 {
     public class TimelineUI : MonoBehaviour
     {
@@ -28,14 +28,15 @@ namespace MapUiComponents
         
         [SerializeField]        
         private float playbackRate = 0.5f;
+        
+        private static CloudManager CloudManager => MapUI.Instance.cloudManager;
 
-        //NOTE: Represents a number of seconds since the playback started, not the database timestamps.
+        //NOTE: Represents a number of seconds since the playback started, not the database timestamps. 
         private float _currentTime;
         private float _prevTime;
 
         private bool _isPlaying;
 
-        
         private void Start()
         {
             timelineSlider.onValueChanged.AddListener(OnSliderChange);
@@ -46,12 +47,11 @@ namespace MapUiComponents
             StartCoroutine(SetSliderValuesWhenReady());
         }
 
-        
         private void Update()
         {
             if (!_isPlaying) return;
 
-            float maxValue = MapUI.CloudManager.MapCount - 1.01f;
+            float maxValue = CloudManager.MapCount - 1.01f;
             timelineSlider.maxValue = maxValue;
             _currentTime += playbackRate * Time.deltaTime;
 
@@ -66,13 +66,13 @@ namespace MapUiComponents
         
         private IEnumerator SetSliderValuesWhenReady()
         {
-            yield return new WaitUntil(() => MapUI.CloudManager.MapCount > 0);
+            yield return new WaitUntil(() => CloudManager.MapCount > 0);
             
             Debug.Log("Slider values set");
     
             timelineSlider.minValue = 0;
             timeValueText.text = "0.0";
-            timelineSlider.maxValue = MapUI.CloudManager.MapCount - 1.1f;
+            timelineSlider.maxValue = CloudManager.MapCount - 1.1f;
         }
         
         
@@ -84,7 +84,6 @@ namespace MapUiComponents
             ChangeTime(value);
         }
 
-        
         private void ChangeTime(float value)
         {
             _currentTime = value;
@@ -93,13 +92,12 @@ namespace MapUiComponents
             
             if (nSteps != 0)
             {
-                MapUI.CloudManager.UpdateTime(nSteps);
+                CloudManager.UpdateTime(nSteps);
             }
             _prevTime = _currentTime;
 
-            MapUI.CloudManager.UpdateAlphaForRenderers(_currentTime);
+            CloudManager.ChangeTimestep(_currentTime);
         }
-        
         
         private static int NumSteps(float prev, float current)
         {

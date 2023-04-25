@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace MapUiComponents
+namespace MapUI
 {
     public class VisibilityUI : MonoBehaviour
     {
@@ -11,7 +11,8 @@ namespace MapUiComponents
         private void Start()
         {
             visibilitySlider.onValueChanged.AddListener(
-                MapUI.CloudManager.ChangeAlpha);
+                MapUI.Instance.cloudManager.ChangeOpacity
+            );
         }
     }
 }

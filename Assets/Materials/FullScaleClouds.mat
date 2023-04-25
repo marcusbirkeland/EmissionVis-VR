@@ -39,11 +39,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorMapMax:
-        m_Texture: {fileID: 2800000, guid: 2f614b283c732914c8dd552ca828a215, type: 3}
+        m_Texture: {fileID: 2800000, guid: 54a029ccda3bee441953362434e8f28d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorMapMin:
-        m_Texture: {fileID: 2800000, guid: 5139343d89d202f4c88d9a582406b2aa, type: 3}
+        m_Texture: {fileID: 2800000, guid: e82e2f09d2f8ecb4f9cf5a16270f7cbd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TerrainHeightmap:
+        m_Texture: {fileID: 2800000, guid: 9605f7cc562435d44b6e3c86504bbfc2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -79,23 +83,25 @@ Material:
     - _AlphaClampMax: 0.8
     - _BaseMapOpacity: 100
     - _BaseMapTransparency: 8
-    - _ColorBlendFac: 0.317
+    - _ColorBlendFac: 0.053
     - _ColorLowTreshold: 0.377
     - _ColorMapAlpha: 0
     - _ColorMapOpacity: 1.49
-    - _ColorMapTransparency: 0.065
+    - _ColorMapTransparency: 0
     - _ColorMaxTreshold: 0.75
     - _ColorMidTreshold: 0.573
     - _ColorMinOpacity: 1
     - _ColorMinTreshold: 0.191
     - _DarkSpotBrightness: 0
     - _NoiseAlpha: 50
-    - _Opacity: 0.62
+    - _Opacity: 1
     - _OpacityMax: 1
     - _OpacityMultipler: 1
     - _QueueControl: 1
     - _QueueOffset: -21
-    - _ValleyColorMultipler: 2.81
+    - _TerrainDisplacement: 300
+    - _Terrain_Curvature: 0.9
+    - _ValleyColorMultipler: 3.81
     m_Colors:
     - Color_6D35BD30: {r: 0, g: 0.5373578, b: 1, a: 0}
     - Color_AD16EE5E: {r: 0, g: 0.3121109, b: 1, a: 1}
