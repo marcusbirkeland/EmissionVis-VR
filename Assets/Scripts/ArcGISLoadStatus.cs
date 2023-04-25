@@ -22,7 +22,7 @@ public class ArcGISLoadStatus : MonoBehaviour
         loadingScreen.SetActive(true);
         arcGisMap = gameObject.GetComponent<ArcGISMapComponent>();
         //arcGisMap.View.Map.DoneLoading += DoneLoading; // <- stops too soon
-        StartCoroutine(Wait(5));
+        StartCoroutine(Wait(8));
     }
 
     IEnumerator Wait(int seconds)
