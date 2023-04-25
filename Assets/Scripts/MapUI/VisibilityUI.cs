@@ -11,7 +11,8 @@ namespace MapUI
         private void Start()
         {
             visibilitySlider.onValueChanged.AddListener(
-                MapUI.Instance.cloudManager.ChangeAlpha);
+                MapUI.Instance.cloudManager.ChangeOpacity
+            );
         }
     }
 }
