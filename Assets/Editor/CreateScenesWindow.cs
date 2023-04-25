@@ -41,8 +41,6 @@ namespace Editor
         private void CreateBothScenes()
         {
             Debug.Log("Creating both scenes");
-
-            return;
             
             CreateMiniatureScene(() =>
             {
