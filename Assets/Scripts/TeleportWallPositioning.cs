@@ -9,14 +9,15 @@ using UnityEngine.InputSystem;
 public class TeleportWallPositioning : MonoBehaviour
 {
     // if changing maxTeleportDistance make sure the controller's raycast maxDistance is changed accordingly (raycast maxDistance >= this maxTeleportDistance)
-    private float maxTeleportDistance = 999.0f;
-    private float minTeleportDistance = 25.0f;
-    public float distanceScale = 1.0f;
-    public ActionBasedController rightController;
+    private float maxTeleportDistance = 900.0f;
+    private float minTeleportDistance = 30.0f;
+    public InputActionReference teleportBumper;
+    public InputActionReference teleportJoystick;
 
     void Start()
     {
-        rightController.GetComponent<ActionBasedController>().selectAction.reference.action.performed += Pressed;
+        teleportBumper.action.performed += Pressed;
+        teleportJoystick.action.performed += Pressed;
     }
 
     private void Pressed(InputAction.CallbackContext context)
@@ -36,8 +37,8 @@ public class TeleportWallPositioning : MonoBehaviour
         // reset to normal layer after raycasting
         gameObject.layer = cachedLayer;
 
-        // make the minimun teleport distance kick in at 50 units before the player is below the threshold, as to make teleporting more controlled at lower altitudes
-        Vector3 TeleportWallDistance = distanceScale * Math.Max(heightAboveTerrain - 50, minTeleportDistance) * transform.forward;
+        // make the minimun teleport distance kick in at 20 units before the player is below the threshold, as to make teleporting more controlled at lower altitudes
+        Vector3 TeleportWallDistance = Math.Max(heightAboveTerrain - 20, minTeleportDistance) * transform.forward;
 
         if (TeleportWallDistance.magnitude > maxTeleportDistance)
         {
