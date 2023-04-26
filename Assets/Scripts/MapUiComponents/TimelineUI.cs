@@ -31,7 +31,7 @@ namespace MapUiComponents
         
         private static CloudManager CloudManager => MapUI.CloudManager;
 
-        //NOTE: Represents a number of seconds since the playback started, not the database timestamps. 
+        //NOTE: Represents a number of seconds since the playback started, not the database timestamps.
         private float _currentTime;
         private float _prevTime;
 
@@ -44,7 +44,7 @@ namespace MapUiComponents
             toggleButton.onClick.AddListener(TogglePlaying);
             UpdateButtonIcon();
 
-            StartCoroutine(SetSliderValuesWhenReady());
+            SetSliderValues();
         }
 
         private void Update()
@@ -64,13 +64,10 @@ namespace MapUiComponents
         }
         
         
-        private IEnumerator SetSliderValuesWhenReady()
+        private void SetSliderValues()
         {
-            yield return new WaitUntil(() => CloudManager.MapCount > 0);
-            
-            Debug.Log("Slider values set");
-    
             timelineSlider.minValue = 0;
+            timelineSlider.value = 0;
             timeValueText.text = "0.0";
             timelineSlider.maxValue = CloudManager.MapCount - 1.1f;
         }
@@ -96,7 +93,7 @@ namespace MapUiComponents
             }
             _prevTime = _currentTime;
 
-            CloudManager.ChangeTimestep(_currentTime);
+            CloudManager.ChangeTimeStep(_currentTime);
         }
         
         private static int NumSteps(float prev, float current)

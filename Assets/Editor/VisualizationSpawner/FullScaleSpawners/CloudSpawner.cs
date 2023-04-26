@@ -15,13 +15,19 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
         private readonly string _cloudImagesPath;
         private readonly Texture2D _heightImg;
         private readonly string _cloudPrefabName;
+        private readonly string _mapName;
+        private readonly double _elevation;
+
 
         private GameObject _cloud;
 
-        
-        public CloudSpawner(string mapName, string cdfFilePath, GameObject map, string cloudPrefabName, float rotationAngle) 
+
+        public CloudSpawner(string mapName, string cdfFilePath, GameObject map, string cloudPrefabName, float rotationAngle, double elevation) 
             : base(cdfFilePath, map, rotationAngle)
         {
+            _elevation = elevation;
+            _mapName = mapName;
+            
             _cloudImagesPath = $"{Application.dataPath}/Resources/MapData/{mapName}/WindSpeed/";
             _heightImg = GetHeightMapImg(mapName);
 
@@ -56,7 +62,7 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
             ArcGISLocationComponent location = VisualizationHolder.AddComponent<ArcGISLocationComponent>();
             location.runInEditMode = true;
 
-            ArcGISPoint pos = new(SelectedCdfAttributes.position.lon, SelectedCdfAttributes.position.lat, 130.0f,
+            ArcGISPoint pos = new(SelectedCdfAttributes.position.lon, SelectedCdfAttributes.position.lat, _elevation,
                 ArcGISSpatialReference.WGS84());
             
             location.Position = pos;
@@ -79,8 +85,10 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
             _cloud.name = "Cloud";
             
             CloudManager cloudManager = _cloud.GetComponent<CloudManager>();
-            cloudManager.imageDirectory = _cloudImagesPath;
             cloudManager.heightMapImg = _heightImg;
+            
+            cloudManager.cloudImages = CloudManagerInitializer.GetImages(_mapName);
+            cloudManager.baseElevation = _elevation;
 
             LODGroup lodGroup = _cloud.GetComponent<LODGroup>();
             lodGroup.size = SelectedCdfAttributes.size.x;

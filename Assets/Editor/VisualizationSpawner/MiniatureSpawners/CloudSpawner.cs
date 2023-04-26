@@ -13,16 +13,22 @@ namespace Editor.VisualizationSpawner.MiniatureSpawners
         private readonly string _cloudImagesPath;
         private readonly Texture2D _heightImg;
         private readonly string _cloudPrefabName;
+        private readonly string _mapName;
+        private readonly double _elevation;
 
         private GameObject _cloud;
 
-
-        public CloudSpawner(string mapName, string cdfFilePath, GameObject map, string cloudPrefabName, float rotationAngle) 
+        
+        public CloudSpawner(string mapName, string cdfFilePath, GameObject map, string cloudPrefabName, float rotationAngle, double elevation) 
             : base(cdfFilePath, map, rotationAngle)
         {
+            _elevation = elevation;
+            
             _cloudImagesPath = $"{Application.dataPath}/Resources/MapData/{mapName}/WindSpeed/";
             _heightImg = GetHeightMapImg(mapName);
 
+            _mapName = mapName;
+            
             if (!DataFilesExist(_cloudImagesPath))
             {
                 throw new Exception($"The directory {_cloudImagesPath} does not contain any image files on the .png format, or does not exist.");
@@ -56,7 +62,7 @@ namespace Editor.VisualizationSpawner.MiniatureSpawners
             mapPin.IsLayerSynchronized = true;
             mapPin.UseRealWorldScale = true;
             mapPin.ShowOutsideMapBounds = true;
-            mapPin.Altitude = 130;
+            mapPin.Altitude = _elevation;
             mapPin.AltitudeReference = AltitudeReference.Surface;
         }
 
@@ -75,8 +81,10 @@ namespace Editor.VisualizationSpawner.MiniatureSpawners
             _cloud.name = "Cloud";
 
             CloudManager cloudManager = _cloud.GetComponent<CloudManager>();
-            cloudManager.imageDirectory = _cloudImagesPath;
             cloudManager.heightMapImg = _heightImg;
+
+            cloudManager.cloudImages = CloudManagerInitializer.GetImages(_mapName);
+            cloudManager.baseElevation = _elevation;
             
             LODGroup lodGroup = _cloud.GetComponent<LODGroup>();
             lodGroup.size = SelectedCdfAttributes.size.x;

@@ -63,7 +63,8 @@ namespace Editor.SceneManagement
                 WindSpeedCdfPath, 
                 FindMap(), 
                 cloudPrefab,
-                -3.1f);
+                -3.1f,
+                -130);
 
             spawner.SpawnAndSetupCloud();
 

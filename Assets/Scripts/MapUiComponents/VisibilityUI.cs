@@ -11,8 +11,15 @@ namespace MapUiComponents
         private void Start()
         {
             visibilitySlider.onValueChanged.AddListener(
-                MapUI.CloudManager.ChangeOpacity
+                UpdateCloudOpacity
             );
+        }
+
+        private static void UpdateCloudOpacity(float value)
+        {
+            MapUI.CloudManager.ChangeOpacity(value);
+            
+            
         }
     }
 }

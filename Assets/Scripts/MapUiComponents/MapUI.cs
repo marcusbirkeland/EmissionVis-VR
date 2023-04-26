@@ -13,14 +13,16 @@ namespace MapUiComponents
         [SerializeField]
         private InputActionReference [] inputActions;
 
-        private GameObject CloudHolder { get; set; }
+        public GameObject CloudHolder { get; set; }
         public GameObject BuildingHolder { get; private set; }
         public GameObject RadiationHolder { get; private set; }
         
         public string miniatureSceneName;
         public string fullScaleSceneName;
+
+        private CloudManager _cloudManager;
         
-        public static CloudManager CloudManager => Instance.CloudHolder.GetComponentInChildren<CloudManager>();
+        public static CloudManager CloudManager => Instance._cloudManager;
 
         public event Action<bool> OnToggle; 
 
@@ -56,11 +58,23 @@ namespace MapUiComponents
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+            Debug.Log("New scene loaded, setting holder values");
             SetHolderValues();
+
+            if (!CloudHolder || !BuildingHolder || !RadiationHolder)
+            {
+                Debug.Log("Missing a holder object");
+            }
         }
 
         private void SetHolderValues() {
             CloudHolder = GameObject.Find("Cloud Holder");
+
+            if (CloudHolder != null)
+            {
+                _cloudManager = CloudHolder.GetComponentInChildren<CloudManager>();
+            }
+            
             BuildingHolder = GameObject.Find("Buildings Holder");
             RadiationHolder = GameObject.Find("Radiation Holder");
         }
