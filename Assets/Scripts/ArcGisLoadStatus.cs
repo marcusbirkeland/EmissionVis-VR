@@ -1,21 +1,45 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class ArcGisLoadStatus : MonoBehaviour
+using Esri.ArcGISMapsSDK.Components;
+using Esri.ArcGISMapsSDK.Samples.Components;
+using Esri.ArcGISMapsSDK.Utils.GeoCoord;
+using Esri.GameEngine.Extent;
+using Esri.GameEngine.Geometry;
+using Esri.Unity;
+using Esri.GameEngine;
+using System;
+
+public class ArcGISLoadStatus : MonoBehaviour
 {
+    private ArcGISMapComponent arcGisMap;
     public GameObject loadingScreen;
 
-    private void Start()
+    // Start is called before the first frame update
+    void Start()
     {
         loadingScreen.SetActive(true);
-        StartCoroutine(Wait(5));
+        arcGisMap = gameObject.GetComponent<ArcGISMapComponent>();
+        //arcGisMap.View.Map.DoneLoading += DoneLoading; // <- stops too soon
+        StartCoroutine(Wait(8));
     }
 
-    //TODO: Should be replaced with an check for when the Arcgis map has finished loading in.
-    //So far, we have been unable to find a way of doing this.
-    private IEnumerator Wait(int seconds)
+    IEnumerator Wait(int seconds)
     {
         yield return new WaitForSeconds(seconds);
         loadingScreen.SetActive(false);
+    }
+
+    /*private void DoneLoading(Exception e)
+    {
+        Debug.Log("FIRST LOAD DONE!");
+    }*/
+
+
+    // Update is called once per frame
+    void Update()
+    {
+
     }
 }
