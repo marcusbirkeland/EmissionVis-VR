@@ -11,8 +11,8 @@ namespace MapUiComponents
         [SerializeField] private float maxRotationAngle = 60.0f;
         [SerializeField] private float moveSpeed = 5.0f;
         [SerializeField] private float tiltAngle = 10.0f;
-        [SerializeField] private float heightOffset = -0.3f;
-        
+        [SerializeField] private float heightOffset = -0.1f;
+
 
         private Quaternion _previousCameraRotation;
         private Vector3 _targetPosition;
@@ -69,6 +69,7 @@ namespace MapUiComponents
             // Rotate the UI to face the camera
             RotateUIFacingCamera();
         }
+
 
         private void UpdateTargetPosition()
         {

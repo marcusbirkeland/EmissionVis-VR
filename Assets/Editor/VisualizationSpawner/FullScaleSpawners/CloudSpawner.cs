@@ -12,13 +12,11 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
 {
     public class CloudSpawner : MapVisualizerSpawner
     {
-        private readonly string _cloudImagesPath;
         private readonly Texture2D _heightImg;
         private readonly string _cloudPrefabName;
         private readonly string _mapName;
         private readonly double _elevation;
-
-
+        
         private GameObject _cloud;
 
 
@@ -27,15 +25,7 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
         {
             _elevation = elevation;
             _mapName = mapName;
-            
-            _cloudImagesPath = $"{Application.dataPath}/Resources/MapData/{mapName}/WindSpeed/";
             _heightImg = GetHeightMapImg(mapName);
-
-            if (!DataFilesExist(_cloudImagesPath))
-            {
-                throw new Exception($"The directory {_cloudImagesPath} does not contain any image files on the .png format, or does not exist.");
-            }
-
             _cloudPrefabName = cloudPrefabName;
         }
         
@@ -97,13 +87,5 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
             float scale = SelectedCdfAttributes.size.x/1000.0f * UnityUnitsPerMeter;
             _cloud.transform.localScale = new Vector3(scale, scale, scale);
         }
-
-
-        private static bool DataFilesExist(string dataPath)
-        {
-            if (!Directory.Exists(dataPath)) return false;
-
-            return Directory.GetFiles(dataPath, "*.png", SearchOption.TopDirectoryOnly).Length > 0;
-        }    
     }
 }

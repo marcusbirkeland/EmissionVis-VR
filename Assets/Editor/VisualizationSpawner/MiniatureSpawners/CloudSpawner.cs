@@ -10,7 +10,6 @@ namespace Editor.VisualizationSpawner.MiniatureSpawners
 {
     public class CloudSpawner : MapVisualizerSpawner
     {
-        private readonly string _cloudImagesPath;
         private readonly Texture2D _heightImg;
         private readonly string _cloudPrefabName;
         private readonly string _mapName;
@@ -23,17 +22,8 @@ namespace Editor.VisualizationSpawner.MiniatureSpawners
             : base(cdfFilePath, map, rotationAngle)
         {
             _elevation = elevation;
-            
-            _cloudImagesPath = $"{Application.dataPath}/Resources/MapData/{mapName}/WindSpeed/";
             _heightImg = GetHeightMapImg(mapName);
-
             _mapName = mapName;
-            
-            if (!DataFilesExist(_cloudImagesPath))
-            {
-                throw new Exception($"The directory {_cloudImagesPath} does not contain any image files on the .png format, or does not exist.");
-            }
-
             _cloudPrefabName = cloudPrefabName;
         }
 
@@ -91,14 +81,6 @@ namespace Editor.VisualizationSpawner.MiniatureSpawners
 
             float scale = SelectedCdfAttributes.size.x / 1000.0f;
             _cloud.transform.localScale = new Vector3(scale, scale, scale);
-        }
-
-
-        private static bool DataFilesExist(string dataPath)
-        {
-            if (!Directory.Exists(dataPath)) return false;
-
-            return Directory.GetFiles(dataPath, "*.png", SearchOption.TopDirectoryOnly).Length > 0;
         }
     }
 }

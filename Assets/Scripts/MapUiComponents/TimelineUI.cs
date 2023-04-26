@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Visualization;
@@ -45,6 +47,16 @@ namespace MapUiComponents
             UpdateButtonIcon();
 
             SetSliderValues();
+
+            SceneManager.sceneLoaded += HandleSceneChange;
+        }
+
+        private void OnDestroy()
+        {
+            timelineSlider.onValueChanged.RemoveListener(OnSliderChange);
+            
+            toggleButton.onClick.RemoveListener(TogglePlaying);
+            SceneManager.sceneLoaded -= HandleSceneChange;
         }
 
         private void Update()
@@ -94,6 +106,14 @@ namespace MapUiComponents
             _prevTime = _currentTime;
 
             CloudManager.ChangeTimeStep(_currentTime);
+        }
+
+
+        private void HandleSceneChange(Scene scene, LoadSceneMode mode)
+        {
+            _prevTime = 0;
+            
+            ChangeTime(timelineSlider.value);
         }
         
         private static int NumSteps(float prev, float current)

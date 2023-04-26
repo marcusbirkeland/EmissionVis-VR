@@ -11,35 +11,21 @@ using Esri.Unity;
 using Esri.GameEngine;
 using System;
 
-public class ArcGISLoadStatus : MonoBehaviour
+public class ArcGisLoadStatus : MonoBehaviour
 {
-    private ArcGISMapComponent arcGisMap;
     public GameObject loadingScreen;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         loadingScreen.SetActive(true);
-        arcGisMap = gameObject.GetComponent<ArcGISMapComponent>();
-        //arcGisMap.View.Map.DoneLoading += DoneLoading; // <- stops too soon
         StartCoroutine(Wait(8));
     }
 
-    IEnumerator Wait(int seconds)
+    //TODO: Replace with actual measure of map load status.
+    //We have not found a good way of doing this. The built-in ArcGis MapLoadStatus is insufficient. 
+    private IEnumerator Wait(int seconds)
     {
         yield return new WaitForSeconds(seconds);
         loadingScreen.SetActive(false);
-    }
-
-    /*private void DoneLoading(Exception e)
-    {
-        Debug.Log("FIRST LOAD DONE!");
-    }*/
-
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

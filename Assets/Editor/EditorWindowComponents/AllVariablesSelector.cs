@@ -15,7 +15,7 @@ namespace Editor.EditorWindowComponents
 
         public event OnDataCompleteHandler OnDataComplete;
         
-        public string MapName { get; private set; } = "Bergen";
+        public string MapName { get; private set; }
 
         public bool DataRetrieved { get; private set; }
         
