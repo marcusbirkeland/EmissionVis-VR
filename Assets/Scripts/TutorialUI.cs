@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,30 +15,31 @@ public class TutorialUI : MonoBehaviour
     public Text descriptionText;
     public Image tutorialImage;
     public Button tutorialButton;
-    public int selectedSlideIndex = 0;
-    private TutorialSlide selectedSlide;
+    public int selectedSlideIndex;
+    private TutorialSlide _selectedSlide;
+    
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        selectedSlide = tutorialSlides[selectedSlideIndex];
-        setSlide();
+        _selectedSlide = tutorialSlides[selectedSlideIndex];
+        SetSlide();
         tutorialButton.onClick.AddListener(OnTutorialButtonPressed);
     }
 
-    private void setSlide(){
-        titleText.text = selectedSlide.title;
-        descriptionText.text = selectedSlide.description;
-        tutorialImage.sprite = selectedSlide.tutorialImage;
+    private void SetSlide(){
+        titleText.text = _selectedSlide.title;
+        descriptionText.text = _selectedSlide.description;
+        tutorialImage.sprite = _selectedSlide.tutorialImage;
     }
 
     private void OnTutorialButtonPressed(){
         if(selectedSlideIndex >= tutorialSlides.Length -1){
             // Hide the tutorial pane when exiting the last slide
-            this.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         } else {
             selectedSlideIndex++;
-            selectedSlide = tutorialSlides[selectedSlideIndex];
-            setSlide();
+            _selectedSlide = tutorialSlides[selectedSlideIndex];
+            SetSlide();
             if(selectedSlideIndex == tutorialSlides.Length - 1){
                 tutorialButton.GetComponentInChildren<Text>().text = "Finish";
             }

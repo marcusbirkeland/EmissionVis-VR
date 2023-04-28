@@ -7,9 +7,9 @@ import os
 import numpy as np
 import cv2 as cv
 from matplotlib import pyplot as plt
-from netCDF4 import Dataset
 from scipy.interpolate import interp2d
 
+# Split the input string by '$' to get the individual input values
 input_fields = __name__.split('$')
 
 nc_path = input_fields[0]
@@ -17,17 +17,14 @@ variable_name = input_fields[1]
 output_path = input_fields[2]
 interpolation_factor = int(input_fields[3])
 
-# Check the shape of the variable data and create either a single png file or multiple png files
+# Open the NetCDF file and get the variable data
 with netCDF4.Dataset(nc_path, "r") as nc_file:
-
     variable_data = nc_file.variables[variable_name][:]
 
-    # Set up the blur kernel
-    kernel_size = 20
-    kernel = np.ones((kernel_size, kernel_size), np.float32) / (kernel_size * kernel_size)
-
+    # Check the shape of the variable data
     if len(variable_data.shape) == 2:
 
+        # Create output directory if it does not exist
         dir_path = os.path.dirname(output_path)
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
@@ -47,14 +44,15 @@ with netCDF4.Dataset(nc_path, "r") as nc_file:
         # Save the plot as a PNG file
         plt.imsave(output_path, flipped_data, cmap='gray')
 
-
+    # If the variable data is 4-dimensional, create multiple PNG files
     elif len(variable_data.shape) == 4:
         output_path += "\\"
 
+        # Create output directory if it does not exist
         if not os.path.exists(output_path):
             os.makedirs(output_path)
 
-        # Create multiple CSV files for the variable data
+        # Iterate through the time dimension
         for i in range(variable_data.shape[0]):
 
             time_value = int(nc_file.variables['time'][i])
@@ -72,6 +70,10 @@ with netCDF4.Dataset(nc_path, "r") as nc_file:
 
             # Interpolate the data to the new grid
             interpolated_data = f(x_new, y_new)
+
+            # Set up the blur kernel
+            kernel_size = 20
+            kernel = np.ones((kernel_size, kernel_size), np.float32) / (kernel_size * kernel_size)
 
             # Apply image blur
             blur = cv.filter2D(np.flipud(interpolated_data), -1, kernel)

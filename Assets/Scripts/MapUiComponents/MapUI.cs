@@ -50,6 +50,7 @@ namespace MapUiComponents
             gameObject.SetActive(false);
         }
 
+        
         private void OnDestroy() {
             foreach(InputActionReference iar in inputActions){
                 iar.action.started -= Toggle;
@@ -57,6 +58,7 @@ namespace MapUiComponents
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
+        
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
             Debug.Log("New scene loaded, setting holder values");
             SetHolderValues();
@@ -67,6 +69,7 @@ namespace MapUiComponents
             }
         }
 
+        
         private void SetHolderValues() {
             CloudHolder = GameObject.Find("Cloud Holder");
 
@@ -78,6 +81,7 @@ namespace MapUiComponents
             BuildingHolder = GameObject.Find("Buildings Holder");
             RadiationHolder = GameObject.Find("Radiation Holder");
         }
+        
         
         private void Toggle(InputAction.CallbackContext context = default){
             gameObject.SetActive(!gameObject.activeSelf);

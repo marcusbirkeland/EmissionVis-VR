@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Editor.NetCDF;
 using Esri.ArcGISMapsSDK.Components;
 using Esri.ArcGISMapsSDK.Utils.GeoCoord;
 using Esri.GameEngine.Geometry;
@@ -77,7 +78,7 @@ namespace Editor.VisualizationSpawner.FullScaleSpawners
             CloudManager cloudManager = _cloud.GetComponent<CloudManager>();
             cloudManager.heightMapImg = _heightImg;
             
-            cloudManager.cloudImages = CloudManagerInitializer.GetImages(_mapName);
+            cloudManager.cloudImages = CloudImageLoader.GetImages(_mapName);
             cloudManager.baseElevation = _elevation;
 
             LODGroup lodGroup = _cloud.GetComponent<LODGroup>();

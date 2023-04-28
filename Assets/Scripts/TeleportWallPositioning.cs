@@ -1,20 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
-
-using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.InputSystem;
 
 public class TeleportWallPositioning : MonoBehaviour
 {
     // if changing maxTeleportDistance make sure the controller's raycast maxDistance is changed accordingly (raycast maxDistance >= this maxTeleportDistance)
-    private float maxTeleportDistance = 900.0f;
-    private float minTeleportDistance = 30.0f;
-    public InputActionReference teleportBumper;
-    public InputActionReference teleportJoystick;
+    [SerializeField] private float maxTeleportDistance = 900.0f;
+    [SerializeField] private float minTeleportDistance = 30.0f;
+    [SerializeField] private InputActionReference teleportBumper;
+    [SerializeField] private InputActionReference teleportJoystick;
 
-    void Start()
+    private void Start()
     {
         teleportBumper.action.performed += Pressed;
         teleportJoystick.action.performed += Pressed;
@@ -28,7 +24,7 @@ public class TeleportWallPositioning : MonoBehaviour
 
         Transform xrOrigin = transform.parent.parent.parent;
         // raycast from under the terrain upwards as to not accedentally hit the teleport wall
-        Ray ray = new Ray(xrOrigin.position, Vector3.up * -1);
+        Ray ray = new(xrOrigin.position, Vector3.up * -1);
         float heightAboveTerrain = transform.position.y; // fall back value if ray cast for some reason doesn't work
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
@@ -37,19 +33,14 @@ public class TeleportWallPositioning : MonoBehaviour
         // reset to normal layer after raycasting
         gameObject.layer = cachedLayer;
 
-        // make the minimun teleport distance kick in at 20 units before the player is below the threshold, as to make teleporting more controlled at lower altitudes
-        Vector3 TeleportWallDistance = Math.Max(heightAboveTerrain - 20, minTeleportDistance) * transform.forward;
+        // make the minimum teleport distance kick in at 20 units before the player is below the threshold, as to make teleporting more controlled at lower altitudes
+        Vector3 teleportWallDistance = Math.Max(heightAboveTerrain - 20, minTeleportDistance) * transform.forward;
 
-        if (TeleportWallDistance.magnitude > maxTeleportDistance)
+        if (teleportWallDistance.magnitude > maxTeleportDistance)
         {
-            TeleportWallDistance = TeleportWallDistance * (maxTeleportDistance / TeleportWallDistance.magnitude);
+            teleportWallDistance *= maxTeleportDistance / teleportWallDistance.magnitude;
         }
 
-        transform.position = TeleportWallDistance + transform.parent.position;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        transform.position = teleportWallDistance + transform.parent.position;
     }
 }

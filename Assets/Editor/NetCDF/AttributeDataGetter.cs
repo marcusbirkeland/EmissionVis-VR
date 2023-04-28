@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +6,9 @@ using UnityEngine;
 
 namespace Editor.NetCDF
 {
+    /// <summary>
+    /// Provides functionality to get attribute data from NetCDF files.
+    /// </summary>
     public static class AttributeDataGetter
     {
         [Serializable]
@@ -27,22 +29,17 @@ namespace Editor.NetCDF
         
 
         [Serializable]
-        private struct FileDataListWrapper : IEnumerable<FileAttributes>
+        private struct FileAttributeListWrapper
         {
             public List<FileAttributes> data;
-
-            public IEnumerator<FileAttributes> GetEnumerator()
-            {
-                return data.GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
         }
 
         
+        /// <summary>
+        /// Gets the file attributes of a specified NetCDF file.
+        /// </summary>
+        /// <param name="cdfFilePath">The path of the NetCDF file.</param>
+        /// <returns>A FileAttributes struct containing file attribute information, or a default struct if not found.</returns>
         public static FileAttributes GetFileAttributes(string cdfFilePath)
         {
             string jsonFilePath = $"{Application.dataPath}/Resources/MapData/attributes.json";
@@ -56,9 +53,9 @@ namespace Editor.NetCDF
             try
             {
                 string jsonContent = File.ReadAllText(jsonFilePath);
-                FileDataListWrapper fileList = JsonUtility.FromJson<FileDataListWrapper>("{\"data\":" + jsonContent + "}");
+                FileAttributeListWrapper fileList = JsonUtility.FromJson<FileAttributeListWrapper>("{\"data\":" + jsonContent + "}");
 
-                return fileList.FirstOrDefault(data => data.filePath == cdfFilePath);
+                return fileList.data.FirstOrDefault(data => data.filePath == cdfFilePath);
             }
             catch (Exception e) when (e is ArgumentException or InvalidOperationException)
             {

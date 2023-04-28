@@ -11,47 +11,36 @@ namespace Editor.NetCDF
     public static class DataGenerator
     {
         /// <summary>
-        /// <para>Generates two JSON files (attributes.json and variables.json) for easier access to NetCDF data within Unity.</para>
-        /// <para>The method runs Python scripts (variable_getter.py and attribute_getter.py) to process the NetCDF files and generate the JSON files, which are saved at the specified outputFolderPath. If the output path doesn't exist, it is created. If the JSON files already exist, they are overwritten.</para>
-        /// <para>The attributes.json file contains positional data for every selected NetCDF file, while the variables.json file contains a list of all variables within each NetCDF file.</para>
+        /// Generates and loads the Variable and Attribute JSON files based on the input data.
         /// </summary>
-        /// <remarks>
-        /// The input format for both Python scripts is a string consisting of any number of NetCDF file locations followed by an output path for the JSON data. Each path must be separated by a "$" character. The method checks for valid file paths and only processes files with the ".nc" extension.
-        /// </remarks>
         /// <param name="netCdfFilePaths">A list of file paths for the NetCDF files to process.</param>
-        /// <param name="outputFolderPath">The folder path where the generated JSON files will be saved.</param>
-        public static void GenerateVariableAndAttributeJson(List<string> netCdfFilePaths, string outputFolderPath)
+        /// <param name="jsonFolderPath">The folder path where the generated JSON files will be saved.</param>
+        /// <returns>A list of <see cref="NcVariable"/> objects containing the data.</returns>
+        public static List<NcVariable> GenerateAndLoadVariables(List<string> netCdfFilePaths, string jsonFolderPath)
         {
-            StringBuilder inputStringBuilder = new();
+            GenerateVariableAndAttributeJson(netCdfFilePaths, jsonFolderPath);
+            
+            List<NcVariable> variables = new();
 
-            foreach (string file in netCdfFilePaths)
+            string path = jsonFolderPath + "/variables.json";
+
+            string jsonString = File.ReadAllText(path);
+
+            jsonString = "{\"fileDataList\":" + jsonString + "}";
+
+            FileDataListWrapper fileDataListWrapper = JsonUtility.FromJson<FileDataListWrapper>(jsonString);
+            List<FileData> ncFiles = fileDataListWrapper.fileDataList;
+
+            foreach (FileData fileData in ncFiles)
             {
-                if (File.Exists(file) && Path.GetExtension(file).ToLower() == ".nc" && !inputStringBuilder.ToString().Contains(file))
+                foreach (string variable in fileData.variables)
                 {
-                    inputStringBuilder.Append(file).Append('$');
+                    variables.Add(new NcVariable { filePath = fileData.filePath, variableName = variable });
                 }
             }
-            
-            string pythonInputString = inputStringBuilder.ToString();
 
-            if (pythonInputString.IsNullOrEmpty())
-            {
-                Debug.Log("No valid file paths");
-                return;
-            }
-            
-            pythonInputString += outputFolderPath;
-            
-            
-            //Creates variable JSON
-            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/variable_getter.py", pythonInputString);
-            
-            //Creates attribute JSON
-            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/attribute_getter.py", pythonInputString);
-            
-            AssetDatabase.Refresh();
+            return variables;        
         }
-        
         
         /// <summary>
         /// Generates and saves the necessary data files and folder structures based on the variables selected by the user.
@@ -82,6 +71,49 @@ namespace Editor.NetCDF
             GenerateRadiationData(mapName, radiationVariables);
             
             EditorUtility.ClearProgressBar();
+            AssetDatabase.Refresh();
+        }
+
+        
+        /// <summary>
+        /// <para>Generates two JSON files (attributes.json and variables.json) for easier access to NetCDF data within Unity.</para>
+        /// <para>The method runs Python scripts (variable_getter.py and attribute_getter.py) to process the NetCDF files and generate the JSON files, which are saved at the specified outputFolderPath. If the output path doesn't exist, it is created. If the JSON files already exist, they are overwritten.</para>
+        /// <para>The attributes.json file contains positional data for every selected NetCDF file, while the variables.json file contains a list of all variables within each NetCDF file.</para>
+        /// </summary>
+        /// <remarks>
+        /// The input format for both Python scripts is a string consisting of any number of NetCDF file locations followed by an output path for the JSON data. Each path must be separated by a "$" character. The method checks for valid file paths and only processes files with the ".nc" extension.
+        /// </remarks>
+        /// <param name="netCdfFilePaths">A list of file paths for the NetCDF files to process.</param>
+        /// <param name="outputFolderPath">The folder path where the generated JSON files will be saved.</param>
+        private static void GenerateVariableAndAttributeJson(List<string> netCdfFilePaths, string outputFolderPath)
+        {
+            StringBuilder inputStringBuilder = new();
+
+            foreach (string file in netCdfFilePaths)
+            {
+                if (File.Exists(file) && Path.GetExtension(file).ToLower() == ".nc" && !inputStringBuilder.ToString().Contains(file))
+                {
+                    inputStringBuilder.Append(file).Append('$');
+                }
+            }
+            
+            string pythonInputString = inputStringBuilder.ToString();
+
+            if (pythonInputString.IsNullOrEmpty())
+            {
+                Debug.Log("No valid file paths");
+                return;
+            }
+            
+            pythonInputString += outputFolderPath;
+            
+            
+            //Creates variable JSON
+            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/variable_getter.py", pythonInputString);
+            
+            //Creates attribute JSON
+            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/attribute_getter.py", pythonInputString);
+            
             AssetDatabase.Refresh();
         }
 

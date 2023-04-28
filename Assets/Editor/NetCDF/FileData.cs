@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Editor.NetCDF
 {
-    /**
-     *  Contains a netCDF filepath and a list of its variables. 
-     */
+    /// <summary>
+    /// Contains a netCDF filepath and a list of its variables.
+    /// </summary> 
     [Serializable]
     public struct FileData
     {

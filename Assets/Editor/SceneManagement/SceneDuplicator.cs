@@ -8,11 +8,19 @@ using UnityEngine.SceneManagement;
 
 namespace Editor.SceneManagement
 {
+    /// <summary>
+    /// Provides functionality to duplicate Unity scenes and customize them for specific map use.
+    /// </summary>
     public static class SceneDuplicator
     {
+        /// <summary>
+        /// Creates a new scene based on a template scene and loads it.
+        /// </summary>
+        /// <param name="templateSceneAsset">The SceneAsset used as a template.</param>
+        /// <param name="mapName">The name of the new scene.</param>
         public static void CreateAndLoadDuplicateScene(SceneAsset templateSceneAsset, string mapName)
         {
-            //No assets selected
+            // No assets selected
             if (templateSceneAsset == null)
             {
                 Debug.LogError("Invalid SceneAsset provided.");
@@ -21,7 +29,6 @@ namespace Editor.SceneManagement
             
             string templateScenePath = AssetDatabase.GetAssetPath(templateSceneAsset);
 
-            
             // Check if the user wants to save the current scene
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
             {
@@ -78,8 +85,12 @@ namespace Editor.SceneManagement
             Debug.Log($"Scene '{mapName}' created and saved at '{newScenePath}'.");
         }
 
-
-        // Check if the templateScene has a mapRenderer component, returns false, and loads the original scene if it doesnt.
+        
+        /// <summary>
+        /// Checks if the specified scene has a MapRenderer or ArcGISMapComponent attached to any GameObject.
+        /// </summary>
+        /// <param name="scenePath">The path of the scene to check.</param>
+        /// <returns>True if the scene contains a MapRenderer or ArcGISMapComponent, false otherwise.</returns>
         private static bool HasMapComponent(string scenePath)
         {
             Scene originalScene = SceneManager.GetActiveScene();
