@@ -2,7 +2,7 @@
 using Esri.GameEngine.Geometry;
 using Microsoft.Geospatial;
 
-namespace Editor.NetCDF
+namespace Editor.NetCDF.Types
 {
     /// <summary>
     /// Represents a geographic position with latitude and longitude coordinates.

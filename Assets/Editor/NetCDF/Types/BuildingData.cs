@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Editor.NetCDF
+namespace Editor.NetCDF.Types
 {
     /// <summary>
     /// Struct containing the positional data for a building.

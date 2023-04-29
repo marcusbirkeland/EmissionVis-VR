@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Editor.NetCDF
+namespace Editor.NetCDF.Types
 {
     /// <summary>
     /// Represents a single netCDF variable and the file it belongs to.

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Editor.NetCDF;
+using Editor.NetCDF.Types;
 using Editor.SceneManagement;
 using UnityEditor;
 using UnityEngine;

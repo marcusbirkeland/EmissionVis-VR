@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Editor.NetCDF;
+using Editor.NetCDF.Types;
 using UnityEditor;
 using UnityEngine;
 

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Editor.NetCDF.Types;
 using Unity.Tutorials.Core.Editor;
 using UnityEditor;
 using UnityEditor.Scripting.Python;
@@ -10,6 +12,20 @@ namespace Editor.NetCDF
 {
     public static class DataGenerator
     {
+        /// <summary>
+        /// Provides a serializable object for JSON deserialization.
+        /// Contains a list of <see cref="FileData"/> objects.
+        /// </summary>
+        [Serializable]
+        private struct FileDataListWrapper
+        {
+            /// <summary>
+            /// A list of <see cref="FileData"/> objects.
+            /// </summary>
+            public List<FileData> fileDataList;
+        }
+        
+        
         /// <summary>
         /// Generates and loads the Variable and Attribute JSON files based on the input data.
         /// </summary>
@@ -38,7 +54,6 @@ namespace Editor.NetCDF
                     variables.Add(new NcVariable { filePath = fileData.filePath, variableName = variable });
                 }
             }
-
             return variables;        
         }
         

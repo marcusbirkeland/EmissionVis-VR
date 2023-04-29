@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Editor.NetCDF.Types;
 using UnityEngine;
+using FileAttributes = Editor.NetCDF.Types.FileAttributes;
 
 namespace Editor.NetCDF
 {
@@ -12,28 +14,11 @@ namespace Editor.NetCDF
     public static class AttributeDataGetter
     {
         [Serializable]
-        public struct Size
-        {
-            public int x;
-            public int y;
-        }
-        
-
-        [Serializable]
-        public struct FileAttributes
-        {
-            public string filePath;
-            public Position position;
-            public Size size;
-        }
-        
-
-        [Serializable]
         private struct FileAttributeListWrapper
         {
             public List<FileAttributes> data;
         }
-
+        
         
         /// <summary>
         /// Gets the file attributes of a specified NetCDF file.
@@ -63,6 +48,25 @@ namespace Editor.NetCDF
             }
 
             return default;
+        }
+        
+        
+        /// <summary>
+        /// Gets the center position of a specified NetCDF files dataset.
+        /// </summary>
+        /// <param name="cdfFilePath">The path of the NetCDF file.</param>
+        /// <returns>A <see cref="Position"/> object with the calculated latitude and longitude coordinates, or a default position if not found.</returns>
+        public static Position GetCenterPosition(string cdfFilePath)
+        {
+            FileAttributes fileAttributes = GetFileAttributes(cdfFilePath);
+            if (fileAttributes.filePath == null)
+            {
+                Debug.LogError("File attributes not found.");
+                return default;
+            }
+
+            return Position.GetOffsetPosition(
+                (double) fileAttributes.size.x / 2, (double) fileAttributes.size.y / 2, fileAttributes.position);
         }
     }
 }
