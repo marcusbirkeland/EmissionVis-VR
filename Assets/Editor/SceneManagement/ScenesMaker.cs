@@ -46,7 +46,7 @@ namespace Editor.SceneManagement
                 allVariablesSelector.RadiationCdfPath,
                 allVariablesSelector.WindSpeedCdfPath);
 
-            miniBuilder.CreateDataVisualization(onSceneCreated);
+            miniBuilder.BuildScene(onSceneCreated);
 
             EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
         }
@@ -69,7 +69,7 @@ namespace Editor.SceneManagement
                 allVariablesSelector.RadiationCdfPath,
                 allVariablesSelector.WindSpeedCdfPath);
 
-            fullScaleBuilder.CreateDataVisualization(onSceneCreated);
+            fullScaleBuilder.BuildScene(onSceneCreated);
 
             EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
         }

@@ -1,23 +1,31 @@
 ﻿using System;
 using Editor.SceneManagement;
+using Editor.Spawner.BuildingSpawner;
+using Editor.Spawner.CloudSpawner;
+using Editor.Spawner.RadiationSpawner;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Visualization;
 using Object = UnityEngine.Object;
 
 namespace Editor.SceneBuilder
 {
     /// <summary>
     /// The BaseSceneBuilder is an abstract base class for creating data visualizations in different types of scenes.
+    /// This class is a generic class, which allows it to work with different map components by specifying the type of
+    /// map component (T) when creating a derived class. This provides flexibility and extensibility when working with
+    /// various map components while still reusing the common functionality provided by the BaseSceneBuilder class.
     /// </summary>
-    public abstract class BaseSceneBuilder
+    /// <typeparam name="T">The type of the map component that will be used in the derived class. T must be a subclass of Component.</typeparam>
+    public abstract class BaseSceneBuilder<T> where T : Component
     {
-        protected readonly string MapName;
+        private readonly string _mapName;
 
         protected readonly string BuildingCdfPath;
         protected readonly string RadiationCdfPath;
         protected readonly string WindSpeedCdfPath;
+
+        protected T Map;
 
         /// <summary>
         /// Initializes a new instance of the BaseSceneBuilder class.
@@ -28,7 +36,7 @@ namespace Editor.SceneBuilder
         /// <param name="windSpeedCdfPath">The path to the wind speed NetCDF file.</param>
         protected BaseSceneBuilder(string mapName, string buildingCdfPath, string radiationCdfPath, string windSpeedCdfPath)
         {
-            MapName = mapName;
+            _mapName = mapName;
             MapUiManager.SetSceneNames(mapName);
 
             BuildingCdfPath = buildingCdfPath;
@@ -39,28 +47,29 @@ namespace Editor.SceneBuilder
         /// <summary>
         /// Main method for the class. Creates the data visualization and saves the scene.
         /// </summary>
-        /// <param name="onDataCreated">A callback to be executed once the data visualization is complete.</param>
-        public void CreateDataVisualization(Action onDataCreated)
+        /// <param name="onSceneBuilt">A callback to be executed once the data visualization is complete.</param>
+        public void BuildScene(Action onSceneBuilt)
         {
             SetUpMap();
 
             WaitForMapToLoad(() =>
             {
-                CreateBuildings();
-                CreateClouds();
-                CreateRadiation();
-
+                CreateDataObjects();
+                
                 EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
-                onDataCreated?.Invoke();
+                onSceneBuilt?.Invoke();
             });
         }
+
+        protected abstract void CreateDataObjects();
+        
 
         /// <summary>
         /// Finds a map component of the specified type in the scene.
         /// </summary>
         /// <typeparam name="T">The type of the map component to find.</typeparam>
         /// <returns>The found map component or throws an exception if not found.</returns>
-        protected static T FindMapComponent<T>() where T : Component
+        protected T FindMapComponent()
         {
             T mapComponent = Object.FindObjectOfType<T>();
 
@@ -78,19 +87,62 @@ namespace Editor.SceneBuilder
         protected abstract void SetUpMap();
 
         /// <summary>
-        /// Abstract method to create buildings.
+        /// Creates buildings in the full scale scene.
         /// </summary>
-        protected abstract void CreateBuildings();
+        protected void CreateBuildings<TSpawner>() where TSpawner : BaseBuildingSpawner
+        {
+            TSpawner spawner = (TSpawner)Activator.CreateInstance(typeof(TSpawner),
+                _mapName,
+                BuildingCdfPath, 
+                Map.gameObject,
+                -3.1f);
+             
+            spawner.SpawnAndSetupBuildings();
 
-        /// <summary>
-        /// Abstract method to set up the cloud gameObject and its accompanying <see cref="CloudManager"/>.
-        /// </summary>
-        protected abstract void CreateClouds();
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        }
 
+        
         /// <summary>
-        /// Abstract method to create buildings in the scene.
+        /// Creates clouds in the full scale scene.
         /// </summary>
-        protected abstract void CreateRadiation();
+        protected void CreateClouds<TSpawner>() where TSpawner : BaseCloudSpawner
+        {
+            const string cloudPrefab = "Cloud Full Scale";
+
+            TSpawner spawner = (TSpawner)Activator.CreateInstance(typeof(TSpawner),
+                _mapName, 
+                WindSpeedCdfPath, 
+                Map.gameObject,
+                cloudPrefab,
+                -3.1f,
+                130);
+
+            spawner.SpawnAndSetupCloud();
+
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        }
+         
+        
+        /// <summary>
+        /// Creates radiation in the full scale scene.
+        /// </summary>
+        protected void CreateRadiation<TSpawner>() where TSpawner : BaseRadiationSpawner
+        {
+            const string radiationPrefab = "Radiation";
+
+            TSpawner spawner = (TSpawner)Activator.CreateInstance(typeof(TSpawner),
+                _mapName,
+                RadiationCdfPath,
+                Map.gameObject,
+                radiationPrefab,
+                -3.1f
+            );
+             
+            spawner.SpawnAndSetupRadiation();
+
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        }
 
         /// <summary>
         /// Waits for the map to load and executes the provided callback once loaded.

@@ -65,7 +65,7 @@ namespace Editor.Spawner.CloudSpawner
         
         protected abstract void CreateCloudHolder();
 
-        
+
         private void CreateCloud()
         {
             _cloud = Object.Instantiate(_prefab, CloudHolder.transform, false);
@@ -79,11 +79,12 @@ namespace Editor.Spawner.CloudSpawner
 
             LODGroup lodGroup = _cloud.GetComponent<LODGroup>();
             lodGroup.size = SelectedCdfAttributes.size.x;
-            
+
+            //Prefab base size is 1km
             float scale = SelectedCdfAttributes.size.x / 1000.0f * LatDistortionValue;
-            _cloud.transform.localScale = new Vector3(scale, scale, scale);
+            _cloud.transform.localScale = new Vector3(scale, SelectedCdfAttributes.size.x / 1000.0f, scale);
         }
-        
+
 
         private void DeletePreviousObject()
         {

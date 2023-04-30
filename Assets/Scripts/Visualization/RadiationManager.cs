@@ -4,10 +4,8 @@ namespace Visualization
 {
     public class RadiationManager : MonoBehaviour
     {
-        [HideInInspector]
         public Texture2D radiationImage;
 
-        [HideInInspector]
         public Texture2D heightMapImg;
         
         private static readonly int RadiationMap = Shader.PropertyToID("_RadiationMap");
