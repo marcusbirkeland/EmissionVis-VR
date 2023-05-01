@@ -516,7 +516,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 57, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 7.314, y: 1.663}
+  m_AnchoredPosition: {x: 7.314026, y: 1.6629944}
   m_SizeDelta: {x: 550, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &1602127997749279950
@@ -562,7 +562,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &1602127997749279944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,11 +619,11 @@ MonoBehaviour:
     tutorialImage: {fileID: 21300000, guid: bfbe869a96830614ca322568ad5119bb, type: 3}
   - title: Moving Around (2/2)
     description: Another option, is navigating by teleportation. To teleport point
-      your right controller where you want to go, and drag the right control-stick
-      back. Release to teleport.
+      your right controller where you want to go, and push the right control-stick
+      forward. Release to teleport.
     tutorialImage: {fileID: 21300000, guid: 47bd19b0607d736499c387a011a01b84, type: 3}
   - title: Turning
-    description: Move the right-stik left or right to snap-turn.
+    description: Move the right-stick left or right to snap-turn.
     tutorialImage: {fileID: 21300000, guid: 4ee12278636e15d429907e8b014ce37e, type: 3}
   - title: Panning the map
     description: While pointing at the map, move your controller in any direction
@@ -730,7 +730,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &2081522977390412309
 MonoBehaviour:
   m_ObjectHideFlags: 0
