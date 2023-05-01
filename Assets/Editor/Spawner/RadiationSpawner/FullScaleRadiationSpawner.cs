@@ -8,8 +8,8 @@ namespace Editor.Spawner.RadiationSpawner
 {
     public class FullScaleRadiationSpawner : BaseRadiationSpawner
     {
-        public FullScaleRadiationSpawner(string mapName, string cdfFilePath, GameObject map, string radiationPrefabName, float rotationAngle) 
-            : base(mapName, cdfFilePath, map, radiationPrefabName, rotationAngle)
+        public FullScaleRadiationSpawner(string mapName, string cdfFilePath, GameObject map, float rotationAngle) 
+            : base(mapName, cdfFilePath, map, rotationAngle)
         {
         }
 

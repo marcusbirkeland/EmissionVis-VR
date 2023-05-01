@@ -108,15 +108,12 @@ namespace Editor.SceneBuilder
         /// </summary>
         protected void CreateClouds<TSpawner>() where TSpawner : BaseCloudSpawner
         {
-            const string cloudPrefab = "Cloud Full Scale";
-
             TSpawner spawner = (TSpawner)Activator.CreateInstance(typeof(TSpawner),
                 _mapName, 
                 WindSpeedCdfPath, 
                 Map.gameObject,
-                cloudPrefab,
-                -3.1f,
-                130);
+                -3.1f
+                );
 
             spawner.SpawnAndSetupCloud();
 
@@ -129,13 +126,10 @@ namespace Editor.SceneBuilder
         /// </summary>
         protected void CreateRadiation<TSpawner>() where TSpawner : BaseRadiationSpawner
         {
-            const string radiationPrefab = "Radiation";
-
             TSpawner spawner = (TSpawner)Activator.CreateInstance(typeof(TSpawner),
                 _mapName,
                 RadiationCdfPath,
                 Map.gameObject,
-                radiationPrefab,
                 -3.1f
             );
              

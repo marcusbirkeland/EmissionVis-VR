@@ -11,8 +11,8 @@ namespace Editor.Spawner.RadiationSpawner
         /// </summary>
         protected override float LatDistortionValue => 1;
 
-        public MiniatureRadiationSpawner(string mapName, string cdfFilePath, GameObject map, string radiationPrefabName, float rotationAngle) 
-            : base(mapName, cdfFilePath, map, radiationPrefabName, rotationAngle)
+        public MiniatureRadiationSpawner(string mapName, string cdfFilePath, GameObject map, float rotationAngle) 
+            : base(mapName, cdfFilePath, map, rotationAngle)
         {
         }
 

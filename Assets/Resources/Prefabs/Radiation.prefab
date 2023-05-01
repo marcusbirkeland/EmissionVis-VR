@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 406740651560214259}
   - component: {fileID: 4899661165748791682}
-  - component: {fileID: 3086648063956291069}
   m_Layer: 0
   m_Name: Radiation
   m_TagString: Untagged
@@ -68,20 +67,6 @@ LODGroup:
     renderers:
     - renderer: {fileID: 6055379434247169224}
   m_Enabled: 1
---- !u!114 &3086648063956291069
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1076035796789969993}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd2f5ce4149f4773a1f6240cf796f82c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  radiationImage: {fileID: 0}
-  heightMapImg: {fileID: 0}
 --- !u!1 &2346576380400186190
 GameObject:
   m_ObjectHideFlags: 0

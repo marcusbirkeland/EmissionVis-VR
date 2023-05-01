@@ -23,30 +23,34 @@ namespace Visualization
         private readonly List<Renderer> _cloudRenderers = new();
 
         public double baseElevation;
-        public Texture2D heightMapImg;
-        public List<Texture2D> cloudImages = new();
-        public int MapCount => cloudImages.Count;
+        
+        private List<Texture2D> _cloudImages = new();
+        public int MapCount => _cloudImages.Count;
 
         private int _index;
         
         
-        //Sets up the cloudRenderers list, and sets textures when application launches.
-        private void Start()
+        public void Initialize( List<Texture2D> cloudImages, Texture2D heightMap, int size, double elevation)
         {
-            LOD[] lods = gameObject.GetComponent<LODGroup>().GetLODs();
-            foreach (LOD lod in lods)
+            _cloudImages = cloudImages;
+            baseElevation = elevation;
+
+            LODGroup lodGroup = gameObject.GetComponent<LODGroup>();
+            lodGroup.size = size;
+            
+            foreach (LOD lod in lodGroup.GetLODs())
             {
                 foreach (Renderer ren in lod.renderers)
                 {
                     _cloudRenderers.Add(ren);
                     ren.material.SetTexture(ColorMapMin, cloudImages[_index]);
                     ren.material.SetTexture(ColorMapMax, cloudImages[_index + 1]);
-                    ren.material.SetTexture(Heightmap, heightMapImg);
+                    ren.material.SetTexture(Heightmap, heightMap);
                 }
             }
         }
-        
-        
+
+
         /* Changes opacity for the clouds-shader */
         public void ChangeOpacity(float value)
         {
@@ -85,7 +89,7 @@ namespace Visualization
         {
             int newIndex = _index + steps;
 
-            if (newIndex < 0 || newIndex + 1 > cloudImages.Count)
+            if (newIndex < 0 || newIndex + 1 > _cloudImages.Count)
                 throw new System.IndexOutOfRangeException("Index out of range");
 
             _index = newIndex;
@@ -94,8 +98,8 @@ namespace Visualization
             
             foreach (Renderer ren in _cloudRenderers)
             {
-                ren.material.SetTexture(ColorMapMin, cloudImages[_index]);
-                ren.material.SetTexture(ColorMapMax, cloudImages[_index + 1]);
+                ren.material.SetTexture(ColorMapMin, _cloudImages[_index]);
+                ren.material.SetTexture(ColorMapMax, _cloudImages[_index + 1]);
             }
         }
     }

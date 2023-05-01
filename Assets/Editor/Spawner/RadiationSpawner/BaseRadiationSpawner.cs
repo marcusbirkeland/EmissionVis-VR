@@ -10,6 +10,7 @@ namespace Editor.Spawner.RadiationSpawner
     public abstract class BaseRadiationSpawner
     {
         protected const string HolderName = "Radiation Holder";
+        protected const string PrefabName = "Radiation";
 
         protected readonly FileAttributes SelectedCdfAttributes;
         protected readonly GameObject Map;
@@ -27,7 +28,7 @@ namespace Editor.Spawner.RadiationSpawner
         /// </summary>
         protected virtual float LatDistortionValue => (float) (1 / Math.Cos(Math.PI * SelectedCdfAttributes.position.lat / 180.0));
 
-        protected BaseRadiationSpawner(string mapName, string cdfFilePath, GameObject map, string radiationPrefabName, float rotationAngle)
+        protected BaseRadiationSpawner(string mapName, string cdfFilePath, GameObject map, float rotationAngle)
         {
             SelectedCdfAttributes = AttributeDataGetter.GetFileAttributes(cdfFilePath);
 
@@ -36,7 +37,7 @@ namespace Editor.Spawner.RadiationSpawner
 
             _radiationImage = LoadFirstRadiationImage(mapName);
             _heightMap = ImageLoader.GetHeightMapImg(mapName);
-            _radiationPrefabName = radiationPrefabName;
+            _radiationPrefabName = PrefabName;
         }
         
         
@@ -66,10 +67,8 @@ namespace Editor.Spawner.RadiationSpawner
 
             GameObject rad = Object.Instantiate(radiationPrefab, RadiationHolder.transform, false);
             rad.name = "Radiation";
-
-            RadiationManager manager = rad.GetComponent<RadiationManager>();
-            manager.radiationImage = _radiationImage;
-            manager.heightMapImg = _heightMap;
+            
+            RadiationManager.SetRadiationImages(rad, _radiationImage, _heightMap);
             
             LODGroup lodGroup = rad.GetComponent<LODGroup>();
             lodGroup.size = SelectedCdfAttributes.size.x;
@@ -78,8 +77,8 @@ namespace Editor.Spawner.RadiationSpawner
             float scale = SelectedCdfAttributes.size.x / 1000.0f * LatDistortionValue;
             rad.transform.localScale = new Vector3(scale, SelectedCdfAttributes.size.x / 1000.0f, scale);
         }
-        
-        
+
+
         private void DeletePreviousHolder()
         {
             for (int i = Map.transform.childCount - 1; i >= 0; i--)

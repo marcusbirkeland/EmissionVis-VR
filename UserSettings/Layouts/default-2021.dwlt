@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 2496
     height: 1397
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Scene
   m_RootView: {fileID: 6}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 38
+  controlID: 69
 --- !u!114 &3
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -223,7 +223,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 200}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 39
+  controlID: 70
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -248,7 +248,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 40
+  controlID: 71
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -268,8 +268,8 @@ MonoBehaviour:
     y: 0
     width: 1434
     height: 867
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 202, y: 221}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 15}
   m_Panes:
   - {fileID: 15}
@@ -318,22 +318,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Packages/com.esri.arcgis-maps-sdk
+    - Assets
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Packages/com.esri.arcgis-maps-sdk
+  - Assets
   m_LastFoldersGridSize: -1
   m_LastProjectPath: E:\Kode\C#\EmissionVis-VR
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 121}
-    m_SelectedIDs: 4c2d0200
-    m_LastClickedID: 142668
-    m_ExpandedIDs: 00000000402d0200422d0200442d0200462d0200482d02004a2d02004c2d02004e2d0200502d0200522d0200542d0200562d0200582d02005a2d02005c2d02005e2d0200602d0200622d0200642d0200662d0200682d02006a2d02006c2d02006e2d0200702d0200722d020000ca9a3bffffff7f
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 682d0200
+    m_LastClickedID: 142696
+    m_ExpandedIDs: 00000000402d0200422d0200442d0200462d0200482d02004a2d02004c2d02004e2d0200502d0200522d0200542d0200562d0200582d02005a2d02005c2d02005e2d0200602d0200622d0200642d0200662d0200682d02006a2d02006c2d02006e2d0200702d0200722d0200dc2e0200ec2e020000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -388,7 +388,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c6230000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -491,9 +491,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 482e0200
+      m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 22fbffff
+      m_ExpandedIDs: f4a4f3ffa4b7f3ffe66cf4ff325af5ff106ef5ff1c11f6ff2411f6ff72dcf7ff2af4f7ffb8acf9ff6eb0f9ff0ad9fbffc2f0fbff50a9fdff06adfdfface9fdff6801feffd8baffff8ebeffff22fbffff2e520200a6bb0200661b03003ca00300720d040098910800262e0900b6110b00babf0b005c3a0c00888b0c00fa9a0c00
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -776,9 +776,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 7.5507708, y: 1.1944137, z: -0.04327722}
+    m_Target: {x: 7.6467443, y: 1.0454679, z: -0.15878272}
     speed: 2
-    m_Value: {x: 7.5507708, y: 1.1944137, z: -0.04327722}
+    m_Value: {x: 7.6467443, y: 1.0454679, z: -0.15878272}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -825,13 +825,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.16995402, y: 0.76562756, z: -0.22505744, w: 0.5781723}
+    m_Target: {x: 0.009522754, y: 0.9879348, z: -0.067678265, w: 0.13901559}
     speed: 2
-    m_Value: {x: 0.16995367, y: 0.765626, z: -0.22505698, w: 0.57817113}
+    m_Value: {x: 0.009421172, y: 0.9881366, z: -0.067692086, w: 0.13753274}
   m_Size:
-    m_Target: 5695.2383
+    m_Target: 0.2886832
     speed: 2
-    m_Value: 5695.2383
+    m_Value: 0.2886832
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -846,8 +846,8 @@ MonoBehaviour:
     m_AccelerationEnabled: 1
     m_FieldOfViewHorizontalOrVertical: 60
     m_NearClip: 0.5
-    m_FarClip: 616476.94
-    m_DynamicClip: 0
+    m_FarClip: 178107.86
+    m_DynamicClip: 1
     m_OcclusionCulling: 0
   m_LastSceneViewRotation: {x: 0, y: 0, z: 0, w: 0}
   m_LastSceneViewOrtho: 0

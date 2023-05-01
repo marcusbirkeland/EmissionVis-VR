@@ -2,25 +2,20 @@
 
 namespace Visualization
 {
-    public class RadiationManager : MonoBehaviour
+    public static class RadiationManager
     {
-        public Texture2D radiationImage;
-
-        public Texture2D heightMapImg;
-        
         private static readonly int RadiationMap = Shader.PropertyToID("_RadiationMap");
         private static readonly int Heightmap = Shader.PropertyToID("_Heightmap");
 
-
-        private void Start()
+        public static void SetRadiationImages(GameObject radiation, Texture2D radiationImage, Texture2D heightMapImage)
         {
-            LOD[] lods = gameObject.GetComponent<LODGroup>().GetLODs();
+            LOD[] lods = radiation.GetComponent<LODGroup>().GetLODs();
             foreach (LOD lod in lods)
             {
                 foreach (Renderer ren in lod.renderers)
                 {
                     ren.material.SetTexture(RadiationMap, radiationImage);
-                    ren.material.SetTexture(Heightmap, heightMapImg);
+                    ren.material.SetTexture(Heightmap, heightMapImage);
                 }
             }
         }

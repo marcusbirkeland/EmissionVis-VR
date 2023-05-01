@@ -6,13 +6,17 @@ namespace Editor.Spawner.CloudSpawner
 {
     public class MiniatureCloudSpawner : BaseCloudSpawner
     {
+        protected override string PrefabName => "Cloud Miniature";
+        protected override double Elevation => -130;
+
+
         /// <summary>
         /// Miniature map doesnt need size offset from position.
         /// </summary>
         protected override float LatDistortionValue => 1;
         
-        public MiniatureCloudSpawner(string mapName, string cdfFilePath, GameObject map, string cloudPrefabName, float rotationAngle, double elevation) 
-            : base(mapName, cdfFilePath, map, cloudPrefabName, rotationAngle, elevation)
+        public MiniatureCloudSpawner(string mapName, string cdfFilePath, GameObject map, float rotationAngle) 
+            : base(mapName, cdfFilePath, map, rotationAngle)
         {
         }
 

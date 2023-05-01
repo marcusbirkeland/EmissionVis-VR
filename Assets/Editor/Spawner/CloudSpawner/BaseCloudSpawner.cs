@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Editor.NetCDF;
 using Editor.NetCDF.Types;
 using UnityEngine;
@@ -7,50 +8,65 @@ using Object = UnityEngine.Object;
 
 namespace Editor.Spawner.CloudSpawner
 {
+    /// <summary>
+    /// The BaseCloudSpawner class is an abstract class used for spawning clouds in different types of maps.
+    /// </summary>
     public abstract class BaseCloudSpawner
     {
         protected const string HolderName = "Cloud Holder";
 
         protected readonly FileAttributes SelectedCdfAttributes;
         protected readonly GameObject Map;
-        
+
         protected readonly float RotationAngle;
-        protected readonly double Elevation;
-        
+
+        private readonly GameObject _prefab;
         private readonly Texture2D _heightImg;
         private readonly string _mapName;
-        private GameObject _cloud;
-        private readonly GameObject _prefab;
 
         protected GameObject CloudHolder;
+
+        protected abstract double Elevation { get; }
+        protected abstract string PrefabName { get; }
 
         
         /// <summary>
         /// The mercator projection gets more distorted the further away from the equator it is.
         /// This value accounts for that.
         /// </summary>
-        protected virtual float LatDistortionValue => (float) (1 / Math.Cos(Math.PI * SelectedCdfAttributes.position.lat / 180.0));
+        protected virtual float LatDistortionValue =>
+            (float) (1 / Math.Cos(Math.PI * SelectedCdfAttributes.position.lat / 180.0));
+
         
-        protected BaseCloudSpawner(string mapName, string cdfFilePath, GameObject map, string prefabName, float rotationAngle, double elevation)
+        /// <summary>
+        /// Initializes a new instance of the BaseCloudSpawner class.
+        /// </summary>
+        /// <param name="mapName">The name of the map.</param>
+        /// <param name="cdfFilePath">The path to the cloud NetCDF file.</param>
+        /// <param name="map">The map GameObject.</param>
+        /// <param name="rotationAngle">The rotation angle for the cloud holder.</param>
+        protected BaseCloudSpawner(string mapName, string cdfFilePath, GameObject map, float rotationAngle)
         {
             SelectedCdfAttributes = AttributeDataGetter.GetFileAttributes(cdfFilePath);
 
-            _prefab = Resources.Load<GameObject>($"Prefabs/{prefabName}");
+            _prefab = Resources.Load<GameObject>($"Prefabs/{PrefabName}");
 
             if (_prefab == null)
             {
-                Debug.LogError($"Cloud prefab not found at 'Assets/Resources/Prefabs/{prefabName}'");
+                Debug.LogError($"Cloud prefab not found at 'Assets/Resources/Prefabs/{PrefabName}'");
                 return;
             }
-            
+
             Map = map;
             RotationAngle = rotationAngle;
             _mapName = mapName;
-            Elevation = elevation;
             _heightImg = ImageLoader.GetHeightMapImg(mapName);
         }
+
         
-        
+        /// <summary>
+        /// Spawns and sets up the cloud in the map.
+        /// </summary>
         public void SpawnAndSetupCloud()
         {
             DeletePreviousObject();
@@ -63,29 +79,35 @@ namespace Editor.Spawner.CloudSpawner
         }
 
         
+        /// <summary>
+        /// Creates the cloud holder GameObject specific to the type of map.
+        /// </summary>
         protected abstract void CreateCloudHolder();
 
-
+        
+        /// <summary>
+        /// Creates the cloud GameObject and initializes the CloudManager with the necessary images and data.
+        /// </summary>
         private void CreateCloud()
         {
-            _cloud = Object.Instantiate(_prefab, CloudHolder.transform, false);
-            _cloud.name = "Cloud";
+            GameObject cloud = Object.Instantiate(_prefab, CloudHolder.transform, false);
+            cloud.name = "Cloud";
 
-            CloudManager cloudManager = _cloud.GetComponent<CloudManager>();
-            cloudManager.heightMapImg = _heightImg;
-
-            cloudManager.cloudImages = ImageLoader.GetCloudImages(_mapName);
-            cloudManager.baseElevation = Elevation;
-
-            LODGroup lodGroup = _cloud.GetComponent<LODGroup>();
-            lodGroup.size = SelectedCdfAttributes.size.x;
-
-            //Prefab base size is 1km
+            // Prefab base size is 1km
             float scale = SelectedCdfAttributes.size.x / 1000.0f * LatDistortionValue;
-            _cloud.transform.localScale = new Vector3(scale, SelectedCdfAttributes.size.x / 1000.0f, scale);
+            cloud.transform.localScale = new Vector3(scale, scale, scale);
+
+            CloudManager cloudManager = cloud.AddComponent<CloudManager>();
+
+            List<Texture2D> images = ImageLoader.GetCloudImages(_mapName);
+
+            cloudManager.Initialize(images, _heightImg, SelectedCdfAttributes.size.x, Elevation);
         }
 
-
+        
+        /// <summary>
+        /// Deletes the previous cloud holder GameObject if it exists.
+        /// </summary>
         private void DeletePreviousObject()
         {
             for (int i = Map.transform.childCount - 1; i >= 0; i--)
