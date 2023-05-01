@@ -7,6 +7,10 @@ using Object = UnityEngine.Object;
 
 namespace Editor.Spawner.RadiationSpawner
 {
+    /// <summary>
+    /// The BaseRadiationSpawner class is an abstract base class for creating and managing
+    /// radiation visualizations in a Unity scene using geospatial data.
+    /// </summary>
     public abstract class BaseRadiationSpawner
     {
         protected const string HolderName = "Radiation Holder";
@@ -21,13 +25,20 @@ namespace Editor.Spawner.RadiationSpawner
 
         protected GameObject RadiationHolder;
 
+        /// <summary>
+        /// Calculates the distortion value to account for the Mercator projection's distortion
+        /// away from the equator.
+        /// </summary>
+        protected virtual float LatDistortionValue =>
+            (float) (1 / Math.Cos(Math.PI * SelectedCdfAttributes.position.lat / 180.0));
 
         /// <summary>
-        /// The mercator projection gets more distorted the further away from the equator it is.
-        /// This value accounts for that.
+        /// Initializes a new instance of the BaseRadiationSpawner class.
         /// </summary>
-        protected virtual float LatDistortionValue => (float) (1 / Math.Cos(Math.PI * SelectedCdfAttributes.position.lat / 180.0));
-
+        /// <param name="mapName">The name of the map to spawn the radiation visualization in.</param>
+        /// <param name="cdfFilePath">The file path of the Cloud Data File (CDF).</param>
+        /// <param name="map">The GameObject representing the map in the Unity scene.</param>
+        /// <param name="rotationAngle">The rotation angle for the radiation visualization.</param>
         protected BaseRadiationSpawner(string mapName, string cdfFilePath, GameObject map, float rotationAngle)
         {
             SelectedCdfAttributes = AttributeDataGetter.GetFileAttributes(cdfFilePath);
@@ -39,26 +50,33 @@ namespace Editor.Spawner.RadiationSpawner
             _heightMap = ImageLoader.GetHeightMapImg(mapName);
             _radiationPrefabName = PrefabName;
         }
-        
-        
+
+        /// <summary>
+        /// Spawns and sets up the radiation visualization in the scene.
+        /// </summary>
         public void SpawnAndSetupRadiation()
         {
             DeletePreviousHolder();
             CreateRadiationHolder();
-            
+
             SpawnRadiation();
-            
+
             Debug.Log("Finished creating radiation");
         }
 
-        
+        /// <summary>
+        /// Creates the radiation holder GameObject. To be implemented in derived classes.
+        /// </summary>
         protected abstract void CreateRadiationHolder();
 
-        
+        /// <summary>
+        /// Instantiates the radiation prefab, sets its images, LOD group size, and scale,
+        /// and then adds it to the RadiationHolder GameObject.
+        /// </summary>
         private void SpawnRadiation()
         {
             GameObject radiationPrefab = Resources.Load<GameObject>($"Prefabs/{_radiationPrefabName}");
-    
+
             if (radiationPrefab == null)
             {
                 Debug.LogError($"Cloud prefab not found at 'Prefabs/{_radiationPrefabName}'");
@@ -67,9 +85,9 @@ namespace Editor.Spawner.RadiationSpawner
 
             GameObject rad = Object.Instantiate(radiationPrefab, RadiationHolder.transform, false);
             rad.name = "Radiation";
-            
+
             RadiationManager.SetRadiationImages(rad, _radiationImage, _heightMap);
-            
+
             LODGroup lodGroup = rad.GetComponent<LODGroup>();
             lodGroup.size = SelectedCdfAttributes.size.x;
 
@@ -78,7 +96,9 @@ namespace Editor.Spawner.RadiationSpawner
             rad.transform.localScale = new Vector3(scale, SelectedCdfAttributes.size.x / 1000.0f, scale);
         }
 
-
+        /// <summary>
+        /// Searches for and deletes any existing radiation holder GameObjects in the map.
+        /// </summary>
         private void DeletePreviousHolder()
         {
             for (int i = Map.transform.childCount - 1; i >= 0; i--)
@@ -90,9 +110,12 @@ namespace Editor.Spawner.RadiationSpawner
                 }
             }
         }
-        
 
-        //TODO: replace radiation display with ability to show all images.
+        /// <summary>
+        /// Loads the first radiation image for the given map name.
+        /// </summary>
+        /// <param name="mapName">The name of the map.</param>
+        /// <returns>The first radiation image as a Texture2D object.</returns>
         private static Texture2D LoadFirstRadiationImage(string mapName) => ImageLoader.GetRadiationImages(mapName)[0];
     }
 }
