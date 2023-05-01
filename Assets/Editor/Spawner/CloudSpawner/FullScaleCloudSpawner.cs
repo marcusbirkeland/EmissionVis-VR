@@ -13,7 +13,7 @@ namespace Editor.Spawner.CloudSpawner
     public class FullScaleCloudSpawner : BaseCloudSpawner
     {
         protected override string PrefabName => "Cloud Full Scale";
-        protected override double Elevation => 130;
+        protected override double Elevation => 150;
 
         /// <summary>
         /// Initializes a new instance of the FullScaleCloudSpawner class.

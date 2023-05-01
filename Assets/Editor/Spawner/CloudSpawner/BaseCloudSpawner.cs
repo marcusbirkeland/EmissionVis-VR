@@ -95,7 +95,8 @@ namespace Editor.Spawner.CloudSpawner
 
             // Prefab base size is 1km
             float scale = SelectedCdfAttributes.size.x / 1000.0f * LatDistortionValue;
-            cloud.transform.localScale = new Vector3(scale, scale, scale);
+            
+            cloud.transform.localScale = new Vector3(scale, SelectedCdfAttributes.size.x / 1000.0f, scale);
 
             CloudManager cloudManager = cloud.AddComponent<CloudManager>();
 

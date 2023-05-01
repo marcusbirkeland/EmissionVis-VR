@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 392283630433916741}
   - component: {fileID: 4840160460650602548}
-  - component: {fileID: -6063613377472331158}
   m_Layer: 0
   m_Name: Cloud Miniature
   m_TagString: Untagged
@@ -68,20 +67,6 @@ LODGroup:
     renderers:
     - renderer: {fileID: 6115224286224575870}
   m_Enabled: 1
---- !u!114 &-6063613377472331158
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1025267443096260095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9668c0c1bf164ccbbad0804751f1e98b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  imageDirectory: 
-  heightMapImg: {fileID: 0}
 --- !u!1 &2325006794940807928
 GameObject:
   m_ObjectHideFlags: 0
