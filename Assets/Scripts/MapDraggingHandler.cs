@@ -44,6 +44,8 @@ public class MapDraggingHandler : MonoBehaviour
 
         Vector3 rightHit = _rightEnabled ? GetRayHit(_rightRayInteractor) : Vector3.zero;
         Vector3 leftHit = _leftEnabled ? GetRayHit(_leftRayInteractor) : Vector3.zero;
+        if (rightHit == Vector3.zero && _rightEnabled) { _rightPreviousPos = Vector3.zero; return; }
+        if (leftHit == Vector3.zero && _leftEnabled) { _leftPreviousPos = Vector3.zero; return; }
 
         Vector3 deltaRight = _rightEnabled ? Delta(rightHit, ref _rightPreviousPos) : Vector3.zero;
         Vector3 deltaLeft = _leftEnabled ? Delta(leftHit, ref _leftPreviousPos) : Vector3.zero;
