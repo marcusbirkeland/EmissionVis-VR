@@ -260,6 +260,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cadd68bfe2b7d9340b324178857b7081, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxTeleportDistance: 900
+  minTeleportDistance: 30
   teleportBumper: {fileID: 187161793506945269, guid: c348712bda248c246b8c49b3db54643f,
     type: 3}
   teleportJoystick: {fileID: -8061240218431744966, guid: c348712bda248c246b8c49b3db54643f,
@@ -1959,7 +1961,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2891431464957888089
 Transform:
   m_ObjectHideFlags: 0
@@ -4961,7 +4963,7 @@ MonoBehaviour:
   m_OriginBaseGameObject: {fileID: 8054432294620570917}
   m_CameraFloorOffsetObject: {fileID: 8651540148618010714}
   m_RequestedTrackingOriginMode: 1
-  m_CameraYOffset: 1
+  m_CameraYOffset: 1.36144
 --- !u!23 &7537288370443174774
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6473,7 +6475,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.5
+  near clip plane: 0.01
   far clip plane: 250358.67
   field of view: 60
   orthographic: 0
@@ -6505,7 +6507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bbba49acb848c0448694828560b07fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UpdateClippingPlanes: 1
+  UpdateClippingPlanes: 0
   UseCameraViewportProperties: 1
   verticalFov: 0
   horizontalFov: 0
