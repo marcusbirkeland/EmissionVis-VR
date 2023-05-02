@@ -52,8 +52,9 @@ namespace Visualization
                     material.SetTexture(Heightmap, heightMap);
                 }
             }
-            
-            EditorUtility.SetDirty(gameObject);
+            #if UNITY_EDITOR
+                EditorUtility.SetDirty(gameObject);
+            #endif
         }
 
 
