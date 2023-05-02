@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Esri.ArcGISMapsSDK.Components;
 using Esri.GameEngine.Geometry;
+using UnityEditor;
 
 namespace Visualization
 {
@@ -19,45 +20,49 @@ namespace Visualization
         private static readonly int Opacity = Shader.PropertyToID("_Opacity");
         private static readonly int Heightmap = Shader.PropertyToID("_TerrainHeightmap");
 
-        private List<Material> _cloudMaterials = new();
+        [SerializeField]
+        private List<Renderer> cloudRenderers = new();
 
         public double baseElevation;
         
-        private List<Texture2D> _cloudImages = new();
-        public int MapCount => _cloudImages.Count;
+        [SerializeField]
+        private List<Texture2D> cloudImages = new();
+        public int MapCount => cloudImages.Count;
 
         private int _index;
         
         
-        public void Initialize( List<Texture2D> cloudImages, Texture2D heightMap, int size, double elevation)
+        public void Initialize( List<Texture2D> newCloudImages, Texture2D heightMap, int size, double elevation)
         {
-            _cloudImages = cloudImages;
+            cloudImages = newCloudImages;
             baseElevation = elevation;
 
             LODGroup lodGroup = gameObject.GetComponent<LODGroup>();
             lodGroup.size = size;
             
-            // Inside the Initialize() method
             foreach (LOD lod in lodGroup.GetLODs())
             {
                 foreach (Renderer ren in lod.renderers)
                 {
+                    cloudRenderers.Add(ren);
+
                     Material material = ren.sharedMaterial;
-                    _cloudMaterials.Add(material);
-                    material.SetTexture(ColorMapMin, cloudImages[_index]);
-                    material.SetTexture(ColorMapMax, cloudImages[_index + 1]);
+                    material.SetTexture(ColorMapMin, newCloudImages[_index]);
+                    material.SetTexture(ColorMapMax, newCloudImages[_index + 1]);
                     material.SetTexture(Heightmap, heightMap);
                 }
             }
+            
+            EditorUtility.SetDirty(gameObject);
         }
 
 
         /* Changes opacity for the clouds-shader */
         public void ChangeOpacity(float value)
         {
-            foreach (Material material in _cloudMaterials)
+            foreach (Renderer ren in cloudRenderers)
             {
-                material.SetFloat(Opacity, value);
+                ren.material.SetFloat(Opacity, value);
             }
         }
 
@@ -65,9 +70,9 @@ namespace Visualization
         /* Updates the time-alpha in the clouds-material, interpolating between the two loaded textures*/
         public void ChangeTimeStep(float time)
         {
-            foreach (Material material in _cloudMaterials)
+            foreach (Renderer ren in cloudRenderers)
             {
-                material.SetFloat(ColorMapAlpha, time % 1);
+                ren.material.SetFloat(ColorMapAlpha, time % 1);
             }
         }
         
@@ -75,13 +80,13 @@ namespace Visualization
         /* Changes the physical height of the clouds in the scene, interpolating the heightmap more when reaching the baseElevation*/
         public void ChangeCurvatureByHeight(float value)
         {
-            foreach (Material material in _cloudMaterials)
+            foreach (Renderer ren in cloudRenderers)
             {
                 if (value >= 0.1f)
                 {
                     value *= 1.2f;
                 }
-                material.SetFloat(TerrainCurvature, Mathf.Clamp01(1 - (value + 0.25f / 1)));
+                ren.material.SetFloat(TerrainCurvature, Mathf.Clamp01(1 - (value + 0.25f / 1)));
             }
         }
         
@@ -90,17 +95,17 @@ namespace Visualization
         {
             int newIndex = _index + steps;
 
-            if (newIndex < 0 || newIndex + 1 > _cloudImages.Count)
+            if (newIndex < 0 || newIndex + 1 > cloudImages.Count)
                 throw new System.IndexOutOfRangeException("Index out of range");
 
             _index = newIndex;
             
             Debug.Log("Update time steps: " + steps);
             
-            foreach (Material material in _cloudMaterials)
+            foreach (Renderer ren in cloudRenderers)
             {
-                material.SetTexture(ColorMapMin, _cloudImages[_index]);
-                material.SetTexture(ColorMapMax, _cloudImages[_index + 1]);
+                ren.material.SetTexture(ColorMapMin, cloudImages[_index]);
+                ren.material.SetTexture(ColorMapMax, cloudImages[_index + 1]);
             }
         }
     }
