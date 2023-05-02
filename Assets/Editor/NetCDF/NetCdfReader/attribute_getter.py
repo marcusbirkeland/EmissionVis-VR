@@ -39,9 +39,11 @@ for i in range(len(input_paths) - 1):
             file_data["size"]["x"] = x_values[-1] + x_values[0]
             file_data["size"]["y"] = y_values[-1] + y_values[0]
 
-    except:
-        print(f"Error reading {path}")
-        UnityEngine.Debug.Log(f"Error reading {path}")
+    except Exception as e:
+        error_msg = f"Error reading {path}: {str(e)}"
+        print(error_msg)
+        UnityEngine.Debug.LogError(error_msg)
+        continue
 
     # Add the extracted data to the output list
     output.append(file_data)

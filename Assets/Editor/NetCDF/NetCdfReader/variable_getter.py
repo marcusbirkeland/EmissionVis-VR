@@ -22,9 +22,12 @@ for i in range(len(input_paths) - 1):
         with netCDF4.Dataset(path, "r") as dataset:
             for var in dataset.variables:
                 file_data["variables"].append(var)
-    except:
-        print(f"Error reading {path}")
-        UnityEngine.Debug.Log(f"Error reading {path}")
+                
+    except Exception as e:
+        error_msg = f"Error reading {path}: {str(e)}"
+        print(error_msg)
+        UnityEngine.Debug.LogError(error_msg)
+        continue
 
     # Append the file_data dictionary to the output list
     output.append(file_data)

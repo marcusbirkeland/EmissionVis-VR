@@ -78,15 +78,16 @@ namespace Editor.EditorWindowComponents
                 _showWarning = true;
                 return;
             }
-                
-            DataGenerator.CreateDataFiles(
-                MapName,
-                (NcVariable)_buildingData.SelectedVariable,
-                (NcVariable)_heightMap.SelectedVariable,
-                (NcVariable)_windSpeed.SelectedVariable,
-                _radiationData.SelectedVariables);
-                
-            ScenesMaker.CreateBothScenes(this);
+
+            if (DataGenerator.CreateDataFiles(
+                    MapName,
+                    (NcVariable) _buildingData.SelectedVariable,
+                    (NcVariable) _heightMap.SelectedVariable,
+                    (NcVariable) _windSpeed.SelectedVariable,
+                    _radiationData.SelectedVariables))
+            {
+                ScenesMaker.CreateBothScenes(this);
+            }
         }
 
         /// <summary>

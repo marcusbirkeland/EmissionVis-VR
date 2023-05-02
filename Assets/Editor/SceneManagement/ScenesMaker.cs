@@ -28,6 +28,7 @@ namespace Editor.SceneManagement
             }, allVariablesSelector);
         }
 
+        
         /// <summary>
         /// Creates a Miniature scene based on the provided data in the AllVariablesSelector object.
         /// </summary>
@@ -38,7 +39,8 @@ namespace Editor.SceneManagement
             Debug.Log("Creating miniature scene");
 
             SceneAsset templateScene = GetTemplateScene("Miniature Template");
-            SceneDuplicator.CreateAndLoadDuplicateScene(templateScene, allVariablesSelector.MapName + " Miniature");
+            if (!SceneDuplicator.CreateAndLoadDuplicateScene(templateScene,
+                    allVariablesSelector.MapName + " Miniature")) return;
 
             MiniatureSceneBuilder miniBuilder = new(
                 allVariablesSelector.MapName,
@@ -61,7 +63,8 @@ namespace Editor.SceneManagement
             Debug.Log("Creating full scale scene");
 
             SceneAsset templateScene = GetTemplateScene("Full Scale Template");
-            SceneDuplicator.CreateAndLoadDuplicateScene(templateScene, allVariablesSelector.MapName + " Full Scale");
+            if (!SceneDuplicator.CreateAndLoadDuplicateScene(templateScene,
+                    allVariablesSelector.MapName + " Full Scale")) return;
 
             FullScaleSceneBuilder fullScaleBuilder = new(
                 allVariablesSelector.MapName,

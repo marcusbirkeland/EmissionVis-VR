@@ -44,7 +44,9 @@ namespace Editor
             {
                 if (_ncFilesSelector?.NcFiles.Count < 1) return;
                 
+                EditorUtility.DisplayProgressBar("Getting variables", "Loading CDF files...", -1);
                 _allVariablesSelector = new AllVariablesSelector(_ncFilesSelector?.NcFiles, $"{Application.dataPath}/Resources/MapData");
+                EditorUtility.ClearProgressBar();
             }
             
             GUILayout.Space(10);

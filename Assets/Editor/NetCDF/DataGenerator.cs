@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Editor.NetCDF.Types;
 using Unity.Tutorials.Core.Editor;
@@ -54,8 +55,9 @@ namespace Editor.NetCDF
                     variables.Add(new NcVariable { filePath = fileData.filePath, variableName = variable });
                 }
             }
-            return variables;        
+            return variables;
         }
+        
         
         /// <summary>
         /// Generates and saves the necessary data files and folder structures based on the variables selected by the user.
@@ -65,12 +67,12 @@ namespace Editor.NetCDF
         /// <param name="terrainHeightVariable">The selected variable for height map data generation.</param>
         /// <param name="windSpeedVariable">The selected variable for wind speed data generation.</param>
         /// <param name="radiationVariables">The list of selected variables for radiation data generation.</param>
-        public static void CreateDataFiles(string mapName, NcVariable buildingsVariable, NcVariable terrainHeightVariable, NcVariable windSpeedVariable, List<NcVariable> radiationVariables)
+        public static bool CreateDataFiles(string mapName, NcVariable buildingsVariable, NcVariable terrainHeightVariable, NcVariable windSpeedVariable, List<NcVariable> radiationVariables)
         {
             if (mapName.IsNullOrWhiteSpace())
             {
                 Debug.Log("You need to select a map name");
-                return;
+                return false;
             }
             
             EditorUtility.DisplayProgressBar("Creating datafiles", "Creating buildings datafiles", -1);
@@ -87,9 +89,15 @@ namespace Editor.NetCDF
             
             EditorUtility.ClearProgressBar();
             AssetDatabase.Refresh();
+            
+            if (DataFoldersExist(mapName)) return true;
+            
+            EditorUtility.DisplayDialog("Warning", "Something went wrong during data creation. Please make sure you selected the correct variables.", "OK");
+            return false;
+
         }
 
-        
+
         /// <summary>
         /// <para>Generates two JSON files (attributes.json and variables.json) for easier access to NetCDF data within Unity.</para>
         /// <para>The method runs Python scripts (variable_getter.py and attribute_getter.py) to process the NetCDF files and generate the JSON files, which are saved at the specified outputFolderPath. If the output path doesn't exist, it is created. If the JSON files already exist, they are overwritten.</para>
@@ -161,7 +169,7 @@ namespace Editor.NetCDF
             
             string pythonInputString = terrainHeightVariable + outputPath + "$" + interpolationFactor;
 
-            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_png.py", pythonInputString);
+            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_2d_png.py", pythonInputString);
         }
         
 
@@ -177,7 +185,7 @@ namespace Editor.NetCDF
 
             string pythonInputString = windSpeedVariable + outputPath + "$" + interpolationFactor;
 
-            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_png.py", pythonInputString);
+            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_4d_pngs.py", pythonInputString);
         }
 
 
@@ -196,7 +204,7 @@ namespace Editor.NetCDF
 
                 string pythonInputString = variable + outputPath + "$" + interpolationFactor;
 
-                PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_png.py", pythonInputString);
+                PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_4d_pngs.py", pythonInputString);
             }
         }
 
@@ -219,6 +227,23 @@ namespace Editor.NetCDF
             }
 
             return result.ToString();
+        }
+        
+        
+                
+        private static bool DataFoldersExist(string mapName)
+        {
+            string basePath = $"{Application.dataPath}/Resources/MapData/{mapName}";
+
+            string[] requiredFolders =
+            {
+                "BuildingData",
+                "HeightMap",
+                "Radiation",
+                "WindSpeed"
+            };
+
+            return requiredFolders.Select(folder => Path.Combine(basePath, folder)).All(Directory.Exists);
         }
     }
 }
