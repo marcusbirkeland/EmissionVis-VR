@@ -14,8 +14,9 @@ namespace Visualization
             {
                 foreach (Renderer ren in lod.renderers)
                 {
-                    ren.material.SetTexture(RadiationMap, radiationImage);
-                    ren.material.SetTexture(Heightmap, heightMapImage);
+                    Material material = ren.sharedMaterial;
+                    material.SetTexture(RadiationMap, radiationImage);
+                    material.SetTexture(Heightmap, heightMapImage);
                 }
             }
         }

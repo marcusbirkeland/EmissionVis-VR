@@ -39,11 +39,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorMapMax:
-        m_Texture: {fileID: 2800000, guid: 217e1bc50948e1a4988d77f1701617c6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 59742c79ec1c79d4f90df74ec5f166d6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorMapMin:
-        m_Texture: {fileID: 2800000, guid: c0b56fc4dbbb95b409164cd9245c960d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 87a9986d6bb8f6d44ac1a7e40f51e433, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TerrainHeightmap:

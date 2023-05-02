@@ -19,8 +19,7 @@ namespace Visualization
         private static readonly int Opacity = Shader.PropertyToID("_Opacity");
         private static readonly int Heightmap = Shader.PropertyToID("_TerrainHeightmap");
 
-        
-        private readonly List<Renderer> _cloudRenderers = new();
+        private List<Material> _cloudMaterials = new();
 
         public double baseElevation;
         
@@ -38,14 +37,16 @@ namespace Visualization
             LODGroup lodGroup = gameObject.GetComponent<LODGroup>();
             lodGroup.size = size;
             
+            // Inside the Initialize() method
             foreach (LOD lod in lodGroup.GetLODs())
             {
                 foreach (Renderer ren in lod.renderers)
                 {
-                    _cloudRenderers.Add(ren);
-                    ren.material.SetTexture(ColorMapMin, cloudImages[_index]);
-                    ren.material.SetTexture(ColorMapMax, cloudImages[_index + 1]);
-                    ren.material.SetTexture(Heightmap, heightMap);
+                    Material material = ren.sharedMaterial;
+                    _cloudMaterials.Add(material);
+                    material.SetTexture(ColorMapMin, cloudImages[_index]);
+                    material.SetTexture(ColorMapMax, cloudImages[_index + 1]);
+                    material.SetTexture(Heightmap, heightMap);
                 }
             }
         }
@@ -54,9 +55,9 @@ namespace Visualization
         /* Changes opacity for the clouds-shader */
         public void ChangeOpacity(float value)
         {
-            foreach (Renderer ren in _cloudRenderers)
+            foreach (Material material in _cloudMaterials)
             {
-                ren.material.SetFloat(Opacity, value);
+                material.SetFloat(Opacity, value);
             }
         }
 
@@ -64,9 +65,9 @@ namespace Visualization
         /* Updates the time-alpha in the clouds-material, interpolating between the two loaded textures*/
         public void ChangeTimeStep(float time)
         {
-            foreach (Renderer ren in _cloudRenderers)
+            foreach (Material material in _cloudMaterials)
             {
-                ren.material.SetFloat(ColorMapAlpha, time % 1);
+                material.SetFloat(ColorMapAlpha, time % 1);
             }
         }
         
@@ -74,13 +75,13 @@ namespace Visualization
         /* Changes the physical height of the clouds in the scene, interpolating the heightmap more when reaching the baseElevation*/
         public void ChangeCurvatureByHeight(float value)
         {
-            foreach (Renderer ren in _cloudRenderers)
+            foreach (Material material in _cloudMaterials)
             {
-                // To create a steeper curve.
-                if ( value >= 0.1f){
-                    value*= 1.2f;
+                if (value >= 0.1f)
+                {
+                    value *= 1.2f;
                 }
-                ren.material.SetFloat(TerrainCurvature, Mathf.Clamp01(1-(value+0.25f / 1)));
+                material.SetFloat(TerrainCurvature, Mathf.Clamp01(1 - (value + 0.25f / 1)));
             }
         }
         
@@ -96,10 +97,10 @@ namespace Visualization
             
             Debug.Log("Update time steps: " + steps);
             
-            foreach (Renderer ren in _cloudRenderers)
+            foreach (Material material in _cloudMaterials)
             {
-                ren.material.SetTexture(ColorMapMin, _cloudImages[_index]);
-                ren.material.SetTexture(ColorMapMax, _cloudImages[_index + 1]);
+                material.SetTexture(ColorMapMin, _cloudImages[_index]);
+                material.SetTexture(ColorMapMax, _cloudImages[_index + 1]);
             }
         }
     }

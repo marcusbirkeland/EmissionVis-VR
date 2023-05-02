@@ -11,7 +11,7 @@ namespace Editor
     {
         private AllVariablesSelector _allVariablesSelector;
         private NcFilesSelector _ncFilesSelector;
-
+        
         
         /// <summary>
         /// Adds an entry to the Unity menu, allowing the user to open the CreateScenesWindow.

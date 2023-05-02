@@ -53,6 +53,7 @@ namespace Editor.SceneManagement
             EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
         }
 
+        
         /// <summary>
         /// Creates a Full Scale scene based on the provided data in the AllVariablesSelector object.
         /// </summary>
@@ -77,6 +78,7 @@ namespace Editor.SceneManagement
             EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
         }
 
+        
         /// <summary>
         /// Retrieves the template scene asset based on the provided scene name.
         /// </summary>
