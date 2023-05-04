@@ -1,5 +1,4 @@
-﻿using Editor.NetCDF;
-using Editor.NetCDF.Types;
+﻿using Editor.NetCDF.Types;
 using Microsoft.Geospatial;
 using Microsoft.Maps.Unity;
 using UnityEngine;

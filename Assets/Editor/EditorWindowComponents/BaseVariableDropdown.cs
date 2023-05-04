@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Editor.NetCDF;
 using Editor.NetCDF.Types;
 
 namespace Editor.EditorWindowComponents

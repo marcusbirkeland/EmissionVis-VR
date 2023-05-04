@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Microsoft.Maps.Unity;
-using Microsoft.Geospatial;
 using System;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.InputSystem;

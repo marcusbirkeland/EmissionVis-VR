@@ -1,10 +1,8 @@
-﻿using Editor.NetCDF;
-using Editor.NetCDF.Types;
+﻿using Editor.NetCDF.Types;
 using Esri.ArcGISMapsSDK.Components;
 using Esri.ArcGISMapsSDK.Utils.GeoCoord;
 using Esri.HPFramework;
 using UnityEngine;
-using Visualization;
 
 namespace Editor.Spawner.BuildingSpawner
 {

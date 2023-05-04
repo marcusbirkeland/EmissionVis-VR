@@ -1,12 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.Maps.Unity;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
-using Esri.ArcGISMapsSDK.Components;
-using Esri.GameEngine.Geometry;
-using UnityEditor;
 
 namespace Visualization
 {
