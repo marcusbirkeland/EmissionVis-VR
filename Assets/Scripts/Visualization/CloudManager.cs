@@ -3,9 +3,12 @@ using UnityEngine;
 
 namespace Visualization
 {
+    /// <summary>
+    /// The CloudManager class handles the functionality of managing the appearance and properties of clouds in the scene.
+    /// </summary>
     public class CloudManager : MonoBehaviour
     {
-        //More efficient to store these as static variables.
+        // More efficient to store these as static variables.
         private static readonly int ColorMapMin = Shader.PropertyToID("_ColorMapMin");
         private static readonly int ColorMapMax = Shader.PropertyToID("_ColorMapMax");
         private static readonly int ColorMapAlpha = Shader.PropertyToID("_ColorMapAlpha");
@@ -13,26 +16,31 @@ namespace Visualization
         private static readonly int Opacity = Shader.PropertyToID("_Opacity");
         private static readonly int Heightmap = Shader.PropertyToID("_TerrainHeightmap");
 
-        [SerializeField]
-        private List<Renderer> cloudRenderers = new();
+        [SerializeField] private List<Renderer> cloudRenderers = new();
 
         public double baseElevation;
-        
-        [SerializeField]
-        private List<Texture2D> cloudImages = new();
+
+        [SerializeField] private List<Texture2D> cloudImages = new();
         public int MapCount => cloudImages.Count;
 
         private int _index;
-        
-        
-        public void Initialize( List<Texture2D> newCloudImages, Texture2D heightMap, int size, double elevation)
+
+
+        /// <summary>
+        /// Initializes the CloudManager with a set of cloud images, heightmap, size, and elevation.
+        /// </summary>
+        /// <param name="newCloudImages">A list of cloud images.</param>
+        /// <param name="heightMap">The heightmap texture.</param>
+        /// <param name="size">The size of the LODGroup component.</param>
+        /// <param name="elevation">The base elevation value.</param>
+        public void Initialize(List<Texture2D> newCloudImages, Texture2D heightMap, int size, double elevation)
         {
             cloudImages = newCloudImages;
             baseElevation = elevation;
 
             LODGroup lodGroup = gameObject.GetComponent<LODGroup>();
             lodGroup.size = size;
-            
+
             foreach (LOD lod in lodGroup.GetLODs())
             {
                 foreach (Renderer ren in lod.renderers)
@@ -47,8 +55,10 @@ namespace Visualization
             }
         }
 
-
-        /* Changes opacity for the clouds-shader */
+        /// <summary>
+        /// Changes the opacity of the clouds.
+        /// </summary>
+        /// <param name="value">The opacity value (0 to 1) to set for the clouds.</param>
         public void ChangeOpacity(float value)
         {
             foreach (Renderer ren in cloudRenderers)
@@ -57,8 +67,10 @@ namespace Visualization
             }
         }
 
-        
-        /* Updates the time-alpha in the clouds-material, interpolating between the two loaded textures*/
+        /// <summary>
+        /// Updates the time-alpha in the clouds-material, interpolating between the two loaded textures.
+        /// </summary>
+        /// <param name="time">The time value representing the desired interpolation value between two textures.</param>
         public void ChangeTimeStep(float time)
         {
             foreach (Renderer ren in cloudRenderers)
@@ -66,9 +78,11 @@ namespace Visualization
                 ren.material.SetFloat(ColorMapAlpha, time % 1);
             }
         }
-        
-        
-        /* Changes the physical height of the clouds in the scene, interpolating the heightmap more when reaching the baseElevation*/
+
+        /// <summary>
+        /// Changes the physical height of the clouds in the scene, interpolating the heightmap more when reaching the baseElevation.
+        /// </summary>
+        /// <param name="value">The height value representing the desired physical height of the clouds.</param>
         public void ChangeCurvatureByHeight(float value)
         {
             foreach (Renderer ren in cloudRenderers)
@@ -77,11 +91,15 @@ namespace Visualization
                 {
                     value *= 1.2f;
                 }
+
                 ren.material.SetFloat(TerrainCurvature, Mathf.Clamp01(1 - (value + 0.25f / 1)));
             }
         }
-        
-        
+
+        /// <summary>
+        /// Updates the cloud textures to display the next or previous cloud texture based on the specified steps.
+        /// </summary>
+        /// <param name="steps">The number of steps to update the cloud texture. Positive values move forward in time, while negative values move backward in time.</param>
         public void UpdateTime(int steps)
         {
             int newIndex = _index + steps;
@@ -90,9 +108,9 @@ namespace Visualization
                 throw new System.IndexOutOfRangeException("Index out of range");
 
             _index = newIndex;
-            
+
             Debug.Log("Update time steps: " + steps);
-            
+
             foreach (Renderer ren in cloudRenderers)
             {
                 ren.material.SetTexture(ColorMapMin, cloudImages[_index]);

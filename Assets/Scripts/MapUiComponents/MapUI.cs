@@ -6,6 +6,10 @@ using Visualization;
 
 namespace MapUiComponents
 {
+    /// <summary>
+    /// The MapUI class is a singleton responsible for managing the UI elements in the scene, such as clouds,
+    /// buildings, and radiation. It provides access to the scene elements for the mapUI subcomponents.
+    /// </summary>
     public class MapUI : MonoBehaviour
     {
         public static MapUI Instance { get; private set; }
@@ -24,8 +28,7 @@ namespace MapUiComponents
         
         public static CloudManager CloudManager => Instance._cloudManager;
 
-        public event Action<bool> OnToggle; 
-
+        public event Action<bool> OnToggle;
 
         private void Awake()
         {
@@ -50,16 +53,16 @@ namespace MapUiComponents
             gameObject.SetActive(false);
         }
 
-        
-        private void OnDestroy() {
+        private void OnDestroy()
+        {
             foreach(InputActionReference iar in inputActions){
                 iar.action.started -= Toggle;
             }
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
-        
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
             Debug.Log("New scene loaded, setting holder values");
             SetHolderValues();
 
@@ -69,8 +72,11 @@ namespace MapUiComponents
             }
         }
 
-        
-        private void SetHolderValues() {
+        /// <summary>
+        /// Gets the holder elements for clouds, buildings, and radiation objects from the current scene.
+        /// </summary>
+        private void SetHolderValues()
+        {
             CloudHolder = GameObject.Find("Cloud Holder");
 
             if (CloudHolder != null)
@@ -82,8 +88,12 @@ namespace MapUiComponents
             RadiationHolder = GameObject.Find("Radiation Holder");
         }
         
-        
-        private void Toggle(InputAction.CallbackContext context = default){
+        /// <summary>
+        /// Toggles the visibility of the mapUI gameObject.
+        /// </summary>
+        /// <param name="context">The input action callback context (optional).</param>
+        private void Toggle(InputAction.CallbackContext context = default)
+        {
             gameObject.SetActive(!gameObject.activeSelf);
 
             Debug.Log("Toggled UI");

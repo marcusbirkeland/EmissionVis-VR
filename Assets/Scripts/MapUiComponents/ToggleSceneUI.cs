@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 namespace MapUiComponents
 {
+    /// <summary>
+    /// The ToggleSceneUI class handles the functionality of switching between miniature and full-scale scenes.
+    /// </summary>
     public class ToggleSceneUI : MonoBehaviour
     {
         [SerializeField]
@@ -20,6 +23,9 @@ namespace MapUiComponents
             toggleSceneButton.onClick.RemoveListener(SwitchScene);
         }
 
+        /// <summary>
+        /// Switches between the miniature and full-scale scenes.
+        /// </summary>
         private static void SwitchScene()
         {
             string currentScene = SceneManager.GetActiveScene().name;

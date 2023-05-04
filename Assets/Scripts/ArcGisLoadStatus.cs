@@ -11,11 +11,17 @@ public class ArcGisLoadStatus : MonoBehaviour
         StartCoroutine(Wait(8));
     }
 
-    //TODO: Replace with actual measure of map load status.
-    //We have not found a good way of doing this. The built-in ArcGis MapLoadStatus is insufficient. 
+    /// <summary>
+    /// Waits for a specified number of seconds before deactivating the loading screen.
+    /// This is a temporary solution until a better measure of map load status is implemented.
+    /// The built-in ArcGis MapLoadStatus is insufficient.
+    /// </summary>
+    /// <param name="seconds">The number of seconds to wait before deactivating the loading screen.</param>
+    /// <returns>An IEnumerator to be used with a coroutine that controls the WaitForSeconds object.</returns>
     private IEnumerator Wait(int seconds)
     {
         yield return new WaitForSeconds(seconds);
         loadingScreen.SetActive(false);
     }
+
 }
