@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace MapUiComponents
@@ -16,6 +17,8 @@ namespace MapUiComponents
             visibilitySlider.onValueChanged.AddListener(
                 UpdateCloudOpacity
             );
+
+            SceneManager.sceneLoaded += HandleSceneChange;
         }
 
         /// <summary>
@@ -25,6 +28,16 @@ namespace MapUiComponents
         private static void UpdateCloudOpacity(float value)
         {
             MapUI.CloudManager.ChangeOpacity(value);
+        }
+
+        /// <summary>
+        /// Sets the clouds opacity based on the slider value when swapping scenes.
+        /// </summary>
+        /// <param name="scene">The loaded scene.</param>
+        /// <param name="mode">The scene loading mode.</param>
+        private void HandleSceneChange(Scene scene, LoadSceneMode mode)
+        {
+            UpdateCloudOpacity(visibilitySlider.value);
         }
     }
 }

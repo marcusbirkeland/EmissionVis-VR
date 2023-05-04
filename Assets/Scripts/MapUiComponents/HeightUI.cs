@@ -3,6 +3,7 @@ using Esri.ArcGISMapsSDK.Components;
 using Esri.GameEngine.Geometry;
 using Microsoft.Maps.Unity;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace MapUiComponents
@@ -21,6 +22,8 @@ namespace MapUiComponents
             heightSlider.onValueChanged.AddListener(
                 UpdateCloudHeight
             );
+
+            SceneManager.sceneLoaded += HandleSceneChange;
         }
 
         /// <summary>
@@ -52,6 +55,15 @@ namespace MapUiComponents
                 ArcGISSpatialReference.WGS84()
             );
         }
+        
+        /// <summary>
+        /// Sets the cloud height based on the slider value on scene loaded.
+        /// </summary>
+        /// <param name="scene">The loaded scene.</param>
+        /// <param name="mode">The scene loading mode.</param>
+        private void HandleSceneChange(Scene scene, LoadSceneMode mode)
+        {
+            UpdateCloudHeight(heightSlider.value);
+        }    
     }
-
 }
