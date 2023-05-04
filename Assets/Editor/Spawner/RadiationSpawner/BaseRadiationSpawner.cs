@@ -2,7 +2,6 @@
 using Editor.NetCDF;
 using Editor.NetCDF.Types;
 using UnityEngine;
-using Visualization;
 using Object = UnityEngine.Object;
 
 namespace Editor.Spawner.RadiationSpawner
@@ -13,8 +12,11 @@ namespace Editor.Spawner.RadiationSpawner
     /// </summary>
     public abstract class BaseRadiationSpawner
     {
+        private static readonly int RadiationMap = Shader.PropertyToID("_RadiationMap");
+        private static readonly int Heightmap = Shader.PropertyToID("_Heightmap");
+
         protected const string HolderName = "Radiation Holder";
-        protected const string PrefabName = "Radiation";
+        private const string PrefabName = "Radiation";
 
         protected readonly FileAttributes SelectedCdfAttributes;
         protected readonly GameObject Map;
@@ -86,7 +88,7 @@ namespace Editor.Spawner.RadiationSpawner
             GameObject rad = Object.Instantiate(radiationPrefab, RadiationHolder.transform, false);
             rad.name = "Radiation";
 
-            RadiationManager.SetRadiationImages(rad, _radiationImage, _heightMap);
+            SetRadiationImages(rad, _radiationImage, _heightMap);
 
             LODGroup lodGroup = rad.GetComponent<LODGroup>();
             lodGroup.size = SelectedCdfAttributes.size.x;
@@ -94,6 +96,20 @@ namespace Editor.Spawner.RadiationSpawner
             //Prefab base size is 1km
             float scale = SelectedCdfAttributes.size.x / 1000.0f * LatDistortionValue;
             rad.transform.localScale = new Vector3(scale, SelectedCdfAttributes.size.x / 1000.0f, scale);
+        }
+        
+        private static void SetRadiationImages(GameObject radiation, Texture2D radiationImage, Texture2D heightMapImage)
+        {
+            LOD[] lods = radiation.GetComponent<LODGroup>().GetLODs();
+            foreach (LOD lod in lods)
+            {
+                foreach (Renderer ren in lod.renderers)
+                {
+                    Material material = ren.sharedMaterial;
+                    material.SetTexture(RadiationMap, radiationImage);
+                    material.SetTexture(Heightmap, heightMapImage);
+                }
+            }
         }
 
         /// <summary>

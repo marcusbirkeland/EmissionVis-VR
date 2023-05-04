@@ -13,7 +13,7 @@ namespace MapUiComponents
         [SerializeField]
         private InputActionReference [] inputActions;
 
-        public GameObject CloudHolder { get; set; }
+        public GameObject CloudHolder { get; private set; }
         public GameObject BuildingHolder { get; private set; }
         public GameObject RadiationHolder { get; private set; }
         

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Editor.NetCDF;
 using Editor.NetCDF.Types;
+using UnityEditor;
 using UnityEngine;
 using Visualization;
 using Object = UnityEngine.Object;
@@ -103,6 +104,8 @@ namespace Editor.Spawner.CloudSpawner
             List<Texture2D> images = ImageLoader.GetCloudImages(_mapName);
 
             cloudManager.Initialize(images, _heightImg, SelectedCdfAttributes.size.x, Elevation);
+            
+            EditorUtility.SetDirty(cloudManager);
         }
 
         

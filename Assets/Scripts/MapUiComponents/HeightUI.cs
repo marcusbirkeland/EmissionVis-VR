@@ -18,7 +18,7 @@ namespace MapUiComponents
             );
         }
 
-        //TODO: Reduce function calls by storing locations somewhere.
+        //TODO: Reduce function calls by storing map components somewhere.
         private static void UpdateCloudHeight(float value)
         {
             MapUI.CloudManager.ChangeCurvatureByHeight(value);

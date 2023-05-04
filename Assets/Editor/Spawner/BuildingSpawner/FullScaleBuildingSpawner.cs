@@ -32,7 +32,6 @@ namespace Editor.Spawner.BuildingSpawner
         {
             BuildingsHolder = new GameObject(HolderName);
             BuildingsHolder.transform.SetParent(Map.transform, false);
-            BuildingsHolder.AddComponent<BuildingsManager>();
 
             BuildingsHolder.AddComponent<HPTransform>();
 
