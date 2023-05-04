@@ -6507,7 +6507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bbba49acb848c0448694828560b07fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UpdateClippingPlanes: 0
+  UpdateClippingPlanes: 1
   UseCameraViewportProperties: 1
   verticalFov: 0
   horizontalFov: 0
