@@ -5,8 +5,14 @@ using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Handles map panning and scaling based on controller gestures.
+/// </summary>
 public class MapDraggingHandler : MonoBehaviour
 {
+    /// <summary>
+    /// Reference to the Bing map game object.
+    /// </summary>
     public GameObject map;
     public ActionBasedController rightController;
     public ActionBasedController leftController;
@@ -24,6 +30,9 @@ public class MapDraggingHandler : MonoBehaviour
     private bool _rightEnabled;
     private bool _leftEnabled;
 
+    /// <summary>
+    /// Called before the first frame update.
+    /// </summary>
     private void Start()
     {
         _target = map.GetComponent<MapRenderer>();
@@ -33,7 +42,9 @@ public class MapDraggingHandler : MonoBehaviour
         _leftRayInteractor = InitController(leftController, LeftPressed, LeftReleased);
     }
 
-
+    /// <summary>
+    /// Update is called once per frame.
+    /// </summary>
     private void Update()
     {
         if (!_rightEnabled && !_leftEnabled) return;
@@ -63,7 +74,9 @@ public class MapDraggingHandler : MonoBehaviour
         TranslateMap(midpoint * deltaZoom * (_target.MapDimension.x / 2));
     }
 
-
+    /// <summary>
+    /// Assigns the approprate actions to a controller that are to be performed when a button is pressed.
+    /// </summary>
     private static XRRayInteractor InitController(Component controller, Action<InputAction.CallbackContext> pressed, Action<InputAction.CallbackContext> released)
     {
         InputActionReference selectReference = controller.GetComponent<ActionBasedController>().activateAction.reference;
@@ -75,6 +88,10 @@ public class MapDraggingHandler : MonoBehaviour
         return rayInteractor;
     }
 
+    /// <summary>
+    /// Handler for when the right controller trigger is pressed
+    /// </summary>
+    /// <param name="context">A callback to be executed once a controller action has been performed.</param>
     private void RightPressed(InputAction.CallbackContext context)
     {
         _rightEnabled = true;
@@ -82,22 +99,38 @@ public class MapDraggingHandler : MonoBehaviour
         _rightPreviousPos = Vector3.zero;
     }
 
+    /// <summary>
+    /// Handler for when the left controller trigger is pressed
+    /// </summary>
+    /// <param name="context">A callback to be executed once a controller action has been performed.</param>
     private void LeftPressed(InputAction.CallbackContext context)
     {
         _leftEnabled = true;
         _leftPreviousPos = Vector3.zero;
     }
 
+    /// <summary>
+    /// Handler for when the right controller trigger is released
+    /// </summary>
+    /// <param name="context">A callback to be executed once a controller action has been performed.</param>
     private void RightReleased(InputAction.CallbackContext context)
     {
         _rightEnabled = false;
     }
 
+    /// <summary>
+    /// Handler for when the left controller trigger is released
+    /// </summary>
+    /// <param name="context">A callback to be executed once a controller action has been performed.</param>
     private void LeftReleased(InputAction.CallbackContext context)
     {
         _leftEnabled = false;
     }
 
+    /// <summary>
+    /// Returns the first raycast hit on a 3D object (ignoring UI hits).
+    /// </summary>
+    /// <param name="rayInteractor">The ray interactor to be checked for raycast hits.</param>
     private Vector3 GetRayHit(XRRayInteractor rayInteractor)
     {
         if (!rayInteractor.TryGetCurrentRaycast(out RaycastHit? raycastHit, out int _, out RaycastResult? uiRaycastHit, out int _, out bool _)) return Vector3.zero;
@@ -111,6 +144,11 @@ public class MapDraggingHandler : MonoBehaviour
         return Vector3.zero;
     }
 
+    /// <summary>
+    /// Find the difference between two raycast hits.
+    /// </summary>
+    /// <param name="hit">The current raycast hit.</param>
+    /// <param name="previousHit">The previous raycast hit.</param>
     private static Vector3 Delta(Vector3 hit, ref Vector3 previousHit)
     {
         // If "previousHit" is not set to a valid hit we want the panning in the first frame to be stationary.
@@ -122,6 +160,10 @@ public class MapDraggingHandler : MonoBehaviour
         return deltaHit;
     }
 
+    /// <summary>
+    /// Pans the map in a direction according to the provided vector.
+    /// </summary>
+    /// <param name="delta">The raycast difference telling how far to pan the map.</param>
     private void TranslateMap(Vector3 delta)
     {
         // Rotate the delta by the map's current Y-axis rotation
