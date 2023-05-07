@@ -46,7 +46,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Heightmap:
-        m_Texture: {fileID: 2800000, guid: 9605f7cc562435d44b6e3c86504bbfc2, type: 3}
+        m_Texture: {fileID: 2800000, guid: a50bb42e5fa44ed49bf720610e3913ee, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -66,7 +66,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RadiationMap:
-        m_Texture: {fileID: 2800000, guid: 9f9f0d1e5e5e78844a895017a62c4832, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3d9167bbffb8b034c81629feeb8cc9be, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2DLOD_1b32f683fe7449c8b7cc37feda75d3b9_Texture_1:

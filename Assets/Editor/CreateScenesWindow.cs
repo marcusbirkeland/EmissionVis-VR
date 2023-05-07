@@ -1,21 +1,21 @@
-﻿using System;
-using Editor.EditorWindowComponents;
-using Editor.SceneManagement;
+﻿using Editor.EditorWindowComponents;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Editor
 {
-    //Main editor window application
+    /// <summary>
+    /// The CreateScenesWindow class provides an Editor Window to generate Unity scenes based on netCDF data files.
+    /// </summary>
     public class CreateScenesWindow : EditorWindow
     {
         private AllVariablesSelector _allVariablesSelector;
+        private NcFilesSelector _ncFilesSelector;
         
-        private string _jsonFolderPath;
-
-
+        
+        /// <summary>
+        /// Adds an entry to the Unity menu, allowing the user to open the CreateScenesWindow.
+        /// </summary>
         [MenuItem("Sintef/Create Scenes")]
         private static void ShowWindow()
         {
@@ -24,87 +24,34 @@ namespace Editor
         }
 
 
+        /// <summary>
+        /// Initializes the window components when the window is enabled.
+        /// </summary>
         private void OnEnable()
         {
-            _jsonFolderPath = $"{Application.dataPath}/Resources/MapData";
-            
-            _allVariablesSelector = new AllVariablesSelector(_jsonFolderPath);
-            _allVariablesSelector.OnDataComplete += CreateBothScenes;
+            _ncFilesSelector = new NcFilesSelector();
         }
 
         
+        /// <summary>
+        /// Renders the window's GUI, including the NcFilesSelector and AllVariablesSelector components.
+        /// </summary>
         private void OnGUI()
         {
-            _allVariablesSelector.Draw();
-
-            if (!_allVariablesSelector.DataRetrieved) return;
+            _ncFilesSelector?.Draw();
             
-            _allVariablesSelector.LoadVariablesButton();
-        }
-
-        
-        private void CreateBothScenes()
-        {
-            Debug.Log("Creating both scenes");
-
-            CreateMiniatureScene( 
-                null
-                //() => CreateFullScaleScene(null)
-                );
-        }
-
-        
-        private void CreateMiniatureScene(Action onSceneCreated)
-        {
-            Debug.Log("Creating miniature scene");
-
-            SceneAsset templateScene = GetTemplateScene("Miniature Template");
-            SceneDuplicator.CreateAndLoadDuplicateScene(templateScene, _allVariablesSelector.MapName + " Miniature");
-            
-            MiniatureSceneBuilder miniBuilder = new(
-                _allVariablesSelector.MapName, 
-                _jsonFolderPath, 
-                _allVariablesSelector.BuildingCdfPath,
-                _allVariablesSelector.RadiationCdfPath,
-                _allVariablesSelector.WindSpeedCdfPath);
-            
-            miniBuilder.CreateDataVisualization(onSceneCreated);
-            
-            EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
-        }
-
-        
-        private void CreateFullScaleScene(Action onSceneCreated)
-        {
-            Debug.Log("Creating full scale scene");
-            
-            SceneAsset templateScene = GetTemplateScene("Full Scale Template");
-            SceneDuplicator.CreateAndLoadDuplicateScene(templateScene, _allVariablesSelector.MapName + " Full Scale");
-
-            FullScaleSceneBuilder fullScaleBuilder = new(
-                _allVariablesSelector.MapName, 
-                _jsonFolderPath, 
-                _allVariablesSelector.BuildingCdfPath,
-                _allVariablesSelector.RadiationCdfPath,
-                _allVariablesSelector.WindSpeedCdfPath);
-            
-            fullScaleBuilder.CreateDataVisualization(onSceneCreated);
-            
-            EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
-        }
-
-        
-        private static SceneAsset GetTemplateScene(string sceneName)
-        {
-            string scenePath = $"Assets/TemplateScenes/{sceneName}.unity";
-            SceneAsset sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
-
-            if (sceneAsset == null)
+            if (GUILayout.Button("Get data", GUILayout.Width(400)))
             {
-                throw new Exception($"The template scene '{sceneName}' is missing");
+                if (_ncFilesSelector?.NcFiles.Count < 1) return;
+                
+                EditorUtility.DisplayProgressBar("Getting variables", "Loading CDF files...", -1);
+                _allVariablesSelector = new AllVariablesSelector(_ncFilesSelector?.NcFiles, $"{Application.dataPath}/Resources/MapData");
+                EditorUtility.ClearProgressBar();
             }
+            
+            GUILayout.Space(10);
 
-            return sceneAsset;
+            _allVariablesSelector?.Draw();
         }
     }
 }

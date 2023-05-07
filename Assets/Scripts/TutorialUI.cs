@@ -1,47 +1,65 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// A serializable class representing a single tutorial slide.
+/// </summary>
 [System.Serializable]
-public class TutorialSlide {
+public class TutorialSlide
+{
     public string title = "Title";
     public string description = "Description";
     public Sprite tutorialImage;
 }
 
+/// <summary>
+/// Manages the tutorial UI, displaying a series of tutorial slides.
+/// </summary>
 public class TutorialUI : MonoBehaviour
 {
-    public TutorialSlide [] tutorialSlides;
-    public Text titleText;
-    public Text descriptionText;
-    public Image tutorialImage;
-    public Button tutorialButton;
-    public int selectedSlideIndex = 0;
-    private TutorialSlide selectedSlide;
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private TutorialSlide[] tutorialSlides;
+    [SerializeField] private Text titleText;
+    [SerializeField] private Text descriptionText;
+    [SerializeField] private Image tutorialImage;
+    [SerializeField] private Button tutorialButton;
+
+    private int _selectedSlideIndex;
+
+    /// <summary>
+    /// Called before the first frame update.
+    /// </summary>
+    private void Start()
     {
-        selectedSlide = tutorialSlides[selectedSlideIndex];
-        setSlide();
+        SetSlide();
         tutorialButton.onClick.AddListener(OnTutorialButtonPressed);
     }
 
-    private void setSlide(){
-        titleText.text = selectedSlide.title;
-        descriptionText.text = selectedSlide.description;
-        tutorialImage.sprite = selectedSlide.tutorialImage;
+    /// <summary>
+    /// Sets the slide content in the UI elements.
+    /// </summary>
+    private void SetSlide()
+    {
+        titleText.text = tutorialSlides[_selectedSlideIndex].title;
+        descriptionText.text = tutorialSlides[_selectedSlideIndex].description;
+        tutorialImage.sprite = tutorialSlides[_selectedSlideIndex].tutorialImage;
     }
 
-    private void OnTutorialButtonPressed(){
-        if(selectedSlideIndex >= tutorialSlides.Length -1){
+    /// <summary>
+    /// Handles the tutorial button click event and updates the slide content.
+    /// </summary>
+    private void OnTutorialButtonPressed()
+    {
+        if (_selectedSlideIndex >= tutorialSlides.Length - 1)
+        {
             // Hide the tutorial pane when exiting the last slide
-            this.gameObject.SetActive(false);
-        } else {
-            selectedSlideIndex++;
-            selectedSlide = tutorialSlides[selectedSlideIndex];
-            setSlide();
-            if(selectedSlideIndex == tutorialSlides.Length - 1){
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            _selectedSlideIndex++;
+            SetSlide();
+            if (_selectedSlideIndex == tutorialSlides.Length - 1)
+            {
                 tutorialButton.GetComponentInChildren<Text>().text = "Finish";
             }
         }

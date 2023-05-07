@@ -2311,6 +2311,31 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4175972426720127801, guid: 805e6164544541c41ab013d22450bce2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4175972426720127806, guid: 805e6164544541c41ab013d22450bce2,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4175972426720127806, guid: 805e6164544541c41ab013d22450bce2,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4175972426720127806, guid: 805e6164544541c41ab013d22450bce2,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 38
+      objectReference: {fileID: 0}
+    - target: {fileID: 4175972426720127806, guid: 805e6164544541c41ab013d22450bce2,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6550586102245848484, guid: 805e6164544541c41ab013d22450bce2,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -2639,6 +2664,7 @@ GameObject:
   - component: {fileID: 7567009078882052146}
   - component: {fileID: 7567009078882052152}
   - component: {fileID: 7567009078882052153}
+  - component: {fileID: 7567009078882052154}
   m_Layer: 0
   m_Name: Bing Map
   m_TagString: Untagged
@@ -2666,14 +2692,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7567009078882052144}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 2.495294, y: -1.3668209, z: -1.167}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 482205229}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &7567009078882052148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2776,3 +2802,16 @@ MonoBehaviour:
   _onInteractionEnded:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7567009078882052154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7567009078882052144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 889772739d4dbea469dca1b51e668bec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loadingScreen: {fileID: 1442034482633856687}

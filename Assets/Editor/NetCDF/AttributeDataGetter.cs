@@ -1,65 +1,34 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Geospatial;
+using Editor.NetCDF.Types;
 using UnityEngine;
+using FileAttributes = Editor.NetCDF.Types.FileAttributes;
 
 namespace Editor.NetCDF
 {
+    /// <summary>
+    /// Provides functionality to get attribute data from NetCDF files.
+    /// </summary>
     public static class AttributeDataGetter
     {
         [Serializable]
-        public struct Position
-        {
-            public double lat;
-            public double lon;
-            
-            public static implicit operator LatLon(Position position)
-            {
-                return new LatLon(position.lat, position.lon);
-            }
-
-            public static implicit operator LatLonAlt(Position position)
-            {
-                return new LatLonAlt(position.lat, position.lon, 0.0);
-            }
-        }
-
-        [Serializable]
-        public struct Size
-        {
-            public int x;
-            public int y;
-        }
-
-        [Serializable]
-        public struct FileAttributes
-        {
-            public string filePath;
-            public Position position;
-            public Size size;
-        }
-
-        [Serializable]
-        private struct FileDataListWrapper : IEnumerable<FileAttributes>
+        private struct FileAttributeListWrapper
         {
             public List<FileAttributes> data;
-
-            public IEnumerator<FileAttributes> GetEnumerator()
-            {
-                return data.GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
         }
-
-        public static FileAttributes GetFileAttributes(string jsonFilePath, string cdfFilePath)
+        
+        
+        /// <summary>
+        /// Gets the file attributes of a specified NetCDF file.
+        /// </summary>
+        /// <param name="cdfFilePath">The path of the NetCDF file.</param>
+        /// <returns>A FileAttributes struct containing file attribute information, or a default struct if not found.</returns>
+        public static FileAttributes GetFileAttributes(string cdfFilePath)
         {
+            string jsonFilePath = $"{Application.dataPath}/Resources/MapData/attributes.json";
+            
             if (!File.Exists(jsonFilePath))
             {
                 Debug.LogError("JSON file not found.");
@@ -69,9 +38,9 @@ namespace Editor.NetCDF
             try
             {
                 string jsonContent = File.ReadAllText(jsonFilePath);
-                FileDataListWrapper fileList = JsonUtility.FromJson<FileDataListWrapper>("{\"data\":" + jsonContent + "}");
+                FileAttributeListWrapper fileList = JsonUtility.FromJson<FileAttributeListWrapper>("{\"data\":" + jsonContent + "}");
 
-                return fileList.FirstOrDefault(data => data.filePath == cdfFilePath);
+                return fileList.data.FirstOrDefault(data => data.filePath == cdfFilePath);
             }
             catch (Exception e) when (e is ArgumentException or InvalidOperationException)
             {
@@ -79,6 +48,25 @@ namespace Editor.NetCDF
             }
 
             return default;
+        }
+        
+        
+        /// <summary>
+        /// Gets the center position of a specified NetCDF files dataset.
+        /// </summary>
+        /// <param name="cdfFilePath">The path of the NetCDF file.</param>
+        /// <returns>A <see cref="Position"/> object with the calculated latitude and longitude coordinates, or a default position if not found.</returns>
+        public static Position GetCenterPosition(string cdfFilePath)
+        {
+            FileAttributes fileAttributes = GetFileAttributes(cdfFilePath);
+            if (fileAttributes.filePath == null)
+            {
+                Debug.LogError("File attributes not found.");
+                return default;
+            }
+
+            return Position.GetOffsetPosition(
+                (double) fileAttributes.size.x / 2, (double) fileAttributes.size.y / 2, fileAttributes.position);
         }
     }
 }

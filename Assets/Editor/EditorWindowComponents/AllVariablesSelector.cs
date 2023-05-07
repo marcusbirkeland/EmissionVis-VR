@@ -1,65 +1,52 @@
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using Editor.NetCDF;
+using Editor.NetCDF.Types;
+using Editor.SceneManagement;
 using UnityEditor;
 using UnityEngine;
 
 namespace Editor.EditorWindowComponents
 {
-    /**
-     * Class for loading the netCDF data into unity.
-     */
+    /// <summary>
+    /// Class for loading netCDF data into Unity and providing the user with an interface for selecting variables.
+    /// </summary>
     public class AllVariablesSelector
     {
-        public delegate void OnDataCompleteHandler();
-
-        public event OnDataCompleteHandler OnDataComplete;
-        
-        private readonly FileSelector _fileSelector = new();
-
-        private List<FileData> _ncFiles = new();
-
-        private readonly string _jsonFolderPath;
         public string MapName { get; private set; }
         
-        private readonly List<NcVariable> _allVariables = new();
-        
-        private SingleVariableDropdown _buildingData;
-        private SingleVariableDropdown _heightMap;
-        private SingleVariableDropdown _windSpeed;
-        private MultiVariableDropdown _radiationData;
-        
-        
-        public bool DataRetrieved { get; private set; }
-
-
-        public AllVariablesSelector(string jsonFolderPath)
-        {
-            _jsonFolderPath = jsonFolderPath;
-        }
-
         public string BuildingCdfPath => _buildingData.SelectedVariable?.filePath;
         public string WindSpeedCdfPath => _windSpeed.SelectedVariable?.filePath;
-        public string RadiationCdfPath => _radiationData.SelectedVariables.Count > 0 ? _radiationData.SelectedVariables[0].filePath : null;
+        
+        public string RadiationCdfPath => _radiationData.SelectedVariables.Count > 0 ? _radiationData.SelectedVariables[0].filePath : string.Empty;
+        
+        private readonly SingleVariableDropdown _buildingData;
+        private readonly SingleVariableDropdown _heightMap;
+        private readonly SingleVariableDropdown _windSpeed;
+        private readonly MultiVariableDropdown _radiationData;
 
+        private bool _showWarning;
 
-        /**
-         * Event function for drawing the GUI while the editor window is open.
-         */
+        /// <summary>
+        /// Initializes a new instance of the AllVariablesSelector class.
+        /// </summary>
+        /// <param name="files">A list of netCDF file paths.</param>
+        /// <param name="jsonFolderPath">The folder path where JSON files will be saved.</param>
+        public AllVariablesSelector(List<string> files, string jsonFolderPath)
+        {
+            List<NcVariable> allVariables = DataGenerator.GenerateAndLoadVariables(files, jsonFolderPath);
+            
+            _buildingData = new SingleVariableDropdown(allVariables, "Building data:");
+            _heightMap = new SingleVariableDropdown(allVariables, "Heightmap:");
+            _windSpeed = new SingleVariableDropdown(allVariables, "Wind speed:");
+            _radiationData = new MultiVariableDropdown(allVariables, "Radiation Data:");
+        }
+        
+        /// <summary>
+        /// Draws the GUI for the AllVariablesSelector component while the Editor Window is open.
+        /// </summary>
         public void Draw()
         {
-            _fileSelector.Draw();
-            
-            if (GUILayout.Button("Get data", GUILayout.Width(400)))
-            {
-                GetVariables();
-            }
-            
-            GUILayout.Space(10);
-
-            //Prevents variable selection from appearing before the user has selected a dataset.
-            if (_ncFiles.Count <= 0 || _buildingData == null) return;
-
             GUILayout.Label("Select variables to use", EditorStyles.boldLabel);
             MapName = EditorGUILayout.TextField("Map name:", MapName, GUILayout.Width(400));
                 
@@ -67,67 +54,47 @@ namespace Editor.EditorWindowComponents
             _heightMap.Draw();
             _windSpeed.Draw();
             _radiationData.Draw();
-        }
-
-        public void LoadVariablesButton()
-        {
-            if (GUILayout.Button("Load variables", GUILayout.Width(400)))
+            
+            // Display warning message if one of the variables isn't set
+            if (_showWarning)
             {
-                DataGenerator.CreateDataFiles(MapName, _buildingData, _heightMap, _windSpeed, _radiationData);
-                Debug.Log("Finished making data files");
-                OnDataComplete?.Invoke();
+                EditorGUILayout.HelpBox("Please select all variables before generating scenes.", MessageType.Warning);
+            }
+            
+            if (GUILayout.Button("Generate scenes", GUILayout.Width(400)))
+            {
+                CreateScenes();
             }
         }
 
-
-        /**
-         * <summary>
-         *  Loads every variable from the selected netCDF files into unity.
-         *  Then, instantiates the dropdown menus with the list of variables.
-         * </summary>
-         */
-        private void GetVariables()
+        /// <summary>
+        /// Creates scenes based on the selected variables.
+        /// </summary>
+        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
+        private void CreateScenes()
         {
-            DataGenerator.GenerateVariableAndAttributeJson(_fileSelector.NcFiles, _jsonFolderPath);
-            AssetDatabase.Refresh();
-            LoadVariables();
-            
-            _buildingData = new SingleVariableDropdown(_allVariables, "Building data:");
-            _heightMap = new SingleVariableDropdown(_allVariables, "Heightmap:");
-            _windSpeed = new SingleVariableDropdown(_allVariables, "Wind speed:");
-            _radiationData = new MultiVariableDropdown(_allVariables, "Radiation Data:");
-
-            DataRetrieved = true;
-        }
-
-        
-        /**
-         * <summary>
-         *  Populates the _allVariables field with JSON data created earlier.
-         * </summary>
-         */
-        private void LoadVariables()
-        {
-            string path = _jsonFolderPath + "/variables.json";
-
-            string jsonString = File.ReadAllText(path);
-            
-            //A bit of a roundabout way of doing things but the deserializer can only create a single instance of an object.
-            //It doesn't work with several netCDF files without adding the fileDataList key and wrapper.
-            jsonString = "{\"fileDataList\":" + jsonString + "}";
-
-            FileDataListWrapper fileDataListWrapper = JsonUtility.FromJson<FileDataListWrapper>(jsonString);
-            _ncFiles = fileDataListWrapper.fileDataList;
-            
-            _allVariables.Clear();
-
-            foreach (FileData fileData in _ncFiles)
+            if (!AllVariablesSelected)
             {
-                foreach (string variable in fileData.variables)
-                {
-                    _allVariables.Add(new NcVariable { filePath = fileData.filePath, variableName = variable });
-                }
+                _showWarning = true;
+                return;
+            }
+
+            if (DataGenerator.CreateDataFiles(
+                    MapName,
+                    (NcVariable) _buildingData.SelectedVariable,
+                    (NcVariable) _heightMap.SelectedVariable,
+                    (NcVariable) _windSpeed.SelectedVariable,
+                    _radiationData.SelectedVariables))
+            {
+                ScenesMaker.CreateBothScenes(this);
             }
         }
+
+        /// <summary>
+        /// Checks if all required variables have been selected.
+        /// </summary>
+        private bool AllVariablesSelected =>
+            _buildingData.SelectedVariable != null && _heightMap.SelectedVariable != null &&
+             _windSpeed.SelectedVariable != null && _radiationData.SelectedVariables.Count > 0;
     }
 }

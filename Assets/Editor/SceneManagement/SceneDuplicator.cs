@@ -8,31 +8,39 @@ using UnityEngine.SceneManagement;
 
 namespace Editor.SceneManagement
 {
+    /// <summary>
+    /// Provides functionality to duplicate Unity scenes and customize them for specific map use.
+    /// </summary>
     public static class SceneDuplicator
     {
-        public static void CreateAndLoadDuplicateScene(SceneAsset templateSceneAsset, string mapName)
+        /// <summary>
+        /// Creates a new scene based on a template scene and loads it.
+        /// </summary>
+        /// <param name="templateSceneAsset">The SceneAsset used as a template.</param>
+        /// <param name="mapName">The name of the new scene.</param>
+        /// <returns>True if the scene is successfully created and saved, false otherwise.</returns>
+        public static bool CreateAndLoadDuplicateScene(SceneAsset templateSceneAsset, string mapName)
         {
-            //No assets selected
+            // No assets selected
             if (templateSceneAsset == null)
             {
-                Debug.LogError("Invalid SceneAsset provided.");
-                return;
+                EditorUtility.DisplayDialog("Invalid SceneAsset", "Invalid SceneAsset provided.", "OK");
+                return false;
             }
             
             string templateScenePath = AssetDatabase.GetAssetPath(templateSceneAsset);
 
-            
             // Check if the user wants to save the current scene
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
             {
                 Debug.Log("Scene creation cancelled by user.");
-                return;
+                return false;
             }
             
             if (!HasMapComponent(templateScenePath))
             {
-                Debug.LogError("The selected scene does not contain a GameObject with a MapRenderer or an ArcGis Map component. Please verify the template scenes.");
-                return;
+                EditorUtility.DisplayDialog("Invalid Template Scene", "The selected scene does not contain a GameObject with a MapRenderer or an ArcGis Map component. Please verify the template scenes.", "OK");
+                return false;
             }
 
             string newScenePath = Path.Combine("Assets", mapName + ".unity");
@@ -49,7 +57,7 @@ namespace Editor.SceneManagement
                 if (!replace)
                 {
                     Debug.Log("Scene creation cancelled by user.");
-                    return;
+                    return false;
                 }
 
                 // Delete the existing scene file
@@ -60,10 +68,7 @@ namespace Editor.SceneManagement
             AssetDatabase.CopyAsset(templateScenePath, newScenePath);
             AssetDatabase.Refresh();
 
-            // Open the new scene
             Scene newScene = EditorSceneManager.OpenScene(newScenePath, OpenSceneMode.Single);
-            
-            // Mark the new scene as dirty
             EditorSceneManager.MarkSceneDirty(newScene);
             
             // Save the new scene
@@ -71,15 +76,20 @@ namespace Editor.SceneManagement
 
             if (!saveSuccess)
             {
-                Debug.LogError("Failed to save the new scene.");
-                return;
+                EditorUtility.DisplayDialog("Failed to Save Scene", "Failed to save the new scene.", "OK");
+                return false;
             }
             
             Debug.Log($"Scene '{mapName}' created and saved at '{newScenePath}'.");
+            return true;
         }
 
-
-        // Check if the templateScene has a mapRenderer component, returns false, and loads the original scene if it doesnt.
+        
+        /// <summary>
+        /// Checks if the specified scene has a MapRenderer or ArcGISMapComponent attached to any GameObject.
+        /// </summary>
+        /// <param name="scenePath">The path of the scene to check.</param>
+        /// <returns>True if the scene contains a MapRenderer or ArcGISMapComponent, false otherwise.</returns>
         private static bool HasMapComponent(string scenePath)
         {
             Scene originalScene = SceneManager.GetActiveScene();
