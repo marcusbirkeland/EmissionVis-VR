@@ -57,40 +57,30 @@ namespace Editor.NetCDF
             }
             return variables;
         }
-        
-        
+
+
         /// <summary>
         /// Generates and saves the necessary data files and folder structures based on the variables selected by the user.
         /// </summary>
-        /// <param name="mapName">The name of the map for which the data files are generated.</param>
-        /// <param name="buildingsVariable">The selected variable for building data generation.</param>
-        /// <param name="terrainHeightVariable">The selected variable for height map data generation.</param>
-        /// <param name="windSpeedVariable">The selected variable for wind speed data generation.</param>
-        /// <param name="radiationVariables">The list of selected variables for radiation data generation.</param>
-        public static bool CreateDataFiles(string mapName, NcVariable buildingsVariable, NcVariable terrainHeightVariable, NcVariable windSpeedVariable, List<NcVariable> radiationVariables)
+        /// <param name="data"></param>
+        public static bool CreateDataFiles(NcDataset data)
         {
-            if (mapName.IsNullOrWhiteSpace())
-            {
-                Debug.Log("You need to select a map name");
-                return false;
-            }
-            
             EditorUtility.DisplayProgressBar("Creating datafiles", "Creating buildings datafiles", -1);
-            GenerateBuildingData(mapName, buildingsVariable, terrainHeightVariable);
+            GenerateBuildingData(data.MapName, data.BuildingData, data.HeightMap);
             
             EditorUtility.DisplayProgressBar("Creating datafiles", "Creating terrain datafiles", -1);
-            GenerateHeightMap(mapName, terrainHeightVariable);
+            GenerateHeightMap(data.MapName, data.HeightMap);
             
             EditorUtility.DisplayProgressBar("Creating datafiles", "Creating cloud datafiles", -1);
-            GenerateWindSpeedData(mapName, windSpeedVariable);
+            GenerateWindSpeedData(data.MapName, data.WindSpeed);
             
             EditorUtility.DisplayProgressBar("Creating datafiles", "Creating radiation datafiles", -1);
-            GenerateRadiationData(mapName, radiationVariables);
+            GenerateRadiationData(data.MapName, data.RadiationData);
             
             EditorUtility.ClearProgressBar();
             AssetDatabase.Refresh();
             
-            if (DataFoldersExist(mapName)) return true;
+            if (DataFoldersExist(data.MapName)) return true;
             
             EditorUtility.DisplayDialog("Warning", "Something went wrong during data creation. Please make sure you selected the correct variables.", "OK");
             return false;

@@ -1,5 +1,6 @@
 ﻿using System;
 using Editor.NetCDF;
+using Editor.NetCDF.Types;
 using Editor.Spawner.BuildingSpawner;
 using Editor.Spawner.CloudSpawner;
 using Editor.Spawner.RadiationSpawner;
@@ -14,9 +15,7 @@ namespace Editor.SceneBuilder
     /// </summary>
     public class MiniatureSceneBuilder : BaseSceneBuilder<MapRenderer>
     {
-        public MiniatureSceneBuilder(string mapName, string buildingCdfPath, string radiationCdfPath,
-            string windSpeedCdfPath)
-            : base(mapName, buildingCdfPath, radiationCdfPath, windSpeedCdfPath)
+        public MiniatureSceneBuilder(NcDataset ncData) : base(ncData)
         {
         }
         
@@ -34,7 +33,7 @@ namespace Editor.SceneBuilder
         protected override void SetUpMap()
         {
             //NOTE: Using building cdf path as the position baseline, but any of the cdf files should work.
-            Map.Center = AttributeDataGetter.GetCenterPosition(BuildingCdfPath);
+            Map.Center = AttributeDataGetter.GetCenterPosition(NcData.BuildingCdfPath);
         }
         
 

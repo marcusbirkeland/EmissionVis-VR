@@ -1,4 +1,7 @@
 ﻿using Editor.EditorWindowComponents;
+using Editor.NetCDF;
+using Editor.NetCDF.Types;
+using Editor.SceneManagement;
 using UnityEditor;
 using UnityEngine;
 
@@ -51,7 +54,31 @@ namespace Editor
             
             GUILayout.Space(10);
 
-            _allVariablesSelector?.Draw();
+            if (_allVariablesSelector == null) return;
+            
+            _allVariablesSelector.Draw();
+
+            if (GUILayout.Button("Generate scenes", GUILayout.Width(400)))
+            {
+                CreateScenes();
+            }
+        }
+        
+        /// <summary>
+        /// Creates scenes based on the selected variables.
+        /// </summary>
+        private void CreateScenes()
+        {
+            if (_allVariablesSelector.SelectedDataset == null)
+            {
+                _allVariablesSelector.ShowWarning = true;
+                return;
+            }
+            
+            if (DataGenerator.CreateDataFiles((NcDataset) _allVariablesSelector.SelectedDataset))
+            {
+                ScenesBuilder.CreateBothScenes((NcDataset) _allVariablesSelector.SelectedDataset);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Editor.EditorWindowComponents;
+using Editor.NetCDF.Types;
 using Editor.SceneBuilder;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -17,61 +18,53 @@ namespace Editor.SceneManagement
         /// <summary>
         /// Creates both Miniature and Full Scale scenes.
         /// </summary>
-        /// <param name="allVariablesSelector">The AllVariablesSelector object containing necessary data for scene creation.</param>
-        public static void CreateBothScenes(AllVariablesSelector allVariablesSelector)
+        /// <param name="ncData"></param>
+        public static void CreateBothScenes(NcDataset ncData)
         {
             Debug.Log("Started scene creation");
 
             CreateMiniatureScene(() =>
             {
-                CreateFullScaleScene(null, allVariablesSelector);
-            }, allVariablesSelector);
+                CreateFullScaleScene(null, ncData);
+            }, ncData);
         }
 
-        
+
         /// <summary>
         /// Creates a Miniature scene based on the provided data in the AllVariablesSelector object.
         /// </summary>
         /// <param name="onSceneCreated">An optional callback to be invoked when the scene is created.</param>
-        /// <param name="allVariablesSelector">The AllVariablesSelector object containing necessary data for scene creation.</param>
-        private static void CreateMiniatureScene(Action onSceneCreated, AllVariablesSelector allVariablesSelector)
+        /// <param name="ncData"></param>
+        private static void CreateMiniatureScene(Action onSceneCreated, NcDataset ncData)
         {
             Debug.Log("Creating miniature scene");
 
             SceneAsset templateScene = GetTemplateScene("Miniature Template");
             if (!SceneDuplicator.CreateAndLoadDuplicateScene(templateScene,
-                    allVariablesSelector.MapName + " Miniature")) return;
+                    ncData.MapName + " Miniature")) return;
 
-            MiniatureSceneBuilder miniBuilder = new(
-                allVariablesSelector.MapName,
-                allVariablesSelector.BuildingCdfPath,
-                allVariablesSelector.RadiationCdfPath,
-                allVariablesSelector.WindSpeedCdfPath);
+            MiniatureSceneBuilder miniBuilder = new(ncData);
 
             miniBuilder.BuildScene(onSceneCreated);
 
             EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
         }
 
-        
+
         /// <summary>
         /// Creates a Full Scale scene based on the provided data in the AllVariablesSelector object.
         /// </summary>
         /// <param name="onSceneCreated">An optional callback to be invoked when the scene is created.</param>
-        /// <param name="allVariablesSelector">The AllVariablesSelector object containing necessary data for scene creation.</param>
-        private static void CreateFullScaleScene(Action onSceneCreated, AllVariablesSelector allVariablesSelector)
+        /// <param name="ncData"></param>
+        private static void CreateFullScaleScene(Action onSceneCreated, NcDataset ncData)
         {
             Debug.Log("Creating full scale scene");
 
             SceneAsset templateScene = GetTemplateScene("Full Scale Template");
             if (!SceneDuplicator.CreateAndLoadDuplicateScene(templateScene,
-                    allVariablesSelector.MapName + " Full Scale")) return;
+                    ncData.MapName + " Full Scale")) return;
 
-            FullScaleSceneBuilder fullScaleBuilder = new(
-                allVariablesSelector.MapName,
-                allVariablesSelector.BuildingCdfPath,
-                allVariablesSelector.RadiationCdfPath,
-                allVariablesSelector.WindSpeedCdfPath);
+            FullScaleSceneBuilder fullScaleBuilder = new(ncData);
 
             fullScaleBuilder.BuildScene(onSceneCreated);
 

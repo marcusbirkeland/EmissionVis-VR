@@ -1,4 +1,5 @@
 ﻿using System;
+using Editor.NetCDF.Types;
 using Editor.SceneManagement;
 using Editor.Spawner.BuildingSpawner;
 using Editor.Spawner.CloudSpawner;
@@ -19,29 +20,19 @@ namespace Editor.SceneBuilder
     /// <typeparam name="T">The type of the map component that will be used in the derived class. T must be a subclass of Component.</typeparam>
     public abstract class BaseSceneBuilder<T> where T : Component
     {
-        private readonly string _mapName;
-
-        protected readonly string BuildingCdfPath;
-        protected readonly string RadiationCdfPath;
-        protected readonly string WindSpeedCdfPath;
-
+        protected NcDataset NcData;
+        
         protected readonly T Map;
 
         /// <summary>
         /// Initializes a new instance of the BaseSceneBuilder class.
         /// </summary>
-        /// <param name="mapName">The name of the map.</param>
-        /// <param name="buildingCdfPath">The path to the building NetCDF file.</param>
-        /// <param name="radiationCdfPath">The path to the radiation NetCDF file.</param>
-        /// <param name="windSpeedCdfPath">The path to the wind speed NetCDF file.</param>
-        protected BaseSceneBuilder(string mapName, string buildingCdfPath, string radiationCdfPath, string windSpeedCdfPath)
+        /// <param name="ncData"></param>
+        protected BaseSceneBuilder(NcDataset ncData)
         {
-            _mapName = mapName;
-            MapUiManager.SetSceneNames(mapName);
+            MapUiManager.SetSceneNames(ncData.MapName);
 
-            BuildingCdfPath = buildingCdfPath;
-            RadiationCdfPath = radiationCdfPath;
-            WindSpeedCdfPath = windSpeedCdfPath;
+            NcData = ncData;
 
             Map = FindMapComponent();
         }
@@ -94,8 +85,8 @@ namespace Editor.SceneBuilder
         protected void CreateBuildings<TSpawner>() where TSpawner : BaseBuildingSpawner
         {
             TSpawner spawner = (TSpawner)Activator.CreateInstance(typeof(TSpawner),
-                _mapName,
-                BuildingCdfPath, 
+                NcData.MapName,
+                NcData.BuildingCdfPath, 
                 Map.gameObject,
                 -3.1f);
              
@@ -111,8 +102,8 @@ namespace Editor.SceneBuilder
         protected void CreateClouds<TSpawner>() where TSpawner : BaseCloudSpawner
         {
             TSpawner spawner = (TSpawner)Activator.CreateInstance(typeof(TSpawner),
-                _mapName, 
-                WindSpeedCdfPath, 
+                NcData.MapName, 
+                NcData.WindSpeedCdfPath, 
                 Map.gameObject,
                 -3.1f
                 );
@@ -129,8 +120,8 @@ namespace Editor.SceneBuilder
         protected void CreateRadiation<TSpawner>() where TSpawner : BaseRadiationSpawner
         {
             TSpawner spawner = (TSpawner)Activator.CreateInstance(typeof(TSpawner),
-                _mapName,
-                RadiationCdfPath,
+                NcData.MapName,
+                NcData.RadiationCdfPath,
                 Map.gameObject,
                 -3.1f
             );

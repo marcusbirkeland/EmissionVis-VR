@@ -1,5 +1,6 @@
 ﻿using System;
 using Editor.NetCDF;
+using Editor.NetCDF.Types;
 using Editor.Spawner.BuildingSpawner;
 using Editor.Spawner.CloudSpawner;
 using Editor.Spawner.RadiationSpawner;
@@ -14,8 +15,7 @@ namespace Editor.SceneBuilder
     public class FullScaleSceneBuilder : BaseSceneBuilder<ArcGISMapComponent>
     {
         
-        public FullScaleSceneBuilder(string mapName, string buildingCdfPath, string radiationCdfPath, string windSpeedCdfPath) 
-            : base(mapName, buildingCdfPath, radiationCdfPath, windSpeedCdfPath)
+        public FullScaleSceneBuilder(NcDataset ncData) : base(ncData)
         {
         }
 
@@ -34,7 +34,7 @@ namespace Editor.SceneBuilder
         protected override void SetUpMap()
         {
             //NOTE: Using building cdf path as the position baseline, but any of the cdf files should work.
-            Map.OriginPosition = AttributeDataGetter.GetCenterPosition(BuildingCdfPath);
+            Map.OriginPosition = AttributeDataGetter.GetCenterPosition(NcData.BuildingCdfPath);
             
             Map.MeshCollidersEnabled = true;
         }

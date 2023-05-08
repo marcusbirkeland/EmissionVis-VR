@@ -1,6 +1,7 @@
 ﻿using MapUiComponents;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Editor.SceneManagement
 {
@@ -19,7 +20,7 @@ namespace Editor.SceneManagement
             
             if (mapUIInstance == null)
             {
-                Debug.LogWarning("No MapUI instance found in the scene");
+                Debug.LogWarning($"No MapUI instance found in the scene: {SceneManager.GetActiveScene().name}");
                 return;
             }
 
