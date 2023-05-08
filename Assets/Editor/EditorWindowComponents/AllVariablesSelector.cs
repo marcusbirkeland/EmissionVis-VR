@@ -86,7 +86,7 @@ namespace Editor.EditorWindowComponents
                     (NcVariable) _windSpeed.SelectedVariable,
                     _radiationData.SelectedVariables))
             {
-                ScenesMaker.CreateBothScenes(this);
+                ScenesBuilder.CreateBothScenes(this);
             }
         }
 

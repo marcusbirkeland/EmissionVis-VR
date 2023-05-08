@@ -28,7 +28,7 @@ namespace Editor.NetCDF.Types
         }
 
         /// <summary>
-        /// Implicit conversion from NcVariable to string.
+        /// Allows implicit conversion from NcVariable to string.
         /// </summary>
         /// <param name="ncVariable">The NcVariable instance to convert.</param>
         public static implicit operator string(NcVariable ncVariable)

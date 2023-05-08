@@ -17,7 +17,6 @@ namespace Editor.SceneBuilder
         public FullScaleSceneBuilder(string mapName, string buildingCdfPath, string radiationCdfPath, string windSpeedCdfPath) 
             : base(mapName, buildingCdfPath, radiationCdfPath, windSpeedCdfPath)
         {
-            Map = FindMapComponent();
         }
 
 

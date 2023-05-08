@@ -25,7 +25,7 @@ namespace Editor.SceneBuilder
         protected readonly string RadiationCdfPath;
         protected readonly string WindSpeedCdfPath;
 
-        protected T Map;
+        protected readonly T Map;
 
         /// <summary>
         /// Initializes a new instance of the BaseSceneBuilder class.
@@ -42,6 +42,8 @@ namespace Editor.SceneBuilder
             BuildingCdfPath = buildingCdfPath;
             RadiationCdfPath = radiationCdfPath;
             WindSpeedCdfPath = windSpeedCdfPath;
+
+            Map = FindMapComponent();
         }
 
         /// <summary>
@@ -69,7 +71,7 @@ namespace Editor.SceneBuilder
         /// </summary>
         /// <typeparam name="T">The type of the map component to find.</typeparam>
         /// <returns>The found map component or throws an exception if not found.</returns>
-        protected T FindMapComponent()
+        private static T FindMapComponent()
         {
             T mapComponent = Object.FindObjectOfType<T>();
 

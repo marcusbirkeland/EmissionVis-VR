@@ -18,7 +18,6 @@ namespace Editor.SceneBuilder
             string windSpeedCdfPath)
             : base(mapName, buildingCdfPath, radiationCdfPath, windSpeedCdfPath)
         {
-            Map = FindMapComponent();
         }
         
         

@@ -1,4 +1,3 @@
-# 4d_data_script.py
 import UnityEngine
 import matplotlib
 matplotlib.use('Agg')
