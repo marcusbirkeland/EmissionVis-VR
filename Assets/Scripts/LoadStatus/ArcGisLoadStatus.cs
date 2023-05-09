@@ -20,11 +20,14 @@ namespace LoadStatus
             StartCoroutine(Wait(8));
         }
 
-        
+        /// <remarks>
+        /// We acknowledge that this hard-coded timeout of 8 seconds is a poor implementation, but the underlying 
+        /// technology (arcGIS SDK) did not allow us to check when the map has fully finished loading. It was not 
+        /// possible to implement a loading mechanism that waited until the map was completely loaded, as all 
+        /// documented classes that implemented the Loadable class finished way too early.
+        /// </remarks>
         /// <summary>
         /// Waits for a specified number of seconds before deactivating the loading screen.
-        /// This is a temporary solution until a better measure of map load status is implemented.
-        /// The built-in ArcGis MapLoadStatus is insufficient.
         /// </summary>
         /// <param name="seconds">The number of seconds to wait before deactivating the loading screen.</param>
         /// <returns>An IEnumerator to be used with a coroutine that controls the WaitForSeconds object.</returns>
