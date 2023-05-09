@@ -19,7 +19,7 @@ namespace Editor.SceneBuilder
     /// map component (T) when creating a derived class.
     /// </summary>
     /// <typeparam name="T">The type of the map component that will be used in the derived class. T must be a subclass of <see cref="Component"/>.</typeparam>
-    public abstract class BaseSceneBuilder<T> where T : Component
+    public abstract class BaseSceneBuilder<T> : ISceneBuilder where T : Component
     {
         /// <summary>
         /// The dataset containing all the user selected values.
@@ -27,10 +27,16 @@ namespace Editor.SceneBuilder
         protected NcDataset NcData;
         
         /// <summary>
-        /// The map component used when added data to the scene.
+        /// The map component used when adding data to the scene.
         /// </summary>
-        protected readonly T Map;
-
+        protected T Map;
+        
+        
+        /// <summary>
+        /// Abstract value representing the scene name.
+        /// </summary>
+        protected abstract string SceneType { get; }
+        
         
         /// <summary>
         /// Base constructor.
@@ -38,20 +44,24 @@ namespace Editor.SceneBuilder
         /// <param name="ncData"></param>
         protected BaseSceneBuilder(NcDataset ncData)
         {
-            MapUiManager.SetSceneNames(ncData.MapName);
-
             NcData = ncData;
-
-            Map = FindMapComponent();
         }
 
-        
         /// <summary>
-        /// Main method for the class. Creates the data visualization and saves the scene.
+        /// Main method for scene generation. Creates the scene and adds data visualization.
         /// </summary>
         /// <param name="onSceneBuilt">A callback to be executed once the data visualization is complete.</param>
-        protected void BuildScene(Action onSceneBuilt)
+        public void BuildScene(Action onSceneBuilt = null)
         {
+            Debug.Log($"Creating {SceneType} scene");
+
+            SceneAsset templateScene = GetTemplateScene($"{SceneType} Template");
+            if (!SceneDuplicator.CreateAndLoadDuplicateScene(templateScene, NcData.MapName + $" {SceneType}")) return;
+            
+            Map = FindMapComponent();
+            
+            MapUiManager.SetSceneNames(NcData.MapName);
+
             SetUpMap();
 
             WaitForMapToLoad(() =>
@@ -194,7 +204,7 @@ namespace Editor.SceneBuilder
 
             if (!mapComponent)
             {
-                throw new Exception($"The scene is missing a {typeof(T).Name} component.");
+                throw new Exception($"The scene {SceneManager.GetActiveScene().name} is missing a {typeof(T).Name} component.");
             }
 
             return mapComponent;

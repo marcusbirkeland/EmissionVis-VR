@@ -19,7 +19,7 @@ namespace Editor.EditorWindowComponents
         /// A list of all paths that actually contain a netCDF file.
         /// </summary>
         public List<string> NcFiles => _ncFiles.Where(IsValidNetCdfFilePath).ToList();
-        
+
         private readonly List<string> _ncFiles = new(){""};
         
         
@@ -79,7 +79,7 @@ namespace Editor.EditorWindowComponents
             return File.Exists(file) && Path.GetExtension(file).ToLower() == ".nc";
         }
         
-        
+
         /// <summary>
         /// Must be declared at the start of each draw cycle.
         /// </summary>

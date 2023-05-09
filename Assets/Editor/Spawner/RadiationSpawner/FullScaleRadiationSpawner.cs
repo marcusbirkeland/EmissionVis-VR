@@ -25,6 +25,7 @@ namespace Editor.Spawner.RadiationSpawner
         {
         }
 
+        
         /// <summary>
         /// Creates the radiation holder GameObject for the full-scale radiation visualization.
         /// </summary>

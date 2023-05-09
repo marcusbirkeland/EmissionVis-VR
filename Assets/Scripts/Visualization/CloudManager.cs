@@ -4,10 +4,18 @@ using UnityEngine;
 namespace Visualization
 {
     /// <summary>
-    /// The CloudManager class handles the functionality of managing the appearance and properties of clouds in the scene.
+    /// The CloudManager class handles the functionality of managing the appearance and properties of the clouds in the scene.
     /// </summary>
     public class CloudManager : MonoBehaviour
     {
+        /// <summary>
+        /// The minimum elevation for the cloud.
+        /// Represents a number of meters above sea level.
+        /// </summary>
+        public double baseElevation;
+        
+        private int _index;
+        
         // More efficient to store these as static variables.
         private static readonly int ColorMapMin = Shader.PropertyToID("_ColorMapMin");
         private static readonly int ColorMapMax = Shader.PropertyToID("_ColorMapMax");
@@ -15,19 +23,22 @@ namespace Visualization
         private static readonly int TerrainCurvature = Shader.PropertyToID("_Terrain_Curvature");
         private static readonly int Opacity = Shader.PropertyToID("_Opacity");
         private static readonly int Heightmap = Shader.PropertyToID("_TerrainHeightmap");
-
-        [SerializeField] private List<Renderer> cloudRenderers = new();
-
-        public double baseElevation;
-
-        [SerializeField] private List<Texture2D> cloudImages = new();
+        
+        /// <summary>
+        /// The number of timestamps in the list of shader textures.
+        /// </summary>
         public int MapCount => cloudImages.Count;
-
-        private int _index;
-
+        
+        [SerializeField] 
+        private List<Renderer> cloudRenderers = new();
+        
+        [SerializeField] 
+        private List<Texture2D> cloudImages = new();
+        
 
         /// <summary>
         /// Initializes the CloudManager with a set of cloud images, heightmap, size, and elevation.
+        /// Essentially a constructor usable with <see cref="MonoBehaviour"/>.
         /// </summary>
         /// <param name="newCloudImages">A list of cloud images.</param>
         /// <param name="heightMap">The heightmap texture.</param>
@@ -55,8 +66,9 @@ namespace Visualization
             }
         }
 
+        
         /// <summary>
-        /// Changes the opacity of the clouds.
+        /// Changes the opacity of every renderer in the cloud visualization.
         /// </summary>
         /// <param name="value">The opacity value (0 to 1) to set for the clouds.</param>
         public void ChangeOpacity(float value)
@@ -67,6 +79,7 @@ namespace Visualization
             }
         }
 
+        
         /// <summary>
         /// Updates the time-alpha in the clouds-material, interpolating between the two loaded textures.
         /// </summary>
@@ -79,10 +92,13 @@ namespace Visualization
             }
         }
 
+        
+
         /// <summary>
-        /// Changes the physical height of the clouds in the scene, interpolating the heightmap more when reaching the baseElevation.
+        /// Adjusts the degree to which the cloud visualization conforms to the terrain's contours based on its height above the ground.
+        /// As the cloud gets closer to the ground, it adapts more to the terrain's shape, and vice versa.
         /// </summary>
-        /// <param name="value">The height value representing the desired physical height of the clouds.</param>
+        /// <param name="value">A float between 0 and 1 representing the relative height of the clouds as a percentage between the minimum and maximum height.</param>
         public void ChangeCurvatureByHeight(float value)
         {
             foreach (Renderer ren in cloudRenderers)
@@ -96,6 +112,7 @@ namespace Visualization
             }
         }
 
+        
         /// <summary>
         /// Updates the cloud textures to display the next or previous cloud texture based on the specified steps.
         /// </summary>

@@ -14,13 +14,25 @@ public class MapDraggingHandler : MonoBehaviour
     /// Reference to the Bing map game object.
     /// </summary>
     public GameObject map;
+    
+    /// <summary>
+    /// The right controller belonging to the VR headset.
+    /// </summary>
     public ActionBasedController rightController;
+    
+    /// <summary>
+    /// The right controller belonging to the VR headset.
+    /// </summary>
+
     public ActionBasedController leftController;
-    public float dragSpeed = 70.0f;
+    
+    [SerializeField]
+    private float dragSpeed = 70.0f;
 
     private MapRenderer _target;
     private Collider _targetCollider;
-    private MapInteractionController _interactionController; 
+    private MapInteractionController _interactionController;
+    
     private XRRayInteractor _rightRayInteractor;
     private XRRayInteractor _leftRayInteractor;
 
@@ -30,6 +42,7 @@ public class MapDraggingHandler : MonoBehaviour
     private bool _rightEnabled;
     private bool _leftEnabled;
 
+    
     /// <summary>
     /// Called before the first frame update.
     /// </summary>
@@ -42,8 +55,12 @@ public class MapDraggingHandler : MonoBehaviour
         _leftRayInteractor = InitController(leftController, LeftPressed, LeftReleased);
     }
 
+    
     /// <summary>
-    /// Update is called once per frame.
+    /// Update is called once per frame. This method handles map panning and scaling based on the controller input.
+    /// It first checks if either of the controllers are enabled for interaction.
+    /// If a controller is enabled, it calculates the hit points, deltas, and pans the map accordingly.
+    /// When both controllers are enabled, it also handles zooming in or out based on the controller movement.
     /// </summary>
     private void Update()
     {
@@ -74,8 +91,9 @@ public class MapDraggingHandler : MonoBehaviour
         TranslateMap(midpoint * deltaZoom * (_target.MapDimension.x / 2));
     }
 
+    
     /// <summary>
-    /// Assigns the approprate actions to a controller that are to be performed when a button is pressed.
+    /// Assigns the appropriate actions to a controller that are to be performed when a button is pressed.
     /// </summary>
     private static XRRayInteractor InitController(Component controller, Action<InputAction.CallbackContext> pressed, Action<InputAction.CallbackContext> released)
     {
@@ -88,6 +106,7 @@ public class MapDraggingHandler : MonoBehaviour
         return rayInteractor;
     }
 
+    
     /// <summary>
     /// Handler for when the right controller trigger is pressed
     /// </summary>
@@ -99,6 +118,7 @@ public class MapDraggingHandler : MonoBehaviour
         _rightPreviousPos = Vector3.zero;
     }
 
+    
     /// <summary>
     /// Handler for when the left controller trigger is pressed
     /// </summary>
@@ -109,6 +129,7 @@ public class MapDraggingHandler : MonoBehaviour
         _leftPreviousPos = Vector3.zero;
     }
 
+    
     /// <summary>
     /// Handler for when the right controller trigger is released
     /// </summary>
@@ -118,6 +139,7 @@ public class MapDraggingHandler : MonoBehaviour
         _rightEnabled = false;
     }
 
+    
     /// <summary>
     /// Handler for when the left controller trigger is released
     /// </summary>
@@ -127,6 +149,7 @@ public class MapDraggingHandler : MonoBehaviour
         _leftEnabled = false;
     }
 
+    
     /// <summary>
     /// Returns the first raycast hit on a 3D object (ignoring UI hits).
     /// </summary>
@@ -144,6 +167,7 @@ public class MapDraggingHandler : MonoBehaviour
         return Vector3.zero;
     }
 
+    
     /// <summary>
     /// Find the difference between two raycast hits.
     /// </summary>
@@ -160,6 +184,7 @@ public class MapDraggingHandler : MonoBehaviour
         return deltaHit;
     }
 
+    
     /// <summary>
     /// Pans the map in a direction according to the provided vector.
     /// </summary>

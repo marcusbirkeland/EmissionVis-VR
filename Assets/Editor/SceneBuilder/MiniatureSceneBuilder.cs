@@ -1,15 +1,12 @@
 ﻿using System;
 using Editor.NetCDF;
 using Editor.NetCDF.Types;
-using Editor.SceneManagement;
 using Editor.Spawner.BuildingSpawner;
 using Editor.Spawner.CloudSpawner;
 using Editor.Spawner.RadiationSpawner;
 using Microsoft.Maps.Unity;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Editor.SceneBuilder
 {
@@ -21,37 +18,18 @@ namespace Editor.SceneBuilder
     public class MiniatureSceneBuilder : BaseSceneBuilder<MapRenderer>
     {
         /// <summary>
-        /// Private constructor.
         /// Entirely inherited from <see cref="BaseSceneBuilder{T}"/>.
         /// Only used in the CreateScene method.
         /// </summary>
         /// <param name="ncData">The <see cref="NcDataset"/> containing all the user selected data.</param>
-        private MiniatureSceneBuilder(NcDataset ncData) : base(ncData)
+        internal MiniatureSceneBuilder(NcDataset ncData) : base(ncData)
         {
         }
-        
+
         /// <summary>
-        /// Creates a new miniature scene based on the provided NcDataset and calls the provided callback after
-        /// scene creation is complete.
+        /// Name used in scene generation. Must match template scene.
         /// </summary>
-        /// <param name="ncData">The <see cref="NcDataset"/> containing all the user-selected data.</param>
-        /// <param name="onSceneCreated">
-        /// An optional <see cref="Action"/> delegate to be executed After scene creation is finished. Default value is null.
-        /// </param>
-        public static void CreateScene(NcDataset ncData, Action onSceneCreated = null)
-        {
-            Debug.Log("Creating miniature scene");
-
-            SceneAsset templateScene = GetTemplateScene("Miniature Template");
-            if (!SceneDuplicator.CreateAndLoadDuplicateScene(templateScene, ncData.MapName + " Miniature")) return;
-
-            MiniatureSceneBuilder miniBuilder = new(ncData);
-
-            miniBuilder.BuildScene(onSceneCreated);
-
-            EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
-        }
-        
+        protected override string SceneType => "Miniature";
         
         /// <summary>
         /// Creates all the data objects using their miniature spawner implementations.

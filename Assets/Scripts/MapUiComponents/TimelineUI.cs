@@ -8,7 +8,7 @@ namespace MapUiComponents
 {
     /// <summary>
     /// The TimelineUI class is responsible for managing the UI components of the timeline, including the slider
-    /// and play/pause button. It also handles updating the time and cloud visualization during playback.
+    /// and play/pause button. It also informs the <see cref="CloudManager"/> whenever the time value changes.
     /// </summary>
     public class TimelineUI : MonoBehaviour
     {
@@ -33,12 +33,16 @@ namespace MapUiComponents
         [SerializeField]        
         private float playbackRate = 0.5f;
         
-        private static CloudManager CloudManager => MapUI.CloudManager;
-
         private float _currentTime;
         private float _prevTime;
 
         private bool _isPlaying;
+        
+        /// <summary>
+        /// Provides a slightly shorter reference to the CloudManager instance.
+        /// </summary>
+        private static CloudManager CloudManager => MapUI.CloudManager;
+
 
         /// <summary>
         /// Initializes the timeline UI by setting up event listeners and initial values.
@@ -55,6 +59,7 @@ namespace MapUiComponents
             SceneManager.sceneLoaded += HandleSceneChange;
         }
 
+        
         /// <summary>
         /// Removes event listeners when the object is destroyed.
         /// </summary>
@@ -66,6 +71,7 @@ namespace MapUiComponents
             SceneManager.sceneLoaded -= HandleSceneChange;
         }
 
+        
         /// <summary>
         /// Updates the timeline during playback.
         /// </summary>
@@ -85,6 +91,7 @@ namespace MapUiComponents
             timelineSlider.value = _currentTime;
         }
         
+        
         /// <summary>
         /// Sets the initial values for the timeline slider.
         /// </summary>
@@ -95,6 +102,7 @@ namespace MapUiComponents
             timeValueText.text = "0.0";
             timelineSlider.maxValue = CloudManager.MapCount - 1.1f;
         }
+        
         
         /// <summary>
         /// Handles changes to the timeline slider value.
@@ -107,6 +115,7 @@ namespace MapUiComponents
             ChangeTime(value);
         }
 
+        
         /// <summary>
         /// Changes the current time and updates the cloud visualization accordingly.
         /// </summary>
@@ -126,6 +135,7 @@ namespace MapUiComponents
             CloudManager.ChangeTimeStep(_currentTime);
         }
 
+        
         /// <summary>
         /// Handles scene changes by resetting the previous time and updating the cloud visualization.
         /// </summary>
@@ -138,6 +148,7 @@ namespace MapUiComponents
             ChangeTime(timelineSlider.value);
         }
         
+        
         /// <summary>
         /// Calculates the number of steps between the previous and current time.
         /// </summary>
@@ -149,6 +160,7 @@ namespace MapUiComponents
             return Mathf.FloorToInt(current) - Mathf.FloorToInt(prev);
         }
 
+        
         /// <summary>
         /// Toggles the playback state between playing and paused.
         /// </summary>
@@ -158,6 +170,7 @@ namespace MapUiComponents
             UpdateButtonIcon();
         }
 
+        
         /// <summary>
         /// Updates the play/pause button icon based on the current playback state.
         /// </summary>

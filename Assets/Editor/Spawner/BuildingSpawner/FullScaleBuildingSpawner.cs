@@ -32,6 +32,7 @@ namespace Editor.Spawner.BuildingSpawner
             _latitudeOffset = (float) (1 / Math.Cos(Math.PI * SelectedDatasetScope.position.lat / 180.0));
         }
 
+        
         /// <summary>
         /// Creates and sets up the building holder for the full-scale scene.
         /// </summary>
@@ -49,6 +50,7 @@ namespace Editor.Spawner.BuildingSpawner
             location.Rotation = new ArcGISRotation(RotationAngle, 90, 0);
         }
 
+        
         /// <summary>
         /// Spawns a building in the full-scale scene with the given building data.
         /// </summary>

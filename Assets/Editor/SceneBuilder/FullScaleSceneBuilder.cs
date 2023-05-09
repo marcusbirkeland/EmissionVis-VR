@@ -1,15 +1,11 @@
 ﻿using System;
 using Editor.NetCDF;
 using Editor.NetCDF.Types;
-using Editor.SceneManagement;
 using Editor.Spawner.BuildingSpawner;
 using Editor.Spawner.CloudSpawner;
 using Editor.Spawner.RadiationSpawner;
 using Esri.ArcGISMapsSDK.Components;
 using UnityEditor;
-using UnityEditor.SceneManagement;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Editor.SceneBuilder
 {
@@ -26,34 +22,15 @@ namespace Editor.SceneBuilder
         /// Only used in the static CreateScene method.
         /// </summary>
         /// <param name="ncData">The <see cref="NcDataset"/> containing all the user selected data.</param>
-        private FullScaleSceneBuilder(NcDataset ncData) : base(ncData)
+        internal FullScaleSceneBuilder(NcDataset ncData) : base(ncData)
         {
         }
-        
-        
+       
         /// <summary>
-        /// Creates a new full scale scene based on the provided NcDataset and calls the provided callback after
-        /// scene creation is complete.
+        /// Name used in scene generation. Must match template scene.
         /// </summary>
-        /// <param name="ncData">The <see cref="NcDataset"/> containing all the user-selected data.</param>
-        /// <param name="onSceneCreated">
-        /// An optional <see cref="Action"/> delegate to be executed After scene creation is finished. Default value is null.
-        /// </param>
-        public static void CreateScene(NcDataset ncData, Action onSceneCreated = null)
-        {
-            Debug.Log("Creating full scale scene");
-
-            SceneAsset templateScene = GetTemplateScene("Full Scale Template");
-            if (!SceneDuplicator.CreateAndLoadDuplicateScene(templateScene, ncData.MapName + " Full Scale")) return;
-
-            FullScaleSceneBuilder fullScaleBuilder = new(ncData);
-
-            fullScaleBuilder.BuildScene(onSceneCreated);
-
-            EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
-        }
-
-
+        protected override string SceneType => "Full Scale";
+        
         /// <summary>
         /// Creates all the data objects using their full scale spawner implementations.
         /// </summary>

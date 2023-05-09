@@ -1,6 +1,8 @@
-﻿using Editor.NetCDF;
+﻿using System.Collections.Generic;
+using Editor.NetCDF;
 using Editor.NetCDF.Types;
 using Editor.SceneBuilder;
+using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
@@ -59,7 +61,7 @@ namespace Editor.EditorWindowComponents
 
             if (GUILayout.Button("Generate scenes", GUILayout.Width(400)))
             {
-                CreateScenes();
+                CreateAllScenes();
             }
         }
         
@@ -70,7 +72,7 @@ namespace Editor.EditorWindowComponents
         /// <remarks>
         /// If one of the variables arent set, it instead enables the <see cref="AllVariablesSelector"/>s warning display.
         /// </remarks>
-        private void CreateScenes()
+        private void CreateAllScenes()
         {
             if (_allVariablesSelector.SelectedDataset == null)
             {
@@ -82,10 +84,37 @@ namespace Editor.EditorWindowComponents
 
             if (!DataGenerator.CreateDataFiles(dataset)) return;
 
-            MiniatureSceneBuilder.CreateScene(dataset, () =>
+            List<ISceneBuilder> sceneBuilders = new()
             {
-                FullScaleSceneBuilder.CreateScene(dataset);
-            });
+                new MiniatureSceneBuilder(dataset),
+                new FullScaleSceneBuilder(dataset)
+                //Add more scene building implementations here.
+            };
+            
+            CreateScenesRecursively(sceneBuilders);
+        }
+
+
+        /// <summary>
+        /// Recursively creates scenes using the provided list of scene builders.
+        /// </summary>
+        /// <remarks>
+        /// This method takes a list of scene builders and processes them one by one. It removes the current scene builder
+        /// from the list and calls its BuildScene method, providing a callback that continues the recursion.
+        /// The recursion stops when there are no more scene builders left in the list.
+        /// </remarks>
+        /// <param name="sceneBuilders">
+        /// A list of ISceneBuilder objects that need to have their scenes created. The scene builders should be
+        /// ordered in the desired sequence of scene creation.
+        /// </param>
+        private static void CreateScenesRecursively(IList<ISceneBuilder> sceneBuilders)
+        {
+            if (sceneBuilders.Count == 0) return;
+
+            ISceneBuilder currentBuilder = sceneBuilders[0];
+            sceneBuilders.RemoveAt(0);
+            
+            currentBuilder.BuildScene(() => CreateScenesRecursively(sceneBuilders));
         }
     }
 }

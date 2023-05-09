@@ -13,6 +13,7 @@ namespace Editor.Spawner.BuildingSpawner
         private readonly double _metersPerUnit;
         private readonly Vector3 _worldSpacePin;
         
+        
         /// <summary>
         /// Initializes a new instance of the MiniatureBuildingSpawner class.
         /// </summary>
@@ -28,6 +29,7 @@ namespace Editor.Spawner.BuildingSpawner
             _metersPerUnit = mapRenderer.ComputeUnityToMapScaleRatio(SelectedDatasetScope.position) / Map.transform.lossyScale.x;
             _worldSpacePin = mapRenderer.TransformLatLonAltToWorldPoint(SelectedDatasetScope.position);
         }
+        
         
         /// <summary>
         /// Creates and sets up the building holder for the miniature scene.
@@ -46,6 +48,7 @@ namespace Editor.Spawner.BuildingSpawner
             mapPin.AltitudeReference = AltitudeReference.Ellipsoid;
         }
 
+        
         /// <summary>
         /// Spawns a building in the miniature scene with the given building data.
         /// It then raycasts the building to precisely align with the ground.
