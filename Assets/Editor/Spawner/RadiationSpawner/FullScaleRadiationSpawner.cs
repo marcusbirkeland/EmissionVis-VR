@@ -38,7 +38,7 @@ namespace Editor.Spawner.RadiationSpawner
             ArcGISLocationComponent location = RadiationHolder.AddComponent<ArcGISLocationComponent>();
             location.runInEditMode = true;
             
-            location.Position = new ArcGISPoint(SelectedCdfAttributes.position.lon, SelectedCdfAttributes.position.lat, 350.0f,
+            location.Position = new ArcGISPoint(SelectedDatasetScope.position.lon, SelectedDatasetScope.position.lat, 350.0f,
                 ArcGISSpatialReference.WGS84());
             
             location.Rotation = new ArcGISRotation(RotationAngle, 90, 0);

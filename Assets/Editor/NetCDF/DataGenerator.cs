@@ -4,65 +4,77 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Editor.NetCDF.Types;
-using Unity.Tutorials.Core.Editor;
 using UnityEditor;
 using UnityEditor.Scripting.Python;
 using UnityEngine;
 
 namespace Editor.NetCDF
 {
+    /// <summary>
+    /// Static class responsible for using the python scripts to generate datafiles usable in a unity context from
+    /// netCDF data.
+    /// </summary>
     public static class DataGenerator
     {
         /// <summary>
-        /// Provides a serializable object for JSON deserialization.
-        /// Contains a list of <see cref="FileData"/> objects.
+        /// Generates and loads the Variables and Scopes JSON files based on the input data.
         /// </summary>
-        [Serializable]
-        private struct FileDataListWrapper
+        /// <param name="netCdfFilePaths">A list of paths containing the NetCDF files to process.</param>
+        /// <returns>A list of all <see cref="NcVariable"/> types contained in the dataset.</returns>
+        public static List<NcVariable> GenerateAndLoadJsonFiles(List<string> netCdfFilePaths)
         {
-            /// <summary>
-            /// A list of <see cref="FileData"/> objects.
-            /// </summary>
-            public List<FileData> fileDataList;
-        }
-        
-        
-        /// <summary>
-        /// Generates and loads the Variable and Attribute JSON files based on the input data.
-        /// </summary>
-        /// <param name="netCdfFilePaths">A list of file paths for the NetCDF files to process.</param>
-        /// <param name="jsonFolderPath">The folder path where the generated JSON files will be saved.</param>
-        /// <returns>A list of <see cref="NcVariable"/> objects containing the data.</returns>
-        public static List<NcVariable> GenerateAndLoadVariables(List<string> netCdfFilePaths, string jsonFolderPath)
-        {
-            GenerateVariableAndAttributeJson(netCdfFilePaths, jsonFolderPath);
-            
-            List<NcVariable> variables = new();
-
-            string path = jsonFolderPath + "/variables.json";
-
-            string jsonString = File.ReadAllText(path);
-
-            jsonString = "{\"fileDataList\":" + jsonString + "}";
-
-            FileDataListWrapper fileDataListWrapper = JsonUtility.FromJson<FileDataListWrapper>(jsonString);
-            List<FileData> ncFiles = fileDataListWrapper.fileDataList;
-
-            foreach (FileData fileData in ncFiles)
+            if (netCdfFilePaths.Count < 1)
             {
-                foreach (string variable in fileData.variables)
-                {
-                    variables.Add(new NcVariable { filePath = fileData.filePath, variableName = variable });
-                }
+                Debug.LogError("No valid netCDF files selected!");
+                return default;
             }
-            return variables;
+            
+            try
+            {
+                GenerateVariableAndScopeJson(netCdfFilePaths);
+            
+                List<NcVariable> variables = new();
+
+                //Gets the entire json file content wrapped inside a fileDataList wrapper.
+                //NOTE: the fileDataList string must have the same name as the only field in the FileDataListWrapper.
+                string jsonString = File.ReadAllText(FilepathSettings.DatafilesLocation + "variables.json");
+                jsonString = "{\"fileDataList\":" + jsonString + "}";
+
+                FileDataListWrapper fileDataListWrapper = JsonUtility.FromJson<FileDataListWrapper>(jsonString);
+                List<FileData> ncFiles = fileDataListWrapper.fileDataList;
+                
+                foreach (FileData fileData in ncFiles)
+                {
+                    foreach (string variable in fileData.variables)
+                    {
+                        variables.Add(new NcVariable(variable, fileData.filePath));
+                    }
+                }
+                
+                return variables;
+            }
+            catch (Exception e)
+            {
+                EditorUtility.ClearProgressBar();
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
 
         /// <summary>
         /// Generates and saves the necessary data files and folder structures based on the variables selected by the user.
+        /// This method takes an NcDataset object as input and creates the required data files for buildings, terrain,
+        /// clouds, and radiation data. It also updates the progress bar during the data creation process.
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">
+        /// The <see cref="NcDataset"/> type containing all the user selected data, including map name,
+        /// building data, height map, wind speed, and radiation data.
+        /// </param>
+        /// <returns>
+        /// Returns true if the data files and folder structures were created successfully, and false otherwise.
+        /// If there was an issue during data creation, a warning dialog is displayed to inform the user.
+        /// </returns>
         public static bool CreateDataFiles(NcDataset data)
         {
             EditorUtility.DisplayProgressBar("Creating datafiles", "Creating buildings datafiles", -1);
@@ -84,48 +96,34 @@ namespace Editor.NetCDF
             
             EditorUtility.DisplayDialog("Warning", "Something went wrong during data creation. Please make sure you selected the correct variables.", "OK");
             return false;
-
         }
 
 
         /// <summary>
-        /// <para>Generates two JSON files (attributes.json and variables.json) for easier access to NetCDF data within Unity.</para>
-        /// <para>The method runs Python scripts (variable_getter.py and attribute_getter.py) to process the NetCDF files and generate the JSON files, which are saved at the specified outputFolderPath. If the output path doesn't exist, it is created. If the JSON files already exist, they are overwritten.</para>
-        /// <para>The attributes.json file contains positional data for every selected NetCDF file, while the variables.json file contains a list of all variables within each NetCDF file.</para>
+        /// <para>Generates two JSON files (scopes.json and variables.json) for easier access to NetCDF data within Unity.</para>
+        /// <para>The method runs the Python scripts (variable_getter.py and scopes_getter.py) to process the NetCDF files and generate the JSON files. If the JSON files already exist, they are overwritten.</para>
+        /// <para>The scopes.json file contains positional data for every selected NetCDF file, while the variables.json file contains a list of all variables within each NetCDF file.</para>
         /// </summary>
         /// <remarks>
-        /// The input format for both Python scripts is a string consisting of any number of NetCDF file locations followed by an output path for the JSON data. Each path must be separated by a "$" character. The method checks for valid file paths and only processes files with the ".nc" extension.
+        /// The input format for both Python scripts is a string consisting of any number of NetCDF file locations followed by an output path for the JSON data. Each path must be separated by a "$" character.
         /// </remarks>
         /// <param name="netCdfFilePaths">A list of file paths for the NetCDF files to process.</param>
-        /// <param name="outputFolderPath">The folder path where the generated JSON files will be saved.</param>
-        private static void GenerateVariableAndAttributeJson(List<string> netCdfFilePaths, string outputFolderPath)
+        private static void GenerateVariableAndScopeJson(List<string> netCdfFilePaths)
         {
-            StringBuilder inputStringBuilder = new();
+            StringBuilder pythonInputStringBuilder = new();
 
             foreach (string file in netCdfFilePaths)
             {
-                if (File.Exists(file) && Path.GetExtension(file).ToLower() == ".nc" && !inputStringBuilder.ToString().Contains(file))
+                if (!pythonInputStringBuilder.ToString().Contains(file))
                 {
-                    inputStringBuilder.Append(file).Append('$');
+                    pythonInputStringBuilder.Append(file).Append('$');
                 }
             }
-            
-            string pythonInputString = inputStringBuilder.ToString();
 
-            if (pythonInputString.IsNullOrEmpty())
-            {
-                Debug.Log("No valid file paths");
-                return;
-            }
+            pythonInputStringBuilder.Append(FilepathSettings.DatafilesLocation);
             
-            pythonInputString += outputFolderPath;
-            
-            
-            //Creates variable JSON
-            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/variable_getter.py", pythonInputString);
-            
-            //Creates attribute JSON
-            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/attribute_getter.py", pythonInputString);
+            PythonRunner.RunFile(FilepathSettings.PythonFilesLocation + "variable_getter.py", pythonInputStringBuilder.ToString());
+            PythonRunner.RunFile(FilepathSettings.PythonFilesLocation + "scopes_getter.py", pythonInputStringBuilder.ToString());
             
             AssetDatabase.Refresh();
         }
@@ -139,27 +137,27 @@ namespace Editor.NetCDF
         /// <param name="terrainHeightVariable">The terrain height data.</param>
         private static void GenerateBuildingData(string mapName, NcVariable buildingsVariable, NcVariable terrainHeightVariable)
         {
-            string outputPath = $"{Application.dataPath}/Resources/MapData/{mapName}/BuildingData/buildingData";
+            string outputPath = FilepathSettings.DatafilesLocation + $"{mapName}/BuildingData/buildingData";
             
             string pythonInputString = buildingsVariable + terrainHeightVariable + outputPath;
 
-            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_building_csv.py", pythonInputString);
+            PythonRunner.RunFile(FilepathSettings.PythonFilesLocation + "create_building_csv.py", pythonInputString);
         }
 
 
         /// <summary>
-        /// Generates height map data in CSV and PNG formats for the given NetCDF variable and map name.
+        /// Generates height map data for the given NetCDF variable and map name as a greyscale PNG.
         /// </summary>
         /// <param name="mapName">The name of the map for which the height map data is generated.</param>
         /// <param name="terrainHeightVariable">The selected variable for height map data generation.</param>
         /// <param name="interpolationFactor">The interpolation factor for generating height map data (optional, default value is 10).</param>
         private static void GenerateHeightMap(string mapName, NcVariable terrainHeightVariable, int interpolationFactor = 10)
         {
-            string outputPath = $"{Application.dataPath}/Resources/MapData/{mapName}/HeightMap/heightMap";
+            string outputPath = FilepathSettings.DatafilesLocation + $"{mapName}/HeightMap/heightMap";
             
             string pythonInputString = terrainHeightVariable + outputPath + "$" + interpolationFactor;
 
-            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_2d_png.py", pythonInputString);
+            PythonRunner.RunFile(FilepathSettings.PythonFilesLocation + "create_2d_png.py", pythonInputString);
         }
         
 
@@ -171,11 +169,11 @@ namespace Editor.NetCDF
         /// <param name="interpolationFactor">The interpolation factor for generating wind speed data (optional, default value is 10).</param>
         private static void GenerateWindSpeedData(string mapName, NcVariable windSpeedVariable, int interpolationFactor = 10)
         {
-            string outputPath = $"{Application.dataPath}/Resources/MapData/{mapName}/WindSpeed";
+            string outputPath = FilepathSettings.DatafilesLocation + $"{mapName}/WindSpeed";
 
             string pythonInputString = windSpeedVariable + outputPath + "$" + interpolationFactor;
 
-            PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_4d_pngs.py", pythonInputString);
+            PythonRunner.RunFile(FilepathSettings.PythonFilesLocation + "create_4d_pngs.py", pythonInputString);
         }
 
 
@@ -189,12 +187,12 @@ namespace Editor.NetCDF
         {
             foreach (NcVariable variable in radiationDataVariables)
             {
-                string folderName = RemoveInvalidFilenameChars(variable.variableName);
-                string outputPath = $"{Application.dataPath}/Resources/MapData/{mapName}/Radiation/{folderName}";
+                string folderName = RemoveInvalidFilenameChars(variable.VariableName);
+                string outputPath = FilepathSettings.DatafilesLocation + $"{mapName}/Radiation/{folderName}";
 
                 string pythonInputString = variable + outputPath + "$" + interpolationFactor;
 
-                PythonRunner.RunFile($"{Application.dataPath}/Editor/NetCDF/NetCdfReader/create_4d_pngs.py", pythonInputString);
+                PythonRunner.RunFile(FilepathSettings.PythonFilesLocation + "create_4d_pngs.py", pythonInputString);
             }
         }
 
@@ -220,10 +218,18 @@ namespace Editor.NetCDF
         }
         
         
-                
+        /// <summary>
+        /// Checks whether the folders generated by the methods above exist.
+        /// </summary>
+        /// <param name="mapName">The the name of the map to check</param>
+        /// <returns>True if the files exist. False otherwise.</returns>
+        /// <remarks>
+        /// This is a hacky workaround, and should be replaced in the future with a better way of checking if the python
+        /// files executed without problems.
+        /// </remarks>
         private static bool DataFoldersExist(string mapName)
         {
-            string basePath = $"{Application.dataPath}/Resources/MapData/{mapName}";
+            string basePath = FilepathSettings.DatafilesLocation + $"{mapName}";
 
             string[] requiredFolders =
             {
@@ -234,6 +240,23 @@ namespace Editor.NetCDF
             };
 
             return requiredFolders.Select(folder => Path.Combine(basePath, folder)).All(Directory.Exists);
+        }
+        
+        
+        /// <summary>
+        /// Provides a serializable object for JSON deserialization.
+        /// Contains a list of <see cref="FileData"/> objects.
+        /// </summary>
+        /// <remarks>
+        /// Dont rename the <see cref="fileDataList"/> field. Its name is necessary for correct JSON deserialization.
+        /// </remarks>
+        [Serializable]
+        private struct FileDataListWrapper
+        {
+            /// <summary>
+            /// A list of <see cref="FileData"/> objects.
+            /// </summary>
+            public List<FileData> fileDataList;
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Editor.Spawner.RadiationSpawner
             
             MapPin mapPin = RadiationHolder.AddComponent<MapPin>();
 
-            mapPin.Location = SelectedCdfAttributes.position;
+            mapPin.Location = SelectedDatasetScope.position;
             mapPin.IsLayerSynchronized = true;
             mapPin.UseRealWorldScale = true;
             mapPin.ShowOutsideMapBounds = true;

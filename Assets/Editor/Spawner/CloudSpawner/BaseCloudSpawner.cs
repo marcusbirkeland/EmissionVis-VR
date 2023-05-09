@@ -14,18 +14,37 @@ namespace Editor.Spawner.CloudSpawner
     /// </summary>
     public abstract class BaseCloudSpawner
     {
+        /// <summary>
+        /// The name of the holder GameObject.
+        /// </summary>
         protected const string HolderName = "Cloud Holder";
 
-        protected readonly FileAttributes SelectedCdfAttributes;
-        protected readonly GameObject Map;
+        
+        /// <summary>
+        /// The holder GameObject.
+        /// </summary>
+        protected GameObject CloudHolder;
 
+        
+        /// <summary>
+        /// The scope of the dataset containing the cloud data.
+        /// </summary>
+        protected readonly DatasetScope SelectedDatasetScope;
+        
+        /// <summary>
+        /// The GameObject that will contain the cloud holder.
+        /// </summary>
+        protected readonly GameObject Map;
+        
+        /// <summary>
+        /// How many degrees to rotate the data.
+        /// It rotates based on the origin position defined in <see cref="SelectedDatasetScope"/>
+        /// </summary>
         protected readonly float RotationAngle;
 
-        private readonly GameObject _prefab;
+        private readonly GameObject _cloudPrefab;
         private readonly Texture2D _heightImg;
         private readonly string _mapName;
-
-        protected GameObject CloudHolder;
 
         protected abstract double Elevation { get; }
         protected abstract string PrefabName { get; }
@@ -36,7 +55,7 @@ namespace Editor.Spawner.CloudSpawner
         /// This value accounts for that.
         /// </summary>
         protected virtual float LatDistortionValue =>
-            (float) (1 / Math.Cos(Math.PI * SelectedCdfAttributes.position.lat / 180.0));
+            (float) (1 / Math.Cos(Math.PI * SelectedDatasetScope.position.lat / 180.0));
 
         
         /// <summary>
@@ -48,11 +67,11 @@ namespace Editor.Spawner.CloudSpawner
         /// <param name="rotationAngle">The rotation angle for the cloud holder.</param>
         protected BaseCloudSpawner(string mapName, string cdfFilePath, GameObject map, float rotationAngle)
         {
-            SelectedCdfAttributes = AttributeDataGetter.GetFileAttributes(cdfFilePath);
+            SelectedDatasetScope = ScopeDataGetter.GetDatasetScope(cdfFilePath);
 
-            _prefab = Resources.Load<GameObject>($"Prefabs/{PrefabName}");
+            _cloudPrefab = Resources.Load<GameObject>($"Prefabs/{PrefabName}");
 
-            if (_prefab == null)
+            if (_cloudPrefab == null)
             {
                 Debug.LogError($"Cloud prefab not found at 'Assets/Resources/Prefabs/{PrefabName}'");
                 return;
@@ -66,6 +85,7 @@ namespace Editor.Spawner.CloudSpawner
 
         
         /// <summary>
+        /// Main method.
         /// Spawns and sets up the cloud in the map.
         /// </summary>
         public void SpawnAndSetupCloud()
@@ -91,19 +111,19 @@ namespace Editor.Spawner.CloudSpawner
         /// </summary>
         private void CreateCloud()
         {
-            GameObject cloud = Object.Instantiate(_prefab, CloudHolder.transform, false);
+            GameObject cloud = Object.Instantiate(_cloudPrefab, CloudHolder.transform, false);
             cloud.name = "Cloud";
 
-            // Prefab base size is 1km
-            float scale = SelectedCdfAttributes.size.x / 1000.0f * LatDistortionValue;
+            // Prefab base size is 1km*1km
+            float scale = SelectedDatasetScope.size.x / 1000.0f * LatDistortionValue;
             
-            cloud.transform.localScale = new Vector3(scale, SelectedCdfAttributes.size.x / 1000.0f, scale);
+            cloud.transform.localScale = new Vector3(scale, SelectedDatasetScope.size.x / 1000.0f, scale);
 
             CloudManager cloudManager = cloud.AddComponent<CloudManager>();
 
             List<Texture2D> images = ImageLoader.GetCloudImages(_mapName);
 
-            cloudManager.Initialize(images, _heightImg, SelectedCdfAttributes.size.x, Elevation);
+            cloudManager.Initialize(images, _heightImg, SelectedDatasetScope.size.x, Elevation);
             
             EditorUtility.SetDirty(cloudManager);
         }

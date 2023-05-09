@@ -14,15 +14,39 @@ namespace Editor.Spawner.BuildingSpawner
     /// </summary>
     public abstract class BaseBuildingSpawner
     {
+        /// <summary>
+        /// The name of the holder GameObject.
+        /// </summary>
         protected const string HolderName = "Buildings Holder";
 
-        protected readonly FileAttributes SelectedCdfAttributes;
-        protected readonly GameObject Map;
-        protected readonly GameObject BuildingPrefab;
-        protected readonly float RotationAngle;
-        protected readonly float UnityUnitsPerMeter;
-
+        
+        /// <summary>
+        /// The holder GameObject.
+        /// </summary>
         protected GameObject BuildingsHolder;
+
+        
+        /// <summary>
+        /// The scope of the dataset containing the building data.
+        /// </summary>
+        protected readonly DatasetScope SelectedDatasetScope;
+        
+        /// <summary>
+        /// The GameObject that will contain the building holder.
+        /// </summary>
+        protected readonly GameObject Map;
+        
+        /// <summary>
+        /// The prefab used for each house object.
+        /// </summary>
+        protected readonly GameObject BuildingPrefab;
+        
+        /// <summary>
+        /// How many degrees to rotate the data.
+        /// It rotates based on the origin position defined in <see cref="SelectedDatasetScope"/>
+        /// </summary>
+        protected readonly float RotationAngle;
+        
 
         private readonly List<BuildingData> _buildingDataList;
 
@@ -36,8 +60,7 @@ namespace Editor.Spawner.BuildingSpawner
         /// <param name="rotationAngle">The rotation angle for the buildings.</param>
         protected BaseBuildingSpawner(string mapName, string cdfFilePath, GameObject map, float rotationAngle)
         {
-            SelectedCdfAttributes = AttributeDataGetter.GetFileAttributes(cdfFilePath);
-            UnityUnitsPerMeter = (float) (1 / Math.Cos(Math.PI * SelectedCdfAttributes.position.lat / 180.0));
+            SelectedDatasetScope = ScopeDataGetter.GetDatasetScope(cdfFilePath);
 
             Map = map;
             RotationAngle = rotationAngle;
@@ -55,7 +78,7 @@ namespace Editor.Spawner.BuildingSpawner
 
         
         /// <summary>
-        /// Spawns and sets up buildings in the scene.
+        /// Main method. Spawns and sets up buildings in the scene.
         /// </summary>
         public void SpawnAndSetupBuildings()
         {
@@ -69,10 +92,18 @@ namespace Editor.Spawner.BuildingSpawner
         /// Abstract method to create and set up the building holder GameObject.
         /// </summary>
         protected abstract void CreateAndSetupBuildingHolder();
-
+        
         
         /// <summary>
-        /// Spawns all buildings based on the building data.
+        /// Abstract method to spawn an individual building based on the provided <see cref="BuildingData"/>.
+        /// </summary>
+        /// <param name="buildingData">The building data for the building to be spawned.</param>
+        protected abstract void SpawnBuilding(BuildingData buildingData);
+
+
+        /// <summary>
+        /// Iterates through the <see cref="_buildingDataList"/> and spawns a building for each
+        /// <see cref="BuildingData"/> instance.
         /// </summary>
         private void SpawnAllBuildings()
         {
@@ -95,14 +126,7 @@ namespace Editor.Spawner.BuildingSpawner
 
             Debug.Log($"Spawned {BuildingsHolder.transform.childCount} buildings.");
         }
-
         
-        /// <summary>
-        /// Abstract method to spawn an individual building based on the provided building data.
-        /// </summary>
-        /// <param name="buildingData">The building data for the building to be spawned.</param>
-        protected abstract void SpawnBuilding(BuildingData buildingData);
-
         
         /// <summary>
         /// Deletes the previous building visualization holder object if it exists.

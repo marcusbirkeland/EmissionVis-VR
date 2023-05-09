@@ -8,10 +8,13 @@ using UnityEngine;
 namespace Editor.EditorWindowComponents
 {
     /// <summary>
-    /// Class responsible for letting the user select a dataset from the netCDF files.
+    /// Class responsible for letting the user select a dataset from the chosen netCDF files.
     /// </summary>
     public class AllVariablesSelector
     {
+        /// <summary>
+        /// Indicates whether the warning message should get displayed.
+        /// </summary>
         public bool ShowWarning;
 
         private string _mapName;
@@ -20,6 +23,13 @@ namespace Editor.EditorWindowComponents
         private readonly SingleVariableDropdown _windSpeed;
         private readonly MultiVariableDropdown _radiationData;
 
+        /// <summary>
+        /// Gets the selected dataset based on the user's chosen variables.
+        /// </summary>
+        /// <remarks>
+        /// If all required variables have been selected, it returns an instance of the <see cref="NcDataset"/> struct
+        /// containing the selected data. Otherwise, it returns null.
+        /// </remarks>
         public NcDataset? SelectedDataset
         {
             get
@@ -49,10 +59,13 @@ namespace Editor.EditorWindowComponents
         /// Initializes a new instance of the AllVariablesSelector class.
         /// </summary>
         /// <param name="files">A list of netCDF file paths.</param>
-        /// <param name="jsonFolderPath">The folder path where JSON files will be saved.</param>
-        public AllVariablesSelector(List<string> files, string jsonFolderPath)
+        /// <remarks>
+        /// Generates the "scopes.json" and "variables.json" files.
+        /// The files contents are used to generate the available options for the dropdown menus.
+        /// </remarks>
+        public AllVariablesSelector(List<string> files)
         {
-            List<NcVariable> allVariables = DataGenerator.GenerateAndLoadVariables(files, jsonFolderPath);
+            List<NcVariable> allVariables = DataGenerator.GenerateAndLoadJsonFiles(files);
             
             _buildingData = new SingleVariableDropdown(allVariables, "Building data:");
             _heightMap = new SingleVariableDropdown(allVariables, "Heightmap:");
@@ -62,8 +75,11 @@ namespace Editor.EditorWindowComponents
         
         
         /// <summary>
-        /// Draws the GUI for the AllVariablesSelector component while the Editor Window is open.
+        /// Draws the GUI for the AllVariablesSelector component.
         /// </summary>
+        /// <remarks>
+        /// Only works inside an editor window.
+        /// </remarks>
         public void Draw()
         {
             GUILayout.Label("Select variables to use", EditorStyles.boldLabel);

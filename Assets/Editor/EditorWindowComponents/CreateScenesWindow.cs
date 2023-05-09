@@ -1,14 +1,13 @@
-﻿using Editor.EditorWindowComponents;
-using Editor.NetCDF;
+﻿using Editor.NetCDF;
 using Editor.NetCDF.Types;
-using Editor.SceneManagement;
+using Editor.SceneBuilder;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor
+namespace Editor.EditorWindowComponents
 {
     /// <summary>
-    /// The CreateScenesWindow class provides an Editor Window to generate Unity scenes based on netCDF data files.
+    /// Main class for displaying the editor window responsible for scene generation.
     /// </summary>
     public class CreateScenesWindow : EditorWindow
     {
@@ -17,7 +16,7 @@ namespace Editor
         
         
         /// <summary>
-        /// Adds an entry to the Unity menu, allowing the user to open the CreateScenesWindow.
+        /// Adds an entry to the Unity menu, allowing the user to open the <see cref="CreateScenesWindow"/>.
         /// </summary>
         [MenuItem("Sintef/Create Scenes")]
         private static void ShowWindow()
@@ -37,7 +36,7 @@ namespace Editor
 
         
         /// <summary>
-        /// Renders the window's GUI, including the NcFilesSelector and AllVariablesSelector components.
+        /// Renders the window's GUI, including the <see cref="NcFilesSelector"/> and <see cref="AllVariablesSelector"/> components.
         /// </summary>
         private void OnGUI()
         {
@@ -48,7 +47,7 @@ namespace Editor
                 if (_ncFilesSelector?.NcFiles.Count < 1) return;
                 
                 EditorUtility.DisplayProgressBar("Getting variables", "Loading CDF files...", -1);
-                _allVariablesSelector = new AllVariablesSelector(_ncFilesSelector?.NcFiles, $"{Application.dataPath}/Resources/MapData");
+                _allVariablesSelector = new AllVariablesSelector(_ncFilesSelector?.NcFiles);
                 EditorUtility.ClearProgressBar();
             }
             
@@ -64,9 +63,13 @@ namespace Editor
             }
         }
         
+        
         /// <summary>
-        /// Creates scenes based on the selected variables.
+        /// Starts scene creation.
         /// </summary>
+        /// <remarks>
+        /// If one of the variables arent set, it instead enables the <see cref="AllVariablesSelector"/>s warning display.
+        /// </remarks>
         private void CreateScenes()
         {
             if (_allVariablesSelector.SelectedDataset == null)
@@ -75,10 +78,14 @@ namespace Editor
                 return;
             }
             
-            if (DataGenerator.CreateDataFiles((NcDataset) _allVariablesSelector.SelectedDataset))
+            NcDataset dataset = (NcDataset) _allVariablesSelector.SelectedDataset;
+
+            if (!DataGenerator.CreateDataFiles(dataset)) return;
+
+            MiniatureSceneBuilder.CreateScene(dataset, () =>
             {
-                ScenesBuilder.CreateBothScenes((NcDataset) _allVariablesSelector.SelectedDataset);
-            }
+                FullScaleSceneBuilder.CreateScene(dataset);
+            });
         }
     }
 }

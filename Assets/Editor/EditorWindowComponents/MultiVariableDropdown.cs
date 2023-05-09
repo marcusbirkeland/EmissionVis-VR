@@ -7,23 +7,22 @@ using UnityEngine;
 namespace Editor.EditorWindowComponents
 {
     /// <summary>
-    /// A dropdown menu that allows the user to select multiple values.
+    /// A dropdown menu that allows the user to select multiple values. Extends the <see cref="BaseVariableDropdown"/>
     /// </summary>
     public class MultiVariableDropdown : BaseVariableDropdown
     {
-        private readonly List<bool> _selectedIndexes;
-        private string _selectedVariablesLabel = string.Empty;
-
-        
         /// <summary>
         /// Gets a list of the currently selected NcVariables.
         /// </summary>
         public List<NcVariable> SelectedVariables => NcVariables.Where((_, index) => _selectedIndexes[index]).ToList();
 
+        /// Label for displaying what variables are currently selected. Not to be confused with the Label property.
+        private string _selectedVariablesLabel = string.Empty;
+        private readonly List<bool> _selectedIndexes;
+        
         
         /// <summary>
-        /// Constructor that inherits from BaseVariableDropdown.
-        /// Initializes the _selectedIndex Array with a length equal to the ncVariable list.
+        /// Constructor that inherits from <see cref="BaseVariableDropdown"/>'s constructor.
         /// </summary>
         /// <param name="ncVariables">A List of ncVariables to populate the dropdown with.</param>
         /// <param name="label">The GUI label to indicate what the variable will be used for.</param>
@@ -35,8 +34,11 @@ namespace Editor.EditorWindowComponents
 
         
         /// <summary>
-        /// Draws the dropdowns GUI on the EditorWindow. Must be called via an OnGUI event.
+        /// Draws the dropdowns GUI on the EditorWindow.
         /// </summary>
+        /// <remarks>
+        /// Must be used inside an EditorWindow to function.
+        /// </remarks>
         public void Draw()
         {
             if (NcVariables == null || NcVariables.Count == 0)
@@ -47,6 +49,7 @@ namespace Editor.EditorWindowComponents
             string[] labels = VariableLabels;
 
             EditorGUILayout.BeginHorizontal();
+            {
                 EditorGUILayout.LabelField(Label, GUILayout.Width(150));
                 if (GUILayout.Button(_selectedVariablesLabel, "Dropdown", GUILayout.Width(250)))
                 {
@@ -54,19 +57,18 @@ namespace Editor.EditorWindowComponents
                     for (int i = 0; i < labels.Length; i++)
                     {
                         int currentIndex = i;
-                        menu.AddItem(new GUIContent(labels[i]), _selectedIndexes[i], () => ToggleSelection(currentIndex));
+                        menu.AddItem(new GUIContent(labels[i]), _selectedIndexes[i],
+                            () => ToggleSelectionAtIndex(currentIndex));
                     }
+
                     menu.ShowAsContext();
                 }
+            }
             EditorGUILayout.EndHorizontal();
         }
-
         
-        /// <summary>
-        /// Toggles whether the index is selected.
-        /// </summary>
-        /// <param name="index">The index to toggle.</param>
-        private void ToggleSelection(int index)
+        
+        private void ToggleSelectionAtIndex(int index)
         {
             _selectedIndexes[index] = !_selectedIndexes[index];
             UpdateSelectedVariablesLabel();
@@ -77,14 +79,17 @@ namespace Editor.EditorWindowComponents
         /// Sets the dropdown menu's displayed value to every selected variable separated by a comma.
         /// If the length exceeds the GUI field, it instead displays "Multiple..."
         /// </summary>
+        ///
+        /// <remarks>
+        /// TODO: replace max label length with dynamic value based on display size.
+        /// </remarks>
         private void UpdateSelectedVariablesLabel()
         {
-            _selectedVariablesLabel = string.Join(", ", SelectedVariables.Select(v => v.variableName));
+            _selectedVariablesLabel = string.Join(", ", SelectedVariables.Select(v => v.VariableName));
             if (string.IsNullOrEmpty(_selectedVariablesLabel))
             {
                 _selectedVariablesLabel = "Select variables...";
             }
-            // TODO: replace '30' with a dynamic value based on the display size.
             else if (_selectedVariablesLabel.Length > 30) 
             {
                 _selectedVariablesLabel = "Multiple...";

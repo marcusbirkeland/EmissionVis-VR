@@ -6,27 +6,36 @@ namespace Editor.NetCDF.Types
     /// Represents a single netCDF variable and the file it belongs to.
     /// </summary>
     [Serializable]
-    public struct NcVariable
+    public readonly struct NcVariable
     {
         /// <summary>
         /// The file path of the netCDF file containing the variable.
         /// </summary>
-        public string filePath;
+        public readonly string FilePath;
 
         /// <summary>
         /// The name of the netCDF variable.
         /// </summary>
-        public string variableName;
+        public readonly string VariableName;
 
+        
+        public NcVariable(string variableName, string filePath)
+        {
+            VariableName = variableName;
+            FilePath = filePath;
+        }
+
+        
         /// <summary>
         /// Overrides the ToString method to return a string in the format expected by the Python scripts.
         /// </summary>
         /// <returns>A string representation of the NcVariable object.</returns>
         public override string ToString()
         {
-            return $"{filePath}${variableName}$";
+            return $"{FilePath}${VariableName}$";
         }
 
+        
         /// <summary>
         /// Allows implicit conversion from NcVariable to string.
         /// </summary>

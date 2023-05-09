@@ -10,8 +10,8 @@ namespace Editor.Spawner.BuildingSpawner
     /// </summary>
     public class MiniatureBuildingSpawner : BaseBuildingSpawner
     {
-        private double _metersPerUnit;
-        private Vector3 _worldSpacePin;
+        private readonly double _metersPerUnit;
+        private readonly Vector3 _worldSpacePin;
         
         /// <summary>
         /// Initializes a new instance of the MiniatureBuildingSpawner class.
@@ -23,6 +23,10 @@ namespace Editor.Spawner.BuildingSpawner
         public MiniatureBuildingSpawner(string mapName, string cdfFilePath, GameObject map, float rotationAngle)
             : base(mapName, cdfFilePath, map, rotationAngle)
         {
+            MapRenderer mapRenderer = Map.GetComponent<MapRenderer>();
+            
+            _metersPerUnit = mapRenderer.ComputeUnityToMapScaleRatio(SelectedDatasetScope.position) / Map.transform.lossyScale.x;
+            _worldSpacePin = mapRenderer.TransformLatLonAltToWorldPoint(SelectedDatasetScope.position);
         }
         
         /// <summary>
@@ -32,23 +36,19 @@ namespace Editor.Spawner.BuildingSpawner
         {
             Debug.Log("Creating building holder");
             
-            MapRenderer mapRenderer = Map.GetComponent<MapRenderer>();
-            
-            _metersPerUnit = mapRenderer.ComputeUnityToMapScaleRatio(SelectedCdfAttributes.position) / Map.transform.lossyScale.x;
-            _worldSpacePin = mapRenderer.TransformLatLonAltToWorldPoint(SelectedCdfAttributes.position);
-            
             BuildingsHolder = new GameObject(HolderName);
             BuildingsHolder.transform.SetParent(Map.transform, false);
             BuildingsHolder.transform.localRotation = Quaternion.Euler(0, RotationAngle, 0);
             
             MapPin mapPin = BuildingsHolder.AddComponent<MapPin>();
-            mapPin.Location = SelectedCdfAttributes.position;
+            mapPin.Location = SelectedDatasetScope.position;
             mapPin.UseRealWorldScale = true;
             mapPin.AltitudeReference = AltitudeReference.Ellipsoid;
         }
 
         /// <summary>
         /// Spawns a building in the miniature scene with the given building data.
+        /// It then raycasts the building to precisely align with the ground.
         /// </summary>
         /// <param name="buildingData">The data for the building to be spawned.</param>
         protected override void SpawnBuilding(BuildingData buildingData)

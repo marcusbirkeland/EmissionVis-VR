@@ -56,5 +56,5 @@ if not os.path.exists(jsonPath):
     os.makedirs(jsonPath)
 
 # Write the output data to a JSON file in the output folder
-with open(jsonPath + "\\attributes.json", "w") as file:
+with open(jsonPath + "\\scopes.json", "w") as file:
     json.dump(output, file)

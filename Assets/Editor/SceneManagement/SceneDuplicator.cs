@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 namespace Editor.SceneManagement
 {
     /// <summary>
-    /// Provides functionality to duplicate Unity scenes and customize them for specific map use.
+    /// Static class responsible for creating duplicate scenes based on existing scenes in unity.
     /// </summary>
     public static class SceneDuplicator
     {

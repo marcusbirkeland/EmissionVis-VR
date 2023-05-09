@@ -21,7 +21,7 @@ namespace Editor.NetCDF
         {
             List<BuildingData> buildingDataList = new();
             
-            string dataPath = $"{Application.dataPath}/Resources/MapData/{mapName}/BuildingData/buildingData.csv";
+            string dataPath = FilepathSettings.DatafilesLocation + $"{mapName}/BuildingData/buildingData.csv";
             if (!File.Exists(dataPath))
             {
                 throw new ArgumentException("The file at " + dataPath + " does not exist!");

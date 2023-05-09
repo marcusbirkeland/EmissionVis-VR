@@ -12,28 +12,53 @@ namespace Editor.Spawner.RadiationSpawner
     /// </summary>
     public abstract class BaseRadiationSpawner
     {
-        private static readonly int RadiationMap = Shader.PropertyToID("_RadiationMap");
-        private static readonly int Heightmap = Shader.PropertyToID("_Heightmap");
-
+        /// <summary>
+        /// Name of the holder GameObject. 
+        /// </summary>
         protected const string HolderName = "Radiation Holder";
+        
+        /// <summary>
+        /// Name of the prefab that will be used to display radiation.
+        /// </summary>
         private const string PrefabName = "Radiation";
+        
+        /// <summary>
+        /// Holder GameObject.
+        /// </summary>
+        protected GameObject RadiationHolder;
 
-        protected readonly FileAttributes SelectedCdfAttributes;
+        /// <summary>
+        /// The scope of the dataset containing the radiation data.
+        /// </summary>
+        protected readonly DatasetScope SelectedDatasetScope;
+        
+        /// <summary>
+        /// The GameObject that will contain the building holder.
+        /// </summary>
         protected readonly GameObject Map;
+        
+        /// <summary>
+        /// How many degrees to rotate the data.
+        /// It rotates based on the origin position defined in <see cref="SelectedDatasetScope"/>
+        /// </summary>
         protected readonly float RotationAngle;
+        
+        
         private readonly Texture2D _radiationImage;
         private readonly Texture2D _heightMap;
-        private readonly string _radiationPrefabName;
 
-        protected GameObject RadiationHolder;
+        private static readonly int RadiationMap = Shader.PropertyToID("_RadiationMap");
+        private static readonly int Heightmap = Shader.PropertyToID("_Heightmap");
+        
 
         /// <summary>
         /// Calculates the distortion value to account for the Mercator projection's distortion
         /// away from the equator.
         /// </summary>
         protected virtual float LatDistortionValue =>
-            (float) (1 / Math.Cos(Math.PI * SelectedCdfAttributes.position.lat / 180.0));
+            (float) (1 / Math.Cos(Math.PI * SelectedDatasetScope.position.lat / 180.0));
 
+        
         /// <summary>
         /// Initializes a new instance of the BaseRadiationSpawner class.
         /// </summary>
@@ -43,16 +68,16 @@ namespace Editor.Spawner.RadiationSpawner
         /// <param name="rotationAngle">The rotation angle for the radiation visualization.</param>
         protected BaseRadiationSpawner(string mapName, string cdfFilePath, GameObject map, float rotationAngle)
         {
-            SelectedCdfAttributes = AttributeDataGetter.GetFileAttributes(cdfFilePath);
+            SelectedDatasetScope = ScopeDataGetter.GetDatasetScope(cdfFilePath);
 
             Map = map;
             RotationAngle = rotationAngle;
 
             _radiationImage = LoadFirstRadiationImage(mapName);
             _heightMap = ImageLoader.GetHeightMapImg(mapName);
-            _radiationPrefabName = PrefabName;
         }
 
+        
         /// <summary>
         /// Spawns and sets up the radiation visualization in the scene.
         /// </summary>
@@ -66,22 +91,24 @@ namespace Editor.Spawner.RadiationSpawner
             Debug.Log("Finished creating radiation");
         }
 
+        
         /// <summary>
         /// Creates the radiation holder GameObject. To be implemented in derived classes.
         /// </summary>
         protected abstract void CreateRadiationHolder();
 
+        
         /// <summary>
         /// Instantiates the radiation prefab, sets its images, LOD group size, and scale,
         /// and then adds it to the RadiationHolder GameObject.
         /// </summary>
         private void SpawnRadiation()
         {
-            GameObject radiationPrefab = Resources.Load<GameObject>($"Prefabs/{_radiationPrefabName}");
+            GameObject radiationPrefab = Resources.Load<GameObject>($"Prefabs/{PrefabName}");
 
             if (radiationPrefab == null)
             {
-                Debug.LogError($"Cloud prefab not found at 'Prefabs/{_radiationPrefabName}'");
+                Debug.LogError($"Cloud prefab not found at 'Prefabs/{PrefabName}'");
                 return;
             }
 
@@ -91,27 +118,14 @@ namespace Editor.Spawner.RadiationSpawner
             SetRadiationImages(rad, _radiationImage, _heightMap);
 
             LODGroup lodGroup = rad.GetComponent<LODGroup>();
-            lodGroup.size = SelectedCdfAttributes.size.x;
+            lodGroup.size = SelectedDatasetScope.size.x;
 
             //Prefab base size is 1km
-            float scale = SelectedCdfAttributes.size.x / 1000.0f * LatDistortionValue;
-            rad.transform.localScale = new Vector3(scale, SelectedCdfAttributes.size.x / 1000.0f, scale);
-        }
-        
-        private static void SetRadiationImages(GameObject radiation, Texture2D radiationImage, Texture2D heightMapImage)
-        {
-            LOD[] lods = radiation.GetComponent<LODGroup>().GetLODs();
-            foreach (LOD lod in lods)
-            {
-                foreach (Renderer ren in lod.renderers)
-                {
-                    Material material = ren.sharedMaterial;
-                    material.SetTexture(RadiationMap, radiationImage);
-                    material.SetTexture(Heightmap, heightMapImage);
-                }
-            }
+            float scale = SelectedDatasetScope.size.x / 1000.0f * LatDistortionValue;
+            rad.transform.localScale = new Vector3(scale, SelectedDatasetScope.size.x / 1000.0f, scale);
         }
 
+        
         /// <summary>
         /// Searches for and deletes any existing radiation holder GameObjects in the map.
         /// </summary>
@@ -126,12 +140,35 @@ namespace Editor.Spawner.RadiationSpawner
                 }
             }
         }
+        
+        
+        /// <summary>
+        /// Applies the radiation and height map images to every renderer contained in the radiation GameObject.
+        /// </summary>
+        /// <param name="radiation"></param>
+        /// <param name="radiationImage"></param>
+        /// <param name="heightMapImage"></param>
+        private static void SetRadiationImages(GameObject radiation, Texture2D radiationImage, Texture2D heightMapImage)
+        {
+            LOD[] lods = radiation.GetComponent<LODGroup>().GetLODs();
+            foreach (LOD lod in lods)
+            {
+                foreach (Renderer ren in lod.renderers)
+                {
+                    Material material = ren.sharedMaterial;
+                    material.SetTexture(RadiationMap, radiationImage);
+                    material.SetTexture(Heightmap, heightMapImage);
+                }
+            }
+        }
 
+        
         /// <summary>
         /// Loads the first radiation image for the given map name.
         /// </summary>
         /// <param name="mapName">The name of the map.</param>
         /// <returns>The first radiation image as a Texture2D object.</returns>
+        /// 
         private static Texture2D LoadFirstRadiationImage(string mapName) => ImageLoader.GetRadiationImages(mapName)[0];
     }
 }
