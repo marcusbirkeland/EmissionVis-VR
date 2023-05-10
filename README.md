@@ -19,7 +19,7 @@ Unity VR project to visualize real-world locations with climate-data.
 
 7. When asked to install modules select "Android Build Support", "OpenJDK" and "Android SDK & NDK Tools". Press continue, agree to the following terms and click "Install"
 
-8. Note that the project does not work yet, becasue it relies on an external package that needs to be installed first. Please follow the steps listed below. 
+8. Note that the project does not work yet, because it relies on an external package that needs to be installed first. Please follow the steps listed below. 
 
 
 
@@ -42,7 +42,7 @@ Unity VR project to visualize real-world locations with climate-data.
 6. Add your ArcGIS API-key. (In order to load maps, you need to authenticate the plugin with a key.)
   - In Unity, select "ArcGIS Maps SDK" from the toolbar
   - Go to the "Auth" section and enter your API-key
-  - Make sure to **not** share this key publically
+  - Make sure to **not** share this key publicly
 
 ![image](https://user-images.githubusercontent.com/36818485/216334722-6dec2bb1-e29d-43c0-b6c7-f15fb6917493.png)
 
@@ -56,7 +56,7 @@ Unity VR project to visualize real-world locations with climate-data.
 2. Create a resource file to store the key
   - In the Assets/Resources directory of the project, create a file named MapSessionConfig.txt
   - Copy the developer key into MapSessionConfig.txt
-  - Make sure to **not** share this key publically
+  - Make sure to **not** share this key publicly
 
 A final note: Python should be installed on the computer running the project to ensure some Python packages get installed automatically  
 
@@ -68,14 +68,13 @@ The project should now be ready to use.
 
 2. You will need to add all the netCDF files needed to visualize the desired climate data before clicking "Get data"
 
-NOTE: it's important that all files contain data with the same dimensions. I.e. you cannot have rectangular shaped climate data but square elevation data, as one relies on the other
+NOTE: it's important that all files contain data covering the same exact location, and have the same size. I.e. you cannot have one dataset covering Bergen and one covering Oslo, as one relies on the other.
 ![netCFD-selection](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/a760bf91-e890-4fda-887d-ac02b5082b09)
 
 3. Select which field names in the netCDF files correspond to building data, a heightmap/elevation data, wind speed (or any climate data), and radiation data
 ![Scene-gen](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/b4764fbf-c10e-47da-954a-c7a175753166)
 
-4. After clicking "Generate scenes" the new scenes are added to the Assets/ folder, these are the ones used when building the application to a VR-headset
-
+4. After clicking "Generate scenes" the new scenes are added to the Assets folder, these are the ones used when building the application to a VR-headset
 
 ## Setup of Meta Quest headset
 
