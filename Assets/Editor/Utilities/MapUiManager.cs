@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Editor.SceneManagement
+namespace Editor.Utilities
 {
     /// <summary>
     /// Provides functionality to manage the MapUI component in the Unity scene.

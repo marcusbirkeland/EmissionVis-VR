@@ -6,7 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Editor.SceneManagement
+namespace Editor.Utilities
 {
     /// <summary>
     /// Static class responsible for creating duplicate scenes based on existing scenes in unity.

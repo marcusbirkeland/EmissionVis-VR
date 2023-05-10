@@ -2,7 +2,6 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using Visualization;
 
 namespace MapUiComponents
 {

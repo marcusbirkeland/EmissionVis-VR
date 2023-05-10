@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Editor.NetCDF
+namespace Editor.Utilities
 {
     /// <summary>
     /// Static class responsible for holder folder path data used in several files.

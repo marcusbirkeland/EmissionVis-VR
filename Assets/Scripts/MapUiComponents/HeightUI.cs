@@ -1,4 +1,3 @@
-
 using Esri.ArcGISMapsSDK.Components;
 using Esri.GameEngine.Geometry;
 using Microsoft.Maps.Unity;

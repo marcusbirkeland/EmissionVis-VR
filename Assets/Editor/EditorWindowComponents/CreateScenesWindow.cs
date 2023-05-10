@@ -2,7 +2,6 @@
 using Editor.NetCDF;
 using Editor.NetCDF.Types;
 using Editor.SceneBuilder;
-using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
