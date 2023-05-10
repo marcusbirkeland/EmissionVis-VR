@@ -1,10 +1,17 @@
 # EmissionVis-VR
-Unity VR project to visualize real-world locations with emission-data.
+Unity VR project to visualize real-world locations with climate-data.
 
-![image](https://user-images.githubusercontent.com/36818485/215627193-f9225754-4598-4695-9e13-27be4a93c961.png)
+![FS](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/80f5eb22-8cc2-49bf-9491-35f1d2dd7374)
 
+## How to set up Unity
 
-## How to set up
+1. Download and install Unity Hub from https://unity.com/download
+2. Sign into or create a Unity account
+3. When promptet to install the newest version of the Unity Editor, press "Skip installation"
+4. Clone this repository and store it somewhere on your computer. 
+5. Inside the Unity Hub, go to Projects > Open, and open the root folder (EmissionVis-VR/) 
+
+## How to set up this project
 
 1. Clone this repository
 
