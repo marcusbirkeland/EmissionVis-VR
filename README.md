@@ -1,7 +1,7 @@
 # EmissionVis-VR
 Unity VR project to visualize real-world locations with climate-data.
 
-![FS](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/80f5eb22-8cc2-49bf-9491-35f1d2dd7374)
+![tutorial-and-miniature](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/3e737ab9-2fc8-4b74-85aa-3350847e3f56)
 
 ## Installation and setup
 
