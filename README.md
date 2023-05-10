@@ -3,7 +3,7 @@ Link to GitHub repo: https://github.com/marcusbirkeland/EmissionVis-VR
 
 Unity VR project to visualize real-world locations with climate-data.
 
-![tutorial-and-miniature](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/3e737ab9-2fc8-4b74-85aa-3350847e3f56)
+![tutorial-and-miniature](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/7e641066-a4dc-4159-a48f-e57b4deec20c)
 
 ## Installation and setup
 
@@ -71,10 +71,10 @@ The project should now be ready to use.
 2. You will need to add all the netCDF files needed to visualize the desired climate data before clicking "Get data"
 
 NOTE: it's important that all files contain data covering the same exact location, and have the same size. I.e. you cannot have one dataset covering Bergen and one covering Oslo, as one relies on the other.
-![netCFD-selection](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/a760bf91-e890-4fda-887d-ac02b5082b09)
+![netCFD-selection](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/e761b6f1-1c2d-47f0-a00f-2d66e581b88b)
 
 3. Select which field names in the netCDF files correspond to building data, a heightmap/elevation data, wind speed (or any climate data), and radiation data
-![Scene-gen](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/b4764fbf-c10e-47da-954a-c7a175753166)
+![Scene-gen](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/26636e98-d7cb-4530-a777-1846eacc6cc6)
 
 4. After clicking "Generate scenes" the new scenes are added to the Assets folder, these are the ones used when building the application to a VR-headset
 
@@ -90,7 +90,7 @@ NOTE: it's important that all files contain data covering the same exact locatio
 2. Switch platform to Android
 3. Drag the previously generated Miniature scene from the Assets/ folder into the area called "Scenes In Build"
 4. Drag the Full Scale scene underneath the Miniature scene, such that they are ordered like in the screenshot below ("DEMO" will be substituted with the name you provided when generating the scenes)
-![build-scene-order](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/a701e7e8-a5e5-480d-9d84-8b33aa3e5431)
+![build-scene-order](https://github.com/marcusbirkeland/EmissionVis-VR/assets/46761308/56f30b2b-5b68-4a8f-a42b-cceb504885a4)
 5. Confirm that your Meta Quest headset is set as "Run Device" and click "Build and Run"
 
 The application should start automatically on your headset when building has completed!
