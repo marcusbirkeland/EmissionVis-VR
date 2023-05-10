@@ -16,6 +16,7 @@ namespace Editor.Spawner.RadiationSpawner
         /// </summary>
         protected override float LatDistortionValue => 1;
 
+        
         /// <summary>
         /// Initializes a new instance of the MiniatureRadiationSpawner class.
         /// </summary>
@@ -28,6 +29,7 @@ namespace Editor.Spawner.RadiationSpawner
         {
         }
 
+        
         /// <summary>
         /// Creates the radiation holder GameObject for the miniature radiation visualization.
         /// </summary>
@@ -39,7 +41,7 @@ namespace Editor.Spawner.RadiationSpawner
             
             MapPin mapPin = RadiationHolder.AddComponent<MapPin>();
 
-            mapPin.Location = SelectedCdfAttributes.position;
+            mapPin.Location = SelectedDatasetScope.position;
             mapPin.IsLayerSynchronized = true;
             mapPin.UseRealWorldScale = true;
             mapPin.ShowOutsideMapBounds = true;

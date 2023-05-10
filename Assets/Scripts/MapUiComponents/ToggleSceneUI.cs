@@ -13,19 +13,26 @@ namespace MapUiComponents
         [SerializeField]
         private Button toggleSceneButton;
         
+        
         private void Awake()
         {
             toggleSceneButton.onClick.AddListener(SwitchScene);
         }
 
+        
         private void OnDestroy()
         {
             toggleSceneButton.onClick.RemoveListener(SwitchScene);
         }
 
+        
         /// <summary>
         /// Switches between the miniature and full-scale scenes.
         /// </summary>
+        /// <remarks>
+        /// TODO: Replace with better way of scene switching.
+        /// Using the scene name as a string seems doomed to fail at some point.
+        /// </remarks>
         private static void SwitchScene()
         {
             string currentScene = SceneManager.GetActiveScene().name;

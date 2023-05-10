@@ -12,9 +12,17 @@ namespace Editor.Spawner.CloudSpawner
     /// </summary>
     public class FullScaleCloudSpawner : BaseCloudSpawner
     {
+        /// <summary>
+        /// Prefab variant specialized for the full scale model
+        /// </summary>
         protected override string PrefabName => "Cloud Full Scale";
+        
+        /// <summary>
+        /// Base elevation in the full scale scene. Represents meters above sea level.
+        /// </summary>
         protected override double Elevation => 150;
 
+        
         /// <summary>
         /// Initializes a new instance of the FullScaleCloudSpawner class.
         /// </summary>
@@ -27,8 +35,9 @@ namespace Editor.Spawner.CloudSpawner
         {
         }
 
+        
         /// <summary>
-        /// Creates and sets up the cloud holder GameObject in the scene.
+        /// Creates and sets up the cloud holder GameObject using ArcGis' map system.
         /// </summary>
         protected override void CreateCloudHolder()
         {
@@ -40,7 +49,7 @@ namespace Editor.Spawner.CloudSpawner
             ArcGISLocationComponent location = CloudHolder.AddComponent<ArcGISLocationComponent>();
             location.runInEditMode = true;
 
-            ArcGISPoint pos = new(SelectedCdfAttributes.position.lon, SelectedCdfAttributes.position.lat, Elevation,
+            ArcGISPoint pos = new(SelectedDatasetScope.position.lon, SelectedDatasetScope.position.lat, Elevation,
                 ArcGISSpatialReference.WGS84());
             
             location.Position = pos;

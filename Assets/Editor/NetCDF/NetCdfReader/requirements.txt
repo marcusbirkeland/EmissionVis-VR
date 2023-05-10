@@ -1,5 +1,8 @@
-﻿numpy
+﻿netCDF4
+numpy
 matplotlib
-netCDF4
 scipy
 opencv-python
+json
+csv
+os

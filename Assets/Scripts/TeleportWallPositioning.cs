@@ -24,6 +24,7 @@ public class TeleportWallPositioning : MonoBehaviour
     /// </summary>
     [SerializeField] private InputActionReference teleportJoystick;
 
+    
     /// <summary>
     /// Called before the first frame update.
     /// </summary>
@@ -33,6 +34,7 @@ public class TeleportWallPositioning : MonoBehaviour
         teleportJoystick.action.performed += Pressed;
     }
 
+    
     /// <summary>
     /// Handles a controller teleport action. Positions the teleport wall according to the player's 
     /// height above ground level.

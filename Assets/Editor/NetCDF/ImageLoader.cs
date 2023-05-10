@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Editor.Utilities;
 using UnityEngine;
 
 namespace Editor.NetCDF
 {
     /// <summary>
-    /// Static class responsible for loading cloud images from a folder within the Resources folder.
+    /// Static class responsible for retrieving the images generated from netCDF data.
     /// </summary>
     public static class ImageLoader
     {
@@ -16,7 +17,7 @@ namespace Editor.NetCDF
         /// <returns>A list of <see cref="Texture2D"/> objects containing the loaded cloud images, sorted by their timestamps.</returns>
         public static List<Texture2D> GetCloudImages(string mapName)
         {
-            Texture2D[] textures = Resources.LoadAll<Texture2D>($"MapData/{mapName}/WindSpeed");
+            Texture2D[] textures = Resources.LoadAll<Texture2D>($"{FilepathSettings.DataFilesFolderName}/{mapName}/WindSpeed");
 
             Debug.Log($"Found {textures.Length} wind speed images");
             
@@ -31,8 +32,8 @@ namespace Editor.NetCDF
         /// <returns> A <see cref="Texture2D"/> containing the heightmap data in grayscale.</returns>
         public static Texture2D GetHeightMapImg(string mapName)
         {
-            string path = $"MapData/{mapName}/HeightMap/heightMap";
-            Texture2D img = Resources.Load<Texture2D>($"MapData/{mapName}/HeightMap/heightMap");
+            string path = $"{FilepathSettings.DataFilesFolderName}/{mapName}/HeightMap/heightMap";
+            Texture2D img = Resources.Load<Texture2D>($"{FilepathSettings.DataFilesFolderName}/{mapName}/HeightMap/heightMap");
 
             if (img == null)
             {
@@ -50,7 +51,7 @@ namespace Editor.NetCDF
         /// <returns>A list of <see cref="Texture2D"/> objects containing the loaded radiation images.</returns>
         public static List<Texture2D> GetRadiationImages(string mapName)
         {
-            Texture2D[] textures = Resources.LoadAll<Texture2D>($"MapData/{mapName}/Radiation");
+            Texture2D[] textures = Resources.LoadAll<Texture2D>($"{FilepathSettings.DataFilesFolderName}/{mapName}/Radiation");
 
             Debug.Log($"Found {textures.Length} radiation images");
 

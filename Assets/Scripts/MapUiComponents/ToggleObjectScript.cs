@@ -11,9 +11,14 @@ namespace MapUiComponents
     {
         /// <summary>
         /// Toggles the active state of a given game object.
+        /// Used for the data visualizations holder objects.
         /// </summary>
         /// <param name="holder">The game object to toggle.</param>
         /// <param name="isOn">True to activate the game object, false to deactivate it.</param>
+        /// <remarks>
+        /// Bing maps <see cref="MapRenderer"/> component functions differently from other GameObjects.
+        /// It gets toggled via the MapRenderer.enabled property, instead of the regular GameObject.SetActive() method.
+        /// </remarks>
         public static void ToggleActiveState(GameObject holder, bool isOn)
         {
             if (holder == null) throw new ArgumentNullException(nameof(holder));

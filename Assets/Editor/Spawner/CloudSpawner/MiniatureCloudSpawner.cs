@@ -25,6 +25,7 @@ namespace Editor.Spawner.CloudSpawner
         /// </summary>
         protected override float LatDistortionValue => 1;
 
+        
         /// <summary>
         /// Initializes a new instance of the MiniatureCloudSpawner class.
         /// </summary>
@@ -37,8 +38,10 @@ namespace Editor.Spawner.CloudSpawner
         {
         }
 
+        
         /// <summary>
         /// Creates the CloudHolder GameObject, which serves as a container for the spawned clouds.
+        /// Then sets it up using the Bing maps system.
         /// </summary>
         protected override void CreateCloudHolder()
         {
@@ -48,7 +51,7 @@ namespace Editor.Spawner.CloudSpawner
 
             MapPin mapPin = CloudHolder.AddComponent<MapPin>();
 
-            mapPin.Location = SelectedCdfAttributes.position;
+            mapPin.Location = SelectedDatasetScope.position;
             mapPin.IsLayerSynchronized = true;
             mapPin.UseRealWorldScale = true;
             mapPin.ShowOutsideMapBounds = true;

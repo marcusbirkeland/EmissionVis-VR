@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Editor.NetCDF.Types;
+using Editor.Utilities;
 using UnityEngine;
 
 namespace Editor.NetCDF
@@ -21,7 +22,7 @@ namespace Editor.NetCDF
         {
             List<BuildingData> buildingDataList = new();
             
-            string dataPath = $"{Application.dataPath}/Resources/MapData/{mapName}/BuildingData/buildingData.csv";
+            string dataPath = FilepathSettings.DatafilesLocation + $"{mapName}/BuildingData/buildingData.csv";
             if (!File.Exists(dataPath))
             {
                 throw new ArgumentException("The file at " + dataPath + " does not exist!");
@@ -41,12 +42,13 @@ namespace Editor.NetCDF
 
             return buildingDataList;
         }
+        
 
         /// <summary>
         /// Validates and converts the input string data into an array of floats.
         /// </summary>
         /// <param name="data">The input string data to be validated and converted.</param>
-        /// <param name="line">The current line number being processed.</param>
+        /// <param name="line">The current line number being processed. Used for more accurate error messages.</param>
         /// <returns>An array of floats containing the converted data values.</returns>
         /// <exception cref="ArgumentException">Thrown when the input data format is invalid or contains invalid float values.</exception>
         private static float[] AssertDataFormat(string data, long line)

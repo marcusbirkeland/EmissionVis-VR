@@ -8,6 +8,9 @@ namespace MapUiComponents
     /// The ToggleButtonsUI class manages the building and radiation toggle buttons,
     /// updating the visibility of the corresponding game objects based on the toggle state.
     /// </summary>
+    /// <remarks>
+    /// TODO: should probably have single ToggleButtonUI class, with an instance for each button.
+    /// </remarks>
     public class ToggleButtonsUI : MonoBehaviour
     {
         [SerializeField]
@@ -16,6 +19,7 @@ namespace MapUiComponents
         [SerializeField]
         private Toggle radiationToggle;
 
+        
         /// <summary>
         /// Initializes the toggle button UI by setting up event listeners.
         /// </summary>
@@ -27,6 +31,7 @@ namespace MapUiComponents
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
+        
         /// <summary>
         /// Removes the event listener when the object is destroyed.
         /// </summary>
@@ -35,6 +40,7 @@ namespace MapUiComponents
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
+        
         /// <summary>
         /// Handles scene changes by updating the visibility of buildings and radiation
         /// based on the current toggle states.
@@ -47,6 +53,7 @@ namespace MapUiComponents
             ToggleRadiation(radiationToggle.isOn);
         }
 
+        
         /// <summary>
         /// Toggles the visibility of the buildings.
         /// </summary>
@@ -56,6 +63,7 @@ namespace MapUiComponents
             ToggleObjectScript.ToggleActiveState(MapUI.Instance.BuildingHolder, value);
         }
 
+        
         /// <summary>
         /// Toggles the visibility of the radiation visualization.
         /// </summary>

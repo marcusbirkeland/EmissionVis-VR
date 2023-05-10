@@ -10,7 +10,14 @@ namespace Editor.EditorWindowComponents
     /// </summary>
     public abstract class BaseVariableDropdown
     {
+        /// <summary>
+        /// List of all possible NcVariables.
+        /// </summary>
         protected readonly List<NcVariable> NcVariables;
+        
+        /// <summary>
+        /// GUI label used to indicate what variable to select.
+        /// </summary>
         protected readonly string Label;
 
         
@@ -35,10 +42,10 @@ namespace Editor.EditorWindowComponents
         /// </returns>
         protected string[] VariableLabels => NcVariables.Select(info =>
         {
-            string variableName = info.variableName;
-            int count = NcVariables.Count(variableInfo => variableInfo.variableName == info.variableName);
+            string variableName = info.VariableName;
+            int count = NcVariables.Count(variableInfo => variableInfo.VariableName == info.VariableName);
 
-            return count > 1 ? $"{variableName} ({Path.GetFileName(info.filePath)})" : variableName;
+            return count > 1 ? $"{variableName} ({Path.GetFileName(info.FilePath)})" : variableName;
 
         }).ToArray();
     }

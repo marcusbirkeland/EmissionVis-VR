@@ -1,8 +1,10 @@
-﻿using Editor.NetCDF.Types;
+﻿using System;
+using Editor.NetCDF.Types;
 using Esri.ArcGISMapsSDK.Components;
 using Esri.ArcGISMapsSDK.Utils.GeoCoord;
 using Esri.HPFramework;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Editor.Spawner.BuildingSpawner
 {
@@ -11,6 +13,12 @@ namespace Editor.Spawner.BuildingSpawner
     /// </summary>
     public class FullScaleBuildingSpawner : BaseBuildingSpawner
     {
+        /// <summary>
+        /// A value representing the size distortion based on latitude when using the mercator projection.
+        /// </summary>
+        private readonly float _latitudeOffset;
+        
+        
         /// <summary>
         /// Initializes a new instance of the FullScaleBuildingSpawner class.
         /// </summary>
@@ -21,8 +29,10 @@ namespace Editor.Spawner.BuildingSpawner
         public FullScaleBuildingSpawner(string mapName, string cdfFilePath, GameObject map, float rotationAngle)
             : base(mapName, cdfFilePath, map, rotationAngle)
         {
+            _latitudeOffset = (float) (1 / Math.Cos(Math.PI * SelectedDatasetScope.position.lat / 180.0));
         }
 
+        
         /// <summary>
         /// Creates and sets up the building holder for the full-scale scene.
         /// </summary>
@@ -35,11 +45,12 @@ namespace Editor.Spawner.BuildingSpawner
 
             ArcGISLocationComponent location = BuildingsHolder.AddComponent<ArcGISLocationComponent>();
             location.runInEditMode = true;
-            location.Position = SelectedCdfAttributes.position;
+            location.Position = SelectedDatasetScope.position;
 
             location.Rotation = new ArcGISRotation(RotationAngle, 90, 0);
         }
 
+        
         /// <summary>
         /// Spawns a building in the full-scale scene with the given building data.
         /// </summary>
@@ -50,9 +61,9 @@ namespace Editor.Spawner.BuildingSpawner
 
             building.name = $"Small Building {BuildingsHolder.transform.childCount}";
 
-            building.transform.localScale = new Vector3(UnityUnitsPerMeter, UnityUnitsPerMeter, UnityUnitsPerMeter);
+            building.transform.localScale = new Vector3(_latitudeOffset, _latitudeOffset, _latitudeOffset);
             
-            building.transform.localPosition = new Vector3((float)buildingData.X * UnityUnitsPerMeter, (float)buildingData.Altitude, (float)buildingData.Y * UnityUnitsPerMeter);
+            building.transform.localPosition = new Vector3((float)buildingData.X * _latitudeOffset, (float)buildingData.Altitude, (float)buildingData.Y * _latitudeOffset);
         }
     }
 }

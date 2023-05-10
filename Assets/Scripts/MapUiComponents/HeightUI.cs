@@ -1,4 +1,3 @@
-
 using Esri.ArcGISMapsSDK.Components;
 using Esri.GameEngine.Geometry;
 using Microsoft.Maps.Unity;
@@ -14,9 +13,18 @@ namespace MapUiComponents
     /// </summary>
     public class HeightUI : MonoBehaviour
     {
+        /// <summary>
+        /// Represents a number of meters.
+        /// </summary>
+        /// <remarks>
+        /// TODO: This value should be replaced by a user selected value.
+        /// </remarks>
+        private const int MaxHeightDifference = 1000;
+        
         [SerializeField]
         private Slider heightSlider;
 
+        
         private void Start()
         {
             heightSlider.onValueChanged.AddListener(
@@ -26,20 +34,21 @@ namespace MapUiComponents
             SceneManager.sceneLoaded += HandleSceneChange;
         }
 
+        
         /// <summary>
         /// Updates the cloud height based on the slider value.
         /// </summary>
         /// <param name="value">The slider value.</param>
+        /// <remarks>
+        /// TODO: GameObject height logic should get moved somewhere else. It is not relevant to the UI.
+        /// </remarks>
         private static void UpdateCloudHeight(float value)
         {
             MapUI.CloudManager.ChangeCurvatureByHeight(value);
-
-            //The difference in meters between the minimum and maximum cloud position.
-            const int maxHeightDifference = 1000;
-
+            
             MapPin mapPin = MapUI.Instance.CloudHolder.GetComponent<MapPin>();
             if(mapPin){
-                mapPin.Altitude = MapUI.CloudManager.baseElevation + value * maxHeightDifference;
+                mapPin.Altitude = MapUI.CloudManager.baseElevation + value * MaxHeightDifference;
                 return;
             }
         
@@ -51,16 +60,17 @@ namespace MapUiComponents
             arcGisLocation.Position = new ArcGISPoint(
                 arcGisLocation.Position.X, 
                 arcGisLocation.Position.Y, 
-                MapUI.CloudManager.baseElevation + value * maxHeightDifference, 
+                MapUI.CloudManager.baseElevation + value * MaxHeightDifference, 
                 ArcGISSpatialReference.WGS84()
             );
         }
         
+        
         /// <summary>
-        /// Sets the cloud height based on the slider value on scene loaded.
+        /// Called when the scene changes. Updates the cloud height based on the slider value.
         /// </summary>
-        /// <param name="scene">The loaded scene.</param>
-        /// <param name="mode">The scene loading mode.</param>
+        /// <param name="scene">The loaded scene. (unused)</param>
+        /// <param name="mode">The scene loading mode. (unused)</param>
         private void HandleSceneChange(Scene scene, LoadSceneMode mode)
         {
             UpdateCloudHeight(heightSlider.value);
